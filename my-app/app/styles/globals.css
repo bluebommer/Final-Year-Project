@@ -1,0 +1,50 @@
+:root {
+  --bg-base: #0b0f14;
+  --bg-surface: #151a1f;
+  --bg-card: #21262c;
+  --bg-card-hover: #2a3038;
+
+  --card-unsel-1: #151a1f;
+  --card-unsel-2: #21262c;
+  --card-unsel-3: rgba(68,72,77,0.10);
+  --card-unsel-4: #a8abb1;
+  --card-unsel-5: #f1f4fa;
+
+  --card-sel-border: #8ff5ff;
+  --card-sel-glow-1: rgba(0,238,252,0.10);
+  --card-sel-inner: rgba(68,72,77,0.10);
+  --card-sel-tint: rgba(143,245,255,0.20);
+  --card-sel-text: #f1f4fa;
+
+  --grad-start: #8ff5ff;
+  --grad-end:   #00deec;
+
+  --text-primary: #f1f4fa;
+  --text-sub: #a8abb1;
+  --text-label: #8ff5ff;
+
+  --btn-bg: linear-gradient(135deg, #8ff5ff 0%, #00deec 100%);
+  --btn-text: #0b0f14;
+
+  font-family: var(--font-manrope), sans-serif;
+  color-scheme: dark;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  min-height: 100vh;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-manrope), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: #2a3038; border-radius: 3px; }

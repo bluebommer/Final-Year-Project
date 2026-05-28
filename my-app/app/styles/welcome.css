@@ -1,0 +1,189 @@
+/* ── Welcome Page ─────────────────────────────────────────── */
+.welcome {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,222,236,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 90%, rgba(143,245,255,0.06) 0%, transparent 60%),
+    var(--bg-base);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle grid overlay */
+.welcome::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(143,245,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(143,245,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+.welcome__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 560px;
+  width: 100%;
+  text-align: center;
+  animation: fadeUp 0.7s ease both;
+}
+
+/* Logo */
+.welcome__logo-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #1a2830 0%, #0d1f25 100%);
+  border: 1px solid rgba(143,245,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 24px rgba(0,222,236,0.18),
+    0 4px 24px rgba(0,0,0,0.4);
+  margin-bottom: 1.5rem;
+}
+
+.welcome__logo-icon {
+  font-size: 2rem;
+  background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Brand name */
+.welcome__brand {
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.welcome__tagline {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-sub);
+  margin-bottom: 3rem;
+  letter-spacing: 0.01em;
+}
+
+/* Feature cards */
+.welcome__cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 2.5rem;
+}
+
+.welcome__card {
+  background: linear-gradient(160deg, var(--card-unsel-2) 0%, var(--card-unsel-1) 100%);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 1.5rem 1.25rem;
+  text-align: left;
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  animation: fadeUp 0.7s ease both;
+}
+
+.welcome__card:nth-child(1) { animation-delay: 0.1s; }
+.welcome__card:nth-child(2) { animation-delay: 0.2s; }
+.welcome__card:nth-child(3) { animation-delay: 0.3s; }
+
+.welcome__card:hover {
+  border-color: rgba(143,245,255,0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(0,222,236,0.08);
+}
+
+.welcome__card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(143,245,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: var(--grad-end);
+}
+
+.welcome__card-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.welcome__card-desc {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--text-sub);
+  line-height: 1.5;
+}
+
+/* CTA button */
+.welcome__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2.5rem;
+  border-radius: 100px;
+  background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%);
+  color: var(--btn-text);
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow:
+    0 0 24px rgba(0,222,236,0.35),
+    0 4px 16px rgba(0,0,0,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  letter-spacing: 0.01em;
+  animation: fadeUp 0.7s 0.4s ease both;
+}
+
+.welcome__cta:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 36px rgba(0,222,236,0.5), 0 4px 24px rgba(0,0,0,0.4);
+}
+
+.welcome__version {
+  margin-top: 1.25rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: rgba(168,171,177,0.5);
+  text-transform: uppercase;
+  animation: fadeUp 0.7s 0.5s ease both;
+}
+
+/* ── Animations ──────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .welcome__cards { grid-template-columns: 1fr; }
+  .welcome__brand { font-size: 1.8rem; }
+}
