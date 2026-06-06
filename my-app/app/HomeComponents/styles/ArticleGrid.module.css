@@ -1,28 +1,32 @@
 .grid {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
+  width: 100%;
 }
 
+/* Force two-column side-by-side layout */
 .topRow {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 12px;
+  width: 100%;
+  align-items: start;
 }
 
 .bottomRow {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 960px) {
   .topRow {
     grid-template-columns: 1fr;
   }
-
   .bottomRow {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

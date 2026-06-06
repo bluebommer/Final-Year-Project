@@ -1,10 +1,9 @@
-import dynamic from 'next/dynamic';
 import styles from './styles/ArticleGrid.module.css';
 import FeaturedCard from './FeaturedCard';
-
+import SmallCard from './SmallCard';
 import SideCard from './SideCard';
 import { Article } from '../types/article';
-const SmallCard = dynamic(() => import('./SmallCard'));
+// import { Article } from '../../types/article';
 
 const featuredArticle: Article = {
   id: '1',
@@ -12,6 +11,7 @@ const featuredArticle: Article = {
   title: 'Post-Digital Aesthetics: The Rise of Liquid Minimalism',
   readTime: '12 MIN READ',
   isStaffPick: true,
+  isNewRelease: true,
   imageType: 'abstract3d',
 };
 
@@ -54,13 +54,10 @@ const smallArticles: Article[] = [
 export default function ArticleGrid() {
   return (
     <div className={styles.grid}>
-      {/* Top row: Featured (large) + Side card */}
       <div className={styles.topRow}>
         <FeaturedCard article={featuredArticle} />
         <SideCard article={sideArticle} />
       </div>
-
-      {/* Bottom row: 3 small cards */}
       <div className={styles.bottomRow}>
         {smallArticles.map((article) => (
           <SmallCard key={article.id} article={article} />

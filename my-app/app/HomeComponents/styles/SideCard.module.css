@@ -1,0 +1,155 @@
+.sideCard {
+  background-color: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.sideCard:hover {
+  border-color: rgba(0, 222, 236, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ── Landscape Image ── */
+.cardImage {
+  position: relative;
+  height: 190px;
+  width: 100%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Sky: deep navy → orange sunset → steel blue lake reflection */
+.landscapeVisual {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    #0a0a22 0%,
+    #18184a 12%,
+    #301858 22%,
+    #c05018 35%,
+    #e07030 43%,
+    #e89048 50%,
+    #4878a8 58%,
+    #355a88 68%,
+    #182848 82%,
+    #08101e 100%
+  );
+}
+
+/* Far mountain range */
+.landscapeVisual::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background-color: #0c1c30;
+  clip-path: polygon(
+    0% 100%, 0% 52%,
+    6% 34%, 14% 50%,
+    22% 18%, 30% 38%,
+    40% 8%, 48% 26%,
+    56% 16%, 64% 34%,
+    72% 6%, 80% 28%,
+    88% 18%, 94% 36%,
+    100% 28%, 100% 100%
+  );
+}
+
+/* Near mountain range — darker, in front */
+.landscapeVisual::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 42%;
+  background-color: #060e1a;
+  clip-path: polygon(
+    0% 100%, 0% 62%,
+    10% 40%, 20% 58%,
+    32% 26%, 44% 48%,
+    56% 18%, 68% 44%,
+    78% 30%, 88% 50%,
+    96% 36%, 100% 42%,
+    100% 100%
+  );
+}
+
+/* ── Card Content ── */
+.cardContent {
+  padding: 16px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.category {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #22d3ee;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.cardTitle {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #f8fafc;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.description {
+  font-size: 12px;
+  line-height: 1.65;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.author {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  color: #64748b;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.bookmarkBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: #64748b;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+  padding: 0;
+}
+
+.bookmarkBtn:hover {
+  color: #22d3ee;
+  background: rgba(0, 222, 236, 0.08);
+}

@@ -1,18 +1,20 @@
 .sidebar {
   width: 220px;
   min-width: 220px;
-  height: calc(100vh - 56px);
-  background-color: var(--bg-primary);
-  border-right: 1px solid var(--border-subtle);
-  padding: 24px 16px;
+  background-color: #080d18;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 24px 16px 32px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 28px;
+  /* sticky so it stays visible while main scrolls */
   position: sticky;
   top: 56px;
+  height: calc(100vh - 56px);
+  align-self: flex-start;
 }
 
-/* Profile */
+/* ── Profile ── */
 .profile {
   display: flex;
   align-items: center;
@@ -23,37 +25,37 @@
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: var(--surface-raised);
-  border: 1px solid var(--border-subtle);
+  background: #161d2e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-muted);
+  color: #64748b;
   flex-shrink: 0;
 }
 
 .profileInfo {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 
 .profileName {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.07em;
-  color: var(--text-primary);
+  color: #f8fafc;
   font-family: var(--font-display);
 }
 
 .profileStatus {
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.06em;
   color: var(--accent-cyan);
 }
 
-/* Side Nav */
+/* ── Side Nav ── */
 .sideNav {
   flex: 1;
 }
@@ -64,7 +66,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .sideNavItem,
@@ -80,60 +82,62 @@
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
   font-family: var(--font-display);
+  border-left: 2px solid transparent;
 }
 
 .sideNavItem {
-  color: var(--text-muted);
+  color: #64748b;
 }
 
 .sideNavItem:hover {
-  background: var(--surface-hover);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  color: #94a3b8;
 }
 
 .sideNavItemActive {
-  color: var(--text-primary);
-  border-left: 2px solid var(--accent-cyan);
+  color: #f8fafc;
+  border-left-color: var(--accent-cyan);
   padding-left: 10px;
 }
 
-/* Streak Card */
+/* ── Streak Card ── */
 .streakCard {
-  background: var(--surface-raised);
-  border: 1px solid var(--border-subtle);
+  background: #161d2e;
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 12px;
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  margin-top: auto;
 }
 
 .streakLabel {
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.1em;
-  color: var(--text-muted);
+  color: #64748b;
   font-family: var(--font-display);
 }
 
 .streakValue {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #f8fafc;
   letter-spacing: -0.02em;
 }
 
 .streakBar {
   height: 3px;
-  background: var(--surface-hover);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 2px;
-  margin-top: 4px;
+  margin-top: 6px;
   overflow: hidden;
 }
 
 .streakFill {
   height: 100%;
-  width: 60%;
+  width: 55%;
   background: linear-gradient(90deg, var(--accent-cyan), var(--accent-cyan-bright));
   border-radius: 2px;
 }

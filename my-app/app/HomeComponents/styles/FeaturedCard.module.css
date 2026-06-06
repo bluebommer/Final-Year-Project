@@ -1,0 +1,180 @@
+.featuredCard {
+  background-color: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.featuredCard:hover {
+  border-color: rgba(0, 222, 236, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ── Image Area ── */
+.cardImage {
+  position: relative;
+  height: 280px;
+  width: 100%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(145deg, #0d1422 0%, #121c30 50%, #0a1420 100%);
+}
+
+/* Warm ambient glow under the blob */
+.blobGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  height: 280px;
+  background: radial-gradient(
+    ellipse,
+    rgba(180, 130, 80, 0.22) 0%,
+    rgba(140, 95, 55, 0.1) 50%,
+    transparent 75%
+  );
+  filter: blur(24px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/*
+  Organic liquid blob — achieved with a large border-radius
+  that's asymmetric on all four corners to look molten/fluid.
+  The ::before and ::after add small protruding bumps that
+  merge visually into the main shape (unlike separate spheres).
+*/
+.blobVisual {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -54%) rotate(-8deg);
+  width: 200px;
+  height: 185px;
+  /* Asymmetric border-radius: top-left top-right / bottom-right bottom-left */
+  border-radius: 62% 38% 46% 54% / 60% 44% 56% 40%;
+  background: linear-gradient(
+    135deg,
+    #d9b484 0%,
+    #c8a070 18%,
+    #b08558 35%,
+    #9a6e45 52%,
+    #7c5535 68%,
+    #5e3f28 84%,
+    #422c1a 100%
+  );
+  box-shadow:
+    inset -35px -28px 55px rgba(0, 0, 0, 0.6),
+    inset 18px 14px 28px rgba(255, 235, 195, 0.1),
+    0 28px 65px rgba(0, 0, 0, 0.65);
+  z-index: 2;
+  animation: blobMorph 8s ease-in-out infinite;
+}
+
+/* Top-right protrusion — merges into main blob */
+.blobVisual::before {
+  content: '';
+  position: absolute;
+  top: -18%;
+  right: -12%;
+  width: 80px;
+  height: 72px;
+  border-radius: 55% 45% 40% 60% / 50% 55% 45% 50%;
+  background: linear-gradient(
+    135deg,
+    #c8a070 0%,
+    #a87850 40%,
+    #7a5538 80%
+  );
+  box-shadow:
+    inset -10px -8px 18px rgba(0, 0, 0, 0.5),
+    inset 5px 4px 10px rgba(255, 220, 170, 0.1);
+}
+
+/* Bottom-left protrusion — smaller bump */
+.blobVisual::after {
+  content: '';
+  position: absolute;
+  bottom: -12%;
+  left: -8%;
+  width: 52px;
+  height: 48px;
+  border-radius: 50% 50% 45% 55% / 55% 45% 55% 45%;
+  background: linear-gradient(
+    135deg,
+    #a88060 0%,
+    #7a5840 50%,
+    #583c28 100%
+  );
+  box-shadow:
+    inset -7px -6px 14px rgba(0, 0, 0, 0.45),
+    inset 3px 3px 8px rgba(255, 210, 160, 0.08);
+}
+
+@keyframes blobMorph {
+  0%, 100% {
+    border-radius: 62% 38% 46% 54% / 60% 44% 56% 40%;
+    transform: translate(-50%, -54%) rotate(-8deg) scale(1);
+  }
+  25% {
+    border-radius: 50% 50% 58% 42% / 52% 56% 44% 48%;
+    transform: translate(-50%, -57%) rotate(-5deg) scale(1.02);
+  }
+  50% {
+    border-radius: 44% 56% 52% 48% / 48% 60% 40% 52%;
+    transform: translate(-50%, -52%) rotate(-10deg) scale(0.99);
+  }
+  75% {
+    border-radius: 58% 42% 44% 56% / 56% 48% 52% 44%;
+    transform: translate(-50%, -55%) rotate(-6deg) scale(1.01);
+  }
+}
+
+/* ── Card Content ── */
+.cardContent {
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.newRelease {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #f97316;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.cardTitle {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #f8fafc;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 2px;
+}
+
+.readTime,
+.staffPick {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #64748b;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  letter-spacing: 0.04em;
+}

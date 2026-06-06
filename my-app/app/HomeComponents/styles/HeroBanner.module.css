@@ -1,142 +1,209 @@
 .heroBanner {
   position: relative;
   width: 100%;
-  height: 320px;
+  height: 360px;
   border-radius: 16px;
   overflow: hidden;
   margin-bottom: 24px;
+  flex-shrink: 0;
+  /* background is set per-slide via bgTeal/bgPurple/bgEmerald */
+  transition: background 0.6s ease;
 }
 
-/* Simulated hero image — replace with <Image> in production */
-.heroBg {
+/* ── Per-slide background colours ── */
+.bgTeal {
+  background: linear-gradient(135deg, #060c18 0%, #071422 45%, #061220 100%);
+}
+.bgPurple {
+  background: linear-gradient(135deg, #0a0614 0%, #120820 45%, #0c0618 100%);
+}
+.bgEmerald {
+  background: linear-gradient(135deg, #040e0a 0%, #071812 45%, #050e0a 100%);
+}
+
+/* ── Visual: SVG or image — sits right half ── */
+.visualWrapper {
   position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at 70% 40%, rgba(0, 222, 236, 0.35) 0%, transparent 60%),
-    radial-gradient(ellipse at 85% 60%, rgba(180, 0, 255, 0.25) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(34, 211, 238, 0.15) 0%, transparent 70%),
-    linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 40%, #0a1628 100%);
+  top: 0;
+  right: 0;
+  width: 62%;
+  height: 100%;
+  z-index: 1;
 }
 
-/* Abstract neural/tech network lines */
-.heroBg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 40px,
-      rgba(0, 222, 236, 0.04) 40px,
-      rgba(0, 222, 236, 0.04) 41px
-    ),
-    repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 60px,
-      rgba(180, 0, 255, 0.03) 60px,
-      rgba(180, 0, 255, 0.03) 61px
-    );
+.slideImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
-.heroBg::after {
-  content: '';
-  position: absolute;
-  top: 20%;
-  right: 15%;
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 222, 236, 0.5) 0%, rgba(0, 222, 236, 0.1) 40%, transparent 70%);
-  filter: blur(30px);
-}
-
-/* Left-to-right gradient overlay for text legibility */
+/* ── Gradient overlay left → transparent right ── */
 .heroOverlay {
   position: absolute;
   inset: 0;
+  z-index: 2;
   background: linear-gradient(
-    90deg,
-    rgba(10, 14, 26, 0.85) 0%,
-    rgba(10, 14, 26, 0.5) 55%,
+    100deg,
+    #070d1b 0%,
+    #070d1b 26%,
+    rgba(7,13,27,0.94) 36%,
+    rgba(7,13,27,0.62) 52%,
+    rgba(7,13,27,0.18) 72%,
     transparent 100%
   );
 }
 
-/* Content */
+/* Adjust overlay tint per slide */
+.bgPurple .heroOverlay {
+  background: linear-gradient(
+    100deg,
+    #0a0614 0%,
+    #0a0614 26%,
+    rgba(10,6,20,0.94) 36%,
+    rgba(10,6,20,0.62) 52%,
+    rgba(10,6,20,0.18) 72%,
+    transparent 100%
+  );
+}
+.bgEmerald .heroOverlay {
+  background: linear-gradient(
+    100deg,
+    #040e0a 0%,
+    #040e0a 26%,
+    rgba(4,14,10,0.94) 36%,
+    rgba(4,14,10,0.62) 52%,
+    rgba(4,14,10,0.18) 72%,
+    transparent 100%
+  );
+}
+
+/* ── Slide content ── */
 .heroContent {
-  position: relative;
-  z-index: 2;
-  padding: 36px 40px;
-  height: 100%;
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  padding: 40px 44px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 14px;
   max-width: 560px;
-  gap: 12px;
 }
 
+.fadeIn {
+  animation: fadeUp 0.4s ease forwards;
+}
+.fadeOut {
+  animation: fadeDown 0.35s ease forwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeDown {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+
+/* ── Badge ── */
 .heroBadge {
   display: inline-flex;
   align-items: center;
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 5px 12px;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 5px 14px;
   border-radius: 20px;
   width: fit-content;
-  font-family: var(--font-display);
+  font-family: 'DM Sans', system-ui, sans-serif;
 }
 
+/* ── Title ── */
 .heroTitle {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: #ffffff;
   margin: 0;
 }
 
+/* ── Description ── */
 .heroDescription {
   font-size: 13px;
-  line-height: 1.6;
-  color: var(--text-secondary);
+  line-height: 1.65;
+  color: rgba(255,255,255,0.5);
   margin: 0;
-  max-width: 380px;
+  max-width: 360px;
 }
 
+/* ── CTA button ── */
 .readNowBtn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 22px;
-  background: var(--accent-cyan);
-  color: #0a0f1a;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  padding: 11px 24px;
+  background: #00deec;
+  color: #060c18;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-  font-family: var(--font-display);
+  font-family: 'DM Sans', system-ui, sans-serif;
   width: fit-content;
   margin-top: 4px;
-  box-shadow: 0 0 16px rgba(0, 222, 236, 0.3);
+  box-shadow: 0 0 20px rgba(0,222,236,0.35);
 }
 
 .readNowBtn:hover {
-  background: var(--accent-cyan-bright);
+  background: #8ff5ff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(0, 222, 236, 0.45);
+  box-shadow: 0 6px 24px rgba(0,222,236,0.5);
 }
 
-.readNowBtn:active {
-  transform: translateY(0);
+/* ── Dot indicators ── */
+.dots {
+  position: absolute;
+  bottom: 20px;
+  left: 44px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot,
+.dotActive {
+  height: 6px;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.3s ease, width 0.3s ease;
+}
+
+.dot {
+  width: 6px;
+  background: rgba(255,255,255,0.25);
+}
+
+.dot:hover {
+  background: rgba(255,255,255,0.5);
+}
+
+.dotActive {
+  width: 20px;
+  background: #00deec;
+  box-shadow: 0 0 8px rgba(0,222,236,0.6);
 }
