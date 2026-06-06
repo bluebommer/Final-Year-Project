@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 type AuthMode  = "signup" | "signin";
 type SignupStep = "form" | "verify";
@@ -423,10 +424,17 @@ function SignInForm({
 // ─── Main AuthPage ────────────────────────────────────────────────────────────
 
 export default function AuthPage({ onAuthComplete }: AuthPageProps) {
+  const router = useRouter();                                                   // ← NEW
   const [mode,         setMode]         = useState<AuthMode>("signup");
   const [signupStep,   setSignupStep]   = useState<SignupStep>("form");
   const [pendingEmail, setPendingEmail] = useState("");
   const [googleError,  setGoogleError]  = useState("");
+
+  // Wraps the parent's onAuthComplete and redirects to /home               // ← NEW
+  const handleAuthComplete = (user: { name: string; gender: string; email: string }) => {
+    onAuthComplete(user);
+    router.push("/home");
+  };
 
   const handleGoogleAuth = async (credential: string) => {
     const res = await fetch("/api/auth/google", {
@@ -436,7 +444,7 @@ export default function AuthPage({ onAuthComplete }: AuthPageProps) {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
-    onAuthComplete({
+    handleAuthComplete({                                                       // ← was onAuthComplete
       name:   data.user.name,
       gender: data.user.gender,
       email:  data.user.email,
@@ -568,13 +576,13 @@ export default function AuthPage({ onAuthComplete }: AuthPageProps) {
           {mode === "signup" && signupStep === "verify" && (
             <VerifyEmailStep
               email={pendingEmail}
-              onVerified={onAuthComplete}
+              onVerified={handleAuthComplete}                                 
               onBack={handleBackToForm}
             />
           )}
 
           {mode === "signin" && (
-            <SignInForm onSubmit={onAuthComplete} />
+            <SignInForm onSubmit={handleAuthComplete} />                      
           )}
 
           {!isVerifyStep && (

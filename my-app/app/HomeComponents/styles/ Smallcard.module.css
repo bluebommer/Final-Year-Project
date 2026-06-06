@@ -1,0 +1,62 @@
+.smallCard {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 20px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.smallCard:hover {
+  border-color: var(--border-active);
+  transform: translateY(-2px);
+}
+
+.category {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent-cyan);
+  font-family: var(--font-display);
+}
+
+.cardTitle {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.description {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+  flex: 1;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.authorDot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.readTime {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+}

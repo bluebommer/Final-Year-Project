@@ -1,0 +1,142 @@
+.heroBanner {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+/* Simulated hero image — replace with <Image> in production */
+.heroBg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 70% 40%, rgba(0, 222, 236, 0.35) 0%, transparent 60%),
+    radial-gradient(ellipse at 85% 60%, rgba(180, 0, 255, 0.25) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(34, 211, 238, 0.15) 0%, transparent 70%),
+    linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 40%, #0a1628 100%);
+}
+
+/* Abstract neural/tech network lines */
+.heroBg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(0, 222, 236, 0.04) 40px,
+      rgba(0, 222, 236, 0.04) 41px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 60px,
+      rgba(180, 0, 255, 0.03) 60px,
+      rgba(180, 0, 255, 0.03) 61px
+    );
+}
+
+.heroBg::after {
+  content: '';
+  position: absolute;
+  top: 20%;
+  right: 15%;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 222, 236, 0.5) 0%, rgba(0, 222, 236, 0.1) 40%, transparent 70%);
+  filter: blur(30px);
+}
+
+/* Left-to-right gradient overlay for text legibility */
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 14, 26, 0.85) 0%,
+    rgba(10, 14, 26, 0.5) 55%,
+    transparent 100%
+  );
+}
+
+/* Content */
+.heroContent {
+  position: relative;
+  z-index: 2;
+  padding: 36px 40px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 560px;
+  gap: 12px;
+}
+
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 5px 12px;
+  border-radius: 20px;
+  width: fit-content;
+  font-family: var(--font-display);
+}
+
+.heroTitle {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.heroDescription {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 380px;
+}
+
+.readNowBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: var(--accent-cyan);
+  color: #0a0f1a;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  font-family: var(--font-display);
+  width: fit-content;
+  margin-top: 4px;
+  box-shadow: 0 0 16px rgba(0, 222, 236, 0.3);
+}
+
+.readNowBtn:hover {
+  background: var(--accent-cyan-bright);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(0, 222, 236, 0.45);
+}
+
+.readNowBtn:active {
+  transform: translateY(0);
+}
