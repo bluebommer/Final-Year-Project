@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import Script from "next/script";          // ← add this
-import "./styles/globals.css";
-import "./styles/welcome.css";
-import "./styles/preferences.css";
-import "./styles/auth.css";
+import "./Components/RootComponents/styles/globals.css";
+import "./Components/RootComponents/styles/welcome.css";
+import "./Components/RootComponents/styles/preferences.css";
+import "./Components/RootComponents/styles/auth.css";
 
 const manrope = Manrope({
   subsets: ["latin"],

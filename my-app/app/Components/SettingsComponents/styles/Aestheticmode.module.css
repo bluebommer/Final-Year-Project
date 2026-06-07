@@ -1,0 +1,154 @@
+.section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 52px 48px;
+  gap: 40px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 420px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #f8fafc;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.description {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Toggle group */
+.toggleGroup {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.toggleBtn {
+  padding: 11px 24px;
+  border-radius: 24px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #64748b;
+}
+
+.toggleBtn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #94a3b8;
+}
+
+.toggleBtnActive {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #f8fafc !important;
+}
+
+.toggleBtnCyan {
+  border-color: rgba(0, 222, 236, 0.2);
+  color: #64748b;
+}
+
+.toggleBtnActiveCyan {
+  background: #00deec !important;
+  border-color: #00deec !important;
+  color: #060c18 !important;
+  box-shadow: 0 0 20px rgba(0, 222, 236, 0.3);
+}
+
+/* ── Preview card ── */
+.previewWrapper {
+  flex-shrink: 0;
+  border-radius: 20px;
+  padding: 32px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.4s ease, box-shadow 0.4s ease;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  min-width: 240px;
+}
+
+.previewLight {
+  background: #f0f4f8;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.previewDark {
+  background: #111827;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.previewCard {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Sun / Moon icons */
+.previewIcon {
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+.iconActive {
+  color: #22d3ee;
+  opacity: 1;
+}
+
+.iconInactive {
+  opacity: 0.25;
+}
+
+/* Mini switch */
+.previewSwitch {
+  width: 44px;
+  height: 26px;
+  border-radius: 13px;
+  background: #00deec;
+  position: relative;
+  box-shadow: 0 0 12px rgba(0, 222, 236, 0.4);
+  flex-shrink: 0;
+}
+
+.previewThumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #080d18;
+  position: absolute;
+  top: 3px;
+  transition: left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.thumbLeft {
+  left: 3px;
+}
+
+.thumbRight {
+  left: 21px;
+}
+
+@media (max-width: 800px) {
+  .section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

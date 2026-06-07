@@ -1,0 +1,20 @@
+.pageRoot {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #080d18;
+}
+
+.pageBody {
+  display: flex;
+  flex: 1;
+}
+
+.mainContent {
+  flex: 1;
+  min-width: 0;
+  padding: 0 0 64px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}

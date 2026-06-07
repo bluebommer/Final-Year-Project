@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Topic } from "./index";
+import { Topic } from "../../index";
 
 interface TopicCardProps {
   topic: Topic;

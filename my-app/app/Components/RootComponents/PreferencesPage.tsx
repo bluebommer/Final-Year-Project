@@ -1,10 +1,10 @@
 
 "use client"
+import { Topic } from '@/app';
 import dynamic from 'next/dynamic';
 import React, { useState } from "react";
-import { Topic } from "../index";
-const TopicCard = dynamic(() => import('../TopicCard'));
-// import TopicCard from "./TopicCard";
+const TopicCard = dynamic(() => import('./TopicCard'));
+
 
 const MIN_TOPICS = 5;
 

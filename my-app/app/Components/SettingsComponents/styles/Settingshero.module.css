@@ -1,0 +1,49 @@
+.hero {
+  position: relative;
+  padding: 56px 48px 52px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.heroBg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 90% 50%, rgba(0, 222, 236, 0.05) 0%, transparent 60%),
+    radial-gradient(ellipse at 10% 80%, rgba(80, 0, 180, 0.04) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #22d3ee;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.title {
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -0.035em;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #64748b;
+  margin: 0;
+  max-width: 540px;
+}

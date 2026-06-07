@@ -1,10 +1,11 @@
 import dynamic from 'next/dynamic';
-const Navbar = dynamic(() => import('../HomeComponents/Navbar'));
-import styles from '../HomeComponents/styles/Home.module.css';
-const Sidebar = dynamic(() => import('../HomeComponents/SideBar'));
-const ArticleGrid = dynamic(() => import('../HomeComponents/ArticleGrid'));
-const CategoryTabs = dynamic(() => import('../HomeComponents/Categorytabs'));
-const HeroBanner = dynamic(() => import('../HomeComponents/Herobanner'));
+
+import styles from '../Components/HomeComponents/styles/Home.module.css';
+const ArticleGrid = dynamic(() => import('../Components/HomeComponents/ArticleGrid'));
+const CategoryTabs = dynamic(() => import('../Components/HomeComponents/Categorytabs'));
+const Sidebar = dynamic(() => import('../Components/HomeComponents/SideBar'));
+const HeroBanner = dynamic(() => import('../Components/HomeComponents/Herobanner'));
+const Navbar = dynamic(() => import('../Components/HomeComponents/Navbar'));
 
 
 export default function HomePage() {
@@ -12,7 +13,8 @@ export default function HomePage() {
     <div className={styles.pageRoot}>
       <Navbar />
       <div className={styles.pageBody}>
-        <Sidebar />
+        <Sidebar
+         />
         <main className={styles.mainContent}>
           <HeroBanner />
           <CategoryTabs />

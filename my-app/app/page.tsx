@@ -2,10 +2,10 @@
 import dynamic from 'next/dynamic';
 import React, { useState } from "react";
 import { Page, UserProfile } from "./index";
-const WelcomePage = dynamic(() => import('./components/WelcomePage'));
-const PreferencesPage = dynamic(() => import('./components/PreferencesPage'));
+const AuthPage = dynamic(() => import('./Components/RootComponents/Authpage'));
+const PreferencesPage = dynamic(() => import('./Components/RootComponents/PreferencesPage'));
+const WelcomePage = dynamic(() => import('./Components/RootComponents/WelcomePage'));
 
-const AuthPage = dynamic(() => import('./components/Authpage'));
 
 
 export default function Home() {
