@@ -2,7 +2,8 @@ import styles from './styles/ArticleGrid.module.css';
 import FeaturedCard from './FeaturedCard';
 import SmallCard from './SmallCard';
 import SideCard from './SideCard';
-import { Article } from '../types/article';
+import { Article } from '@/app/types/article';
+// import { Article } from '../types/article';
 // import { Article } from '../../types/article';
 
 const featuredArticle: Article = {

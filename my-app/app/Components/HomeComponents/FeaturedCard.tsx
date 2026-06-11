@@ -1,4 +1,5 @@
-import { Article } from '../types/article';
+// import { Article } from '../types/article';
+import { Article } from '@/app/types/article';
 import styles from './styles/FeaturedCard.module.css';
 
 

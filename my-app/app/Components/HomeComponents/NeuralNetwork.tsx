@@ -28,6 +28,9 @@ export default function NeuralNetwork() {
     [11,1],[11,2],
   ];
 
+  // Helper function to round coordinates to 6 decimal places
+  const roundCoord = (num) => Math.round(num * 1e6) / 1e6;
+
   return (
     <svg viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg" style={{ width:'100%', height:'100%' }} aria-hidden="true">
       <defs>
@@ -81,8 +84,20 @@ export default function NeuralNetwork() {
       </circle>
       {[0,30,60,90,120,150,180,210,240,270,300,330].map((deg,i) => {
         const rad = (deg * Math.PI) / 180;
-        return <line key={i} x1={cx} y1={cy} x2={cx+Math.cos(rad)*80} y2={cy+Math.sin(rad)*80}
-          stroke="#00f0ff" strokeWidth="0.5" strokeOpacity="0.12" />;
+        const x2 = cx + Math.cos(rad) * 80;
+        const y2 = cy + Math.sin(rad) * 80;
+        return (
+          <line 
+            key={i} 
+            x1={cx} 
+            y1={cy} 
+            x2={roundCoord(x2)} 
+            y2={roundCoord(y2)}
+            stroke="#00f0ff" 
+            strokeWidth="0.5" 
+            strokeOpacity="0.12" 
+          />
+        );
       })}
     </svg>
   );
