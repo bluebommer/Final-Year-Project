@@ -1,0 +1,102 @@
+/* Components/SettingsComponents/styles/Personalization.module.css */
+.personalization {
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #22d3ee;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  text-transform: uppercase;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #f8fafc;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.topicsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.topicRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.topicName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #f8fafc;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.actionBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #94a3b8;
+  transition: all 0.2s ease;
+}
+
+.actionBtn:hover {
+  background: rgba(0, 222, 236, 0.1);
+  border-color: rgba(0, 222, 236, 0.3);
+  color: #22d3ee;
+  transform: scale(1.05);
+}
+
+.advancedBtn {
+  margin-top: 16px;
+  padding: 12px 0;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  text-transform: uppercase;
+}
+
+.advancedBtn:hover {
+  background: rgba(0, 222, 236, 0.08);
+  border-color: rgba(0, 222, 236, 0.25);
+  color: #22d3ee;
+  transform: translateY(-1px);
+}

@@ -5,6 +5,8 @@ import "./Components/RootComponents/styles/globals.css";
 import "./Components/RootComponents/styles/welcome.css";
 import "./Components/RootComponents/styles/preferences.css";
 import "./Components/RootComponents/styles/auth.css";
+import OfflineIndicator from "./Components/StatusComponents/OfflineIndicator";
+
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -28,6 +30,7 @@ export default function RootLayout({
       <body>
         {children}
         <Script src="https://accounts.google.com/gsi/client" strategy="beforeInteractive" />
+          <OfflineIndicator />
       </body>
     </html>
   );

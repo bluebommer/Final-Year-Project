@@ -1,0 +1,144 @@
+/* Components/SettingsComponents/styles/PerformanceEngine.module.css */
+
+.panel {
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.iconWrap {
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 222, 236, 0.08);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #22d3ee;
+}
+
+.panelTitle {
+  font-size: 18px;
+  font-weight: 800;
+  color: #f8fafc;
+  letter-spacing: -0.01em;
+  margin: 0 0 2px 0;
+}
+
+.panelSub {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #64748b;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  text-transform: uppercase;
+}
+
+.toggleList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.toggleInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.toggleLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f8fafc;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  transition: color 0.2s ease;
+}
+
+.toggleLabelOff {
+  color: #64748b;
+}
+
+.toggleDesc {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.4;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+/* Switch (toggle button) */
+.switch {
+  width: 44px;
+  height: 24px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.25s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.switchOn {
+  background: #00deec;
+  box-shadow: 0 0 8px rgba(0, 222, 236, 0.4);
+}
+
+.switchOff {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.thumb {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  transition: left 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.thumbOn {
+  left: 22px;
+}
+
+.thumbOff {
+  left: 2px;
+}
+
+/* Hover effects */
+.switch:hover {
+  transform: scale(1.02);
+}
+
+.switchOn:hover {
+  background: #8ff5ff;
+  box-shadow: 0 0 12px rgba(0, 222, 236, 0.6);
+}
+
+.switchOff:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

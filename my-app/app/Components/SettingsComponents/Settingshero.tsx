@@ -1,4 +1,4 @@
-import styles from './styles/SettingsHero.module.css';
+import styles from './styles/Settingshero.module.css';
 
 export default function SettingsHero() {
   return (

@@ -1,0 +1,160 @@
+/* Components/StatusComponents/styles/OfflineIndicator.module.css */
+
+.container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  max-width: 320px;
+  pointer-events: none; /* allows clicks to pass through, but inner elements need pointer-events: auto */
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #111827;
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  transition: all 0.2s ease;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.message {
+  font-size: 13px;
+  font-weight: 500;
+  color: #f8fafc;
+}
+
+.dismiss {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 20px;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s;
+  pointer-events: auto;
+}
+
+.dismiss:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #f8fafc;
+}
+
+/* Status-specific styles */
+.offline {
+  background: rgba(220, 38, 38, 0.9);
+  backdrop-filter: blur(12px);
+  border-color: rgba(255, 100, 100, 0.3);
+}
+
+.offline .icon,
+.offline .message {
+  color: #ffffff;
+}
+
+.syncing {
+  background: rgba(0, 222, 236, 0.85);
+  backdrop-filter: blur(12px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.syncing .icon,
+.syncing .message {
+  color: #080d18;
+}
+
+.syncing .icon svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Pending badge */
+.pendingBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f59e0b;
+  padding: 8px 16px;
+  border-radius: 40px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #080d18;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  pointer-events: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.pendingBadge svg {
+  flex-shrink: 0;
+}
+
+/* Demo controls – only for development (remove later) */
+.demoControls {
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 8px 12px;
+  border-radius: 30px;
+  backdrop-filter: blur(8px);
+  font-size: 10px;
+}
+
+.demoBtn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: #f8fafc;
+  font-size: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.demoBtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .container {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    max-width: none;
+  }
+  .banner {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .demoControls {
+    width: 100%;
+    justify-content: center;
+  }
+}
