@@ -1,4 +1,5 @@
 import styles from './styles/Sidebar.module.css';
+import PWAInstall from '../Management Components/Pwainstall';
 
 export default function Sidebar() {
   return (
@@ -36,6 +37,13 @@ export default function Sidebar() {
           </li>
           <li className={styles.sideNavItem}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+            DISCOVER
+          </li>
+          <li className={styles.sideNavItem}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="3"/>
               <path d="M19.07 4.93l-1.41 1.41M6.34 6.34L4.93 4.93M19.07 19.07l-1.41-1.41M6.34 17.66l-1.41 1.41M20 12h2M2 12h2M12 20v2M12 2v2"/>
             </svg>
@@ -43,6 +51,9 @@ export default function Sidebar() {
           </li>
         </ul>
       </nav>
+
+      {/* PWA Install Banner */}
+      <PWAInstall />
 
       {/* Reading Streak */}
       <div className={styles.streakCard}>

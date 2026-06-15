@@ -1,13 +1,17 @@
+// app/types/article.ts
 export interface Article {
   id: string;
-  category: string;
   title: string;
-  description?: string;
-  readTime: string;
+  description: string;
+  category: string;
+  readTime?: string;
   isStaffPick?: boolean;
   isNewRelease?: boolean;
-  authorAvatar?: string;
-  authorColor?: string;
-  imageBg?: string;
-  imageType?: 'abstract3d' | 'landscape' | 'card';
+  imageType?: string;
+  author: string;
+  authorInitial: string;
+  authorColor: string;
+  publishedAt: string;
+  source: string;
+  url: string;
 }

@@ -1,0 +1,76 @@
+/*
+  ============================================================
+  READLITE — Global Accessibility Focus Styles
+  Import this in globals.css or layout.tsx
+  ============================================================
+*/
+
+/* Remove default outline for mouse/touch, keep for keyboard */
+*:focus { outline: none; }
+
+*:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+button:focus-visible,
+[role="switch"]:focus-visible,
+[role="tab"]:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: rgba(0, 222, 236, 0.45) !important;
+  box-shadow: 0 0 0 3px rgba(0, 222, 236, 0.08), 0 0 0 1px rgba(0, 222, 236, 0.25) !important;
+}
+
+a:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* Skip-to-content link */
+.skip-to-content {
+  position: fixed;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: 10px 20px;
+  background: #00deec;
+  color: #060c18;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 0 0 10px 10px;
+  text-decoration: none;
+  transition: top 0.2s ease;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.skip-to-content:focus {
+  top: 0;
+  outline: 2px solid #060c18;
+  outline-offset: -4px;
+}
+
+/* High contrast mode */
+@media (forced-colors: active) {
+  *:focus-visible { outline: 3px solid ButtonText; }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

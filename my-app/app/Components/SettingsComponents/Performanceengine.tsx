@@ -1,3 +1,4 @@
+// Components/SettingsComponents/Performanceengine.tsx
 'use client';
 
 import { useState } from 'react';
@@ -9,6 +10,8 @@ interface Toggle {
   description: string;
   defaultOn: boolean;
 }
+
+type PrefetchBehavior = 'wifi-only' | 'always' | 'never';
 
 const TOGGLES: Toggle[] = [
   {
@@ -31,10 +34,17 @@ const TOGGLES: Toggle[] = [
   },
 ];
 
+const PREFETCH_OPTIONS: { value: PrefetchBehavior; label: string; description: string }[] = [
+  { value: 'wifi-only', label: 'WiFi only', description: 'Prefetch only when on unmetered connections' },
+  { value: 'always', label: 'Always', description: 'Prefetch on any network (may use mobile data)' },
+  { value: 'never', label: 'Never', description: 'Disable all prefetching' },
+];
+
 export default function PerformanceEngine() {
   const [states, setStates] = useState<Record<string, boolean>>(
     Object.fromEntries(TOGGLES.map((t) => [t.id, t.defaultOn]))
   );
+  const [prefetchBehavior, setPrefetchBehavior] = useState<PrefetchBehavior>('wifi-only');
 
   function toggle(id: string) {
     setStates((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -78,6 +88,27 @@ export default function PerformanceEngine() {
             </button>
           </div>
         ))}
+      </div>
+
+      {/* Prefetch Behaviour Section */}
+      <div className={styles.prefetchSection}>
+        <div className={styles.prefetchHeader}>
+          <span className={styles.prefetchLabel}>Prefetch Behaviour</span>
+          <span className={styles.prefetchHint}>Data saving & performance</span>
+        </div>
+        <div className={styles.prefetchOptions}>
+          {PREFETCH_OPTIONS.map((option) => (
+            <button
+              key={option.value}
+              className={`${styles.prefetchBtn} ${prefetchBehavior === option.value ? styles.prefetchBtnActive : ''}`}
+              onClick={() => setPrefetchBehavior(option.value)}
+              aria-pressed={prefetchBehavior === option.value}
+            >
+              <span className={styles.prefetchBtnLabel}>{option.label}</span>
+              <span className={styles.prefetchBtnDesc}>{option.description}</span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

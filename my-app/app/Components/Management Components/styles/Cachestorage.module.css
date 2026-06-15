@@ -1,0 +1,387 @@
+.card {
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Header */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.iconWrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: rgba(0, 222, 236, 0.08);
+  border: 1px solid rgba(0, 222, 236, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #22d3ee;
+  flex-shrink: 0;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0 0 3px;
+  letter-spacing: -0.01em;
+}
+
+.cardSub {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #64748b;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+/* Storage bar */
+.storageBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.storageLabels {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.storageUsed {
+  font-size: 22px;
+  font-weight: 800;
+  color: #f8fafc;
+  letter-spacing: -0.02em;
+}
+
+.storageTotal {
+  font-size: 13px;
+  color: #64748b;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.storageBar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.storageFill {
+  height: 100%;
+  background: linear-gradient(90deg, #22d3ee, #8ff5ff);
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.storageFillWarn {
+  background: linear-gradient(90deg, #f97316, #fbbf24);
+}
+
+.storageFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.storageArticleCount {
+  font-size: 11px;
+  color: #64748b;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.storageFree {
+  font-size: 11px;
+  color: #475569;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.clearBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: rgba(251, 113, 133, 0.1);
+  border: 1px solid rgba(251, 113, 133, 0.2);
+  color: #fb7185;
+}
+
+.clearBtn:hover:not(:disabled) {
+  background: rgba(251, 113, 133, 0.18);
+  border-color: rgba(251, 113, 133, 0.4);
+  transform: translateY(-1px);
+}
+
+.clearBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.clearBtnLoading {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #64748b !important;
+}
+
+.clearBtnDone {
+  background: rgba(52, 211, 153, 0.1) !important;
+  border-color: rgba(52, 211, 153, 0.25) !important;
+  color: #34d399 !important;
+}
+
+.spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-top-color: #94a3b8;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.manageBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+}
+
+.manageBtn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #f8fafc;
+}
+
+/* Per-article list */
+.articleList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  overflow: hidden;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.articleRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.15s ease;
+}
+
+.articleRow:last-child {
+  border-bottom: none;
+}
+
+.articleRow:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.articleInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.articleCategory {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #22d3ee;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.articleTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.articleMeta {
+  font-size: 11px;
+  color: #475569;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.articleRemove {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #475569;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.articleRemove:hover {
+  background: rgba(251, 113, 133, 0.1);
+  border-color: rgba(251, 113, 133, 0.25);
+  color: #fb7185;
+}
+
+/* Empty state */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 32px;
+  color: #475569;
+  font-size: 13px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+/* Focus visible — accessibility */
+.clearBtn:focus-visible,
+.manageBtn:focus-visible,
+.articleRemove:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 2px;
+}
+
+
+/* Components/ManagementComponents/styles/Cachestorage.module.css */
+/* (Add the new strategy selector styles to the existing CSS) */
+
+/* Existing styles remain unchanged – only append these: */
+
+/* ── Strategy Selector ────────────────────────────────────── */
+.strategySection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.strategyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.strategyLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: -0.01em;
+}
+
+.strategyHint {
+  font-size: 10px;
+  font-weight: 500;
+  color: #64748b;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.strategyOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.strategyBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  text-align: left;
+}
+
+.strategyBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.strategyBtnActive {
+  background: rgba(0, 222, 236, 0.08);
+  border-color: rgba(0, 222, 236, 0.35);
+  box-shadow: 0 0 0 1px rgba(0, 222, 236, 0.1);
+}
+
+.strategyBtnLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: -0.01em;
+}
+
+.strategyBtnDesc {
+  font-size: 11px;
+  font-weight: 400;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Focus visible */
+.strategyBtn:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 2px;
+}

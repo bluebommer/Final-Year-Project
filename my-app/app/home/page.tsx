@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic';
 
 import styles from '../Components/HomeComponents/styles/Home.module.css';
+const SkeletonArticleGrid = dynamic(() => import('../Components/SkeletonComponents/SkeletonArticleGrid'));
 const ArticleGrid = dynamic(() => import('../Components/HomeComponents/ArticleGrid'));
 const CategoryTabs = dynamic(() => import('../Components/HomeComponents/Categorytabs'));
 const Sidebar = dynamic(() => import('../Components/HomeComponents/SideBar'));
@@ -19,6 +20,7 @@ export default function HomePage() {
           <HeroBanner />
           <CategoryTabs />
           <ArticleGrid/>
+          <SkeletonArticleGrid />
         </main>
       </div>
     </div>

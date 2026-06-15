@@ -142,3 +142,89 @@
 .switchOff:hover {
   background: rgba(255, 255, 255, 0.2);
 }
+/* Components/SettingsComponents/styles/Performanceengine.module.css */
+/* Append these new styles to the existing file (do not replace existing styles) */
+
+/* ── Prefetch Behaviour ────────────────────────────────────── */
+.prefetchSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 16px;
+  margin-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.prefetchHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.prefetchLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: -0.01em;
+}
+
+.prefetchHint {
+  font-size: 10px;
+  font-weight: 500;
+  color: #64748b;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.prefetchOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prefetchBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  text-align: left;
+}
+
+.prefetchBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.prefetchBtnActive {
+  background: rgba(0, 222, 236, 0.08);
+  border-color: rgba(0, 222, 236, 0.35);
+  box-shadow: 0 0 0 1px rgba(0, 222, 236, 0.1);
+}
+
+.prefetchBtnLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: -0.01em;
+}
+
+.prefetchBtnDesc {
+  font-size: 11px;
+  font-weight: 400;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Focus visible */
+.prefetchBtn:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 2px;
+}

@@ -1,0 +1,75 @@
+/* Components/HomeComponents/styles/SkeletonFeaturedCard.module.css */
+
+.featuredCard {
+  background-color: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.cardImage {
+  position: relative;
+  height: 280px;
+  width: 100%;
+  overflow: hidden;
+  background: #1a2332;
+}
+
+.shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.04) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.cardContent {
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.line {
+  background: #1e293b;
+  border-radius: 4px;
+  height: 14px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.lineSmall {
+  width: 100px;
+  height: 10px;
+}
+
+.lineMedium {
+  width: 85%;
+  height: 20px;
+}
+
+.lineTiny {
+  width: 70px;
+  height: 12px;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
