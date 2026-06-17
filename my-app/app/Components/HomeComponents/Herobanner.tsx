@@ -1,56 +1,34 @@
+// Components/HomeComponents/Herobanner.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import styles from './styles/HeroBanner.module.css';
 import NeuralNetwork from './NeuralNetwork';
 import QuantumField from './QuantumField';
 import GeometricGrid from './GeometricGrid';
+import type { Article } from '@/app/types/article';
 
-interface Slide {
-  badge: string;
-  title: string;
-  description: string;
-  bgClass: string;
-  // Drop your image URL here — leave as empty string to show the SVG visual instead
-  imageUrl?: string;
+interface HeroBannerProps {
+  slides: Article[]; // array of articles to cycle through
 }
-
-const SLIDES: Slide[] = [
-  {
-    badge: 'TECHNOLOGY • 8 MIN READ',
-    title: 'The Silicon Mind: Ethics of Synthetic Cognition',
-    description: 'Exploring the blurred lines between programmed response and genuine consciousness in the next generation of AI.',
-    bgClass: 'bgTeal',
-    imageUrl: '', // e.g. '/images/silicon-mind.jpg'
-  },
-  {
-    badge: 'SCIENCE • 6 MIN READ',
-    title: 'Quantum Entanglement and the Future of Computing',
-    description: 'How physicists are harnessing the strange behaviour of particles to build computers that defy classical logic.',
-    bgClass: 'bgPurple',
-    imageUrl: '', // e.g. '/images/quantum.jpg'
-  },
-  {
-    badge: 'DESIGN • 5 MIN READ',
-    title: 'The Language of Invisible Interfaces',
-    description: 'When design disappears entirely, what remains? A deep look at zero-UI and ambient computing paradigms.',
-    bgClass: 'bgEmerald',
-    imageUrl: '', // e.g. '/images/invisible-ui.jpg'
-  },
-];
 
 const VISUALS = [NeuralNetwork, QuantumField, GeometricGrid];
 
-export default function HeroBanner() {
+export default function HeroBanner({ slides }: HeroBannerProps) {
   const [current, setCurrent] = useState(0);
   const [animating, setAnimating] = useState(false);
 
+  // If no slides, don't render
+  if (!slides || slides.length === 0) return null;
+
+  // Cycle slides
   useEffect(() => {
     const timer = setInterval(() => {
-      goTo((current + 1) % SLIDES.length);
+      goTo((current + 1) % slides.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [current]);
+  }, [current, slides.length]);
 
   function goTo(index: number) {
     if (index === current || animating) return;
@@ -61,44 +39,46 @@ export default function HeroBanner() {
     }, 350);
   }
 
-  const slide = SLIDES[current];
-  const Visual = VISUALS[current];
+  const slide = slides[current];
+  const Visual = VISUALS[current % VISUALS.length];
+  const hasImage = slide.imageUrl && slide.imageUrl.length > 0;
+
+  // Determine background class based on category (for gradient overlay)
+  const bgMap: Record<string, string> = {
+    'TECHNOLOGY': 'bgTeal',
+    'SCIENCE': 'bgPurple',
+    'DESIGN': 'bgEmerald',
+    'FUTURE': 'bgPurple',
+    'PSYCHOLOGY': 'bgTeal',
+    'NATURE': 'bgEmerald',
+    'BUSINESS': 'bgTeal',
+    'CULTURE': 'bgPurple',
+  };
+  const bgClass = bgMap[slide.category] || 'bgTeal';
 
   return (
-    <div className={`${styles.heroBanner} ${styles[slide.bgClass]}`}>
-
-      {/* Right side: real image OR SVG visual */}
+    <div className={`${styles.heroBanner} ${styles[bgClass]}`}>
       <div className={styles.visualWrapper}>
-        {slide.imageUrl ? (
-          <img
-            src={slide.imageUrl}
-            alt={slide.title}
-            className={styles.slideImage}
-          />
+        {hasImage ? (
+          <img src={slide.imageUrl} alt={slide.title} className={styles.slideImage} loading="lazy" />
         ) : (
           <Visual />
         )}
       </div>
-
-      {/* Left-to-right gradient so text stays legible */}
       <div className={styles.heroOverlay} />
-
-      {/* Slide content */}
       <div className={`${styles.heroContent} ${animating ? styles.fadeOut : styles.fadeIn}`}>
-        <span className={styles.heroBadge}>{slide.badge}</span>
+        <span className={styles.heroBadge}>{slide.category} • {slide.readTime}</span>
         <h1 className={styles.heroTitle}>{slide.title}</h1>
         <p className={styles.heroDescription}>{slide.description}</p>
-        <button className={styles.readNowBtn}>
+        <Link href={`/article/${slide.id}`} className={styles.readNowBtn}>
           READ NOW
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
-        </button>
+        </Link>
       </div>
-
-      {/* Dot indicators */}
       <div className={styles.dots}>
-        {SLIDES.map((_, i) => (
+        {slides.map((_, i) => (
           <button
             key={i}
             className={i === current ? styles.dotActive : styles.dot}

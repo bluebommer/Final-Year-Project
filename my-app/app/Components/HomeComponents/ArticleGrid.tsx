@@ -1,68 +1,45 @@
+// Components/HomeComponents/ArticleGrid.tsx
+'use client';
+
+import Link from 'next/link';
 import styles from './styles/ArticleGrid.module.css';
 import FeaturedCard from './FeaturedCard';
-import SmallCard from './SmallCard';
 import SideCard from './SideCard';
-import { Article } from '@/app/types/article';
-// import { Article } from '../types/article';
-// import { Article } from '../../types/article';
+import SmallCard from './SmallCard';
+import type { Article } from '@/app/types/article';
 
-const featuredArticle: Article = {
-  id: '1',
-  category: 'NEW RELEASE',
-  title: 'Post-Digital Aesthetics: The Rise of Liquid Minimalism',
-  readTime: '12 MIN READ',
-  isStaffPick: true,
-  isNewRelease: true,
-  imageType: 'abstract3d',
-};
+interface ArticleGridProps {
+  articles: Article[];
+}
 
-const sideArticle: Article = {
-  id: '2',
-  category: 'NATURE',
-  title: 'The Quiet Revolution of Bio-Regenerative Design',
-  description: 'How architects are using living mycelium and algae to create buildings that breathe and clea...',
-  readTime: '',
-  imageType: 'landscape',
-};
+export default function ArticleGrid({ articles }: ArticleGridProps) {
+  if (!articles || articles.length === 0) {
+    return (
+      <div className={styles.empty}>
+        <p>No articles found.</p>
+      </div>
+    );
+  }
 
-const smallArticles: Article[] = [
-  {
-    id: '3',
-    category: 'PRODUCTIVITY',
-    title: 'Deep Work in the Age of Constant Interruption',
-    description: 'Practical strategies for reclaiming your focus and...',
-    readTime: '5 MIN READ',
-    authorColor: '#3B82F6',
-  },
-  {
-    id: '4',
-    category: 'PSYCHOLOGY',
-    title: 'The Subtle Art of Perceptual Fluidity',
-    description: 'Understanding how our brains construct reality through the...',
-    readTime: '15 MIN READ',
-    authorColor: '#EF4444',
-  },
-  {
-    id: '5',
-    category: 'FUTURE',
-    title: 'Mars One: The Realities of Interplanetary Colonization',
-    description: 'A technical deep dive into the life support systems required f...',
-    readTime: '22 MIN READ',
-    authorColor: '#8B5CF6',
-  },
-];
+  const featuredArticle = articles[0];
+  const sideArticle = articles[1] || null;
+  const remainingArticles = articles.slice(2);
 
-export default function ArticleGrid() {
   return (
     <div className={styles.grid}>
       <div className={styles.topRow}>
         <FeaturedCard article={featuredArticle} />
-        <SideCard article={sideArticle} />
+        {sideArticle && <SideCard article={sideArticle} />}
       </div>
-      <div className={styles.bottomRow}>
-        {smallArticles.map((article) => (
+      <div className={styles.feedGrid}>
+        {remainingArticles.map((article) => (
           <SmallCard key={article.id} article={article} />
         ))}
+      </div>
+      <div className={styles.discoverMore}>
+        <Link href="/discover" className={styles.discoverLink}>
+          Discover more articles →
+        </Link>
       </div>
     </div>
   );

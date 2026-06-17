@@ -14,6 +14,7 @@ import Navbar from '../Components/HomeComponents/Navbar';
 import SettingsSidebar from '../Components/SettingsComponents/SettingsSidebar';
 import Personalization from '../Components/SettingsComponents/Personalization';
 import SettingsFooter from '../Components/SettingsComponents/SettingsFooter';
+const Sidebar = dynamic(() => import('../Components/HomeComponents/SideBar'));
 const CacheStorage = dynamic(() => import('../Components/Management Components/Cachestorage'));
 const SourceManager = dynamic(() => import('../Components/Management Components/Sourcemanager'));
 
@@ -26,7 +27,7 @@ export default function SettingsPage() {
     <div className={styles.pageRoot}>
       <Navbar />
       <div className={styles.pageBody}>
-        <SettingsSidebar />
+        <Sidebar />
         <main className={styles.mainContent}>
           <SettingsHero />
           <AestheticMode />

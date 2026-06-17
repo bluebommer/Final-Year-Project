@@ -1,37 +1,69 @@
+/* Components/HomeComponents/styles/ArticleGrid.module.css */
+
 .grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 28px; /* increased spacing between sections */
   width: 100%;
 }
 
-/* Force two-column side-by-side layout */
+/* Force two-column side-by-side layout for top row only */
 .topRow {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: 12px;
+  gap: 20px;
   width: 100%;
   align-items: start;
 }
 
-.bottomRow {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+/* Feed: one per row, full width, with generous spacing */
+.feedGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px; /* spacing between each feed card */
   width: 100%;
+  margin-top: 4px;
 }
 
+/* Responsive: top row stacks on smaller screens */
 @media (max-width: 960px) {
   .topRow {
     grid-template-columns: 1fr;
   }
-  .bottomRow {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
-@media (max-width: 600px) {
-  .bottomRow {
-    grid-template-columns: 1fr;
-  }
+/* ── Discover More ── */
+.discoverMore {
+  margin-top: 48px; /* more separation from the feed */
+  text-align: center;
+  padding: 24px 0 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.discoverLink {
+  display: inline-block;
+  padding: 12px 36px;
+  background: rgba(0, 222, 236, 0.08);
+  border: 1px solid rgba(0, 222, 236, 0.2);
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #22d3ee;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  letter-spacing: 0.03em;
+}
+
+.discoverLink:hover {
+  background: rgba(0, 222, 236, 0.14);
+  border-color: rgba(0, 222, 236, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 222, 236, 0.15);
+}
+
+.empty {
+  padding: 40px 0;
+  text-align: center;
+  color: #64748b;
 }

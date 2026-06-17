@@ -1,26 +1,32 @@
-import dynamic from 'next/dynamic';
-
+// app/home/page.tsx
+import { Article } from '../types/article';
+import Navbar from '../Components/HomeComponents/Navbar';
+import Sidebar from '../Components/HomeComponents/SideBar';
+import HomeContent from '../Components/HomeComponents/HomeContent';
 import styles from '../Components/HomeComponents/styles/Home.module.css';
-const SkeletonArticleGrid = dynamic(() => import('../Components/SkeletonComponents/SkeletonArticleGrid'));
-const ArticleGrid = dynamic(() => import('../Components/HomeComponents/ArticleGrid'));
-const CategoryTabs = dynamic(() => import('../Components/HomeComponents/Categorytabs'));
-const Sidebar = dynamic(() => import('../Components/HomeComponents/SideBar'));
-const HeroBanner = dynamic(() => import('../Components/HomeComponents/Herobanner'));
-const Navbar = dynamic(() => import('../Components/HomeComponents/Navbar'));
 
+async function getArticles(): Promise<Article[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/articles`, {
+    cache: 'no-store',
+  });
+  if (!res.ok) {
+    console.error('Failed to fetch articles');
+    return [];
+  }
+  const data = await res.json();
+  return data.articles || [];
+}
 
-export default function HomePage() {
+export default async function HomePage() {
+  const articles = await getArticles();
+
   return (
     <div className={styles.pageRoot}>
       <Navbar />
       <div className={styles.pageBody}>
-        <Sidebar
-         />
+        <Sidebar />
         <main className={styles.mainContent}>
-          <HeroBanner />
-          <CategoryTabs />
-          <ArticleGrid/>
-          <SkeletonArticleGrid />
+          <HomeContent articles={articles} />
         </main>
       </div>
     </div>

@@ -178,3 +178,13 @@
   font-family: 'DM Sans', system-ui, sans-serif;
   letter-spacing: 0.04em;
 }
+.featuredCardLink {
+  text-decoration: none;
+  display: block;
+}
+
+.featuredImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

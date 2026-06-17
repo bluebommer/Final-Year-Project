@@ -153,3 +153,5 @@
   color: #22d3ee;
   background: rgba(0, 222, 236, 0.08);
 }
+.sideCardLink { text-decoration: none; display: block; }
+.sideImage { width: 100%; height: 100%; object-fit: cover; }
