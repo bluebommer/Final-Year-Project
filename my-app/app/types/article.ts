@@ -7,12 +7,13 @@ export interface Article {
   readTime: string;
   isStaffPick?: boolean;
   isNewRelease?: boolean;
-  imageType?: string; // optional, still used for abstract visuals
-  imageUrl?: string;  // new: real image URL from source
+  imageType?: string;
+  imageUrl?: string;
   author: string;
   authorInitial: string;
   authorColor: string;
   publishedAt: string;
   source: string;
-  url: string;        // link to original article
+  url: string;
+  content?: string; // full article content (optional, for detail page)
 }

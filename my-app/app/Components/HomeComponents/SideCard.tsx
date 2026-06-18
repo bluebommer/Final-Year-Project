@@ -13,7 +13,9 @@ export default function SideCard({ article }: Props) {
   const hasImage = article.imageUrl && article.imageUrl.length > 0;
 
   return (
-    <Link href={`/article/${article.id}`} className={styles.sideCardLink}>
+    // wherever you render article cards
+<Link href={`/article/${encodeURIComponent(article.id)}`} className={styles.sideCardLink}>
+    
       <article className={styles.sideCard}>
         <div className={styles.cardImage}>
           {hasImage ? (

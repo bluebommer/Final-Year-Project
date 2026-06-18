@@ -13,7 +13,7 @@ export default function SmallCard({ article }: Props) {
   const hasImage = article.imageUrl && article.imageUrl.length > 0;
 
   return (
-    <Link href={`/article/${article.id}`} className={styles.cardLink}>
+    <Link href={`/article/${encodeURIComponent(article.id)}`} className={styles.cardLink}>
       <article className={styles.card}>
         <div className={styles.textContent}>
           <span className={styles.category}>{article.category}</span>
