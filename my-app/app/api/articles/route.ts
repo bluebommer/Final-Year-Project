@@ -2,50 +2,8 @@
 import { NextResponse } from 'next/server';
 import type { Article } from '@/app/types/article';
 import { getCachedArticles, setCachedArticles } from '@/lib/articleCache';
-
-// ── Helper: stable hash from string ──────────────────────────
-function hashString(str: string): string {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  return Math.abs(hash).toString(36);
-}
-
-// ── Helper: estimated reading time ────────────────────────────
-function estimateReadTime(content: string): string {
-  const words = content.split(/\s+/).length;
-  const minutes = Math.max(1, Math.ceil(words / 200));
-  return `${minutes} min read`;
-}
-
-// ── Helper: category ──────────────────────────────────────────
-function getCategory(title: string, description: string): string {
-  const text = `${title} ${description}`.toLowerCase();
-  if (text.match(/ai|machine learning|neural|algorithm|tech|software|code|programming|cyber|data|compute/)) return 'TECHNOLOGY';
-  if (text.match(/design|ui|ux|interface|typography|aesthetic|visual|art|minimal/)) return 'DESIGN';
-  if (text.match(/science|physics|chemistry|biology|quantum|gene|dna|space|cosmos/)) return 'SCIENCE';
-  if (text.match(/psychology|mind|brain|neuroscience|cognition|emotion|behavior|mental/)) return 'PSYCHOLOGY';
-  if (text.match(/business|market|economy|finance|startup|invest|venture|stock/)) return 'BUSINESS';
-  if (text.match(/culture|society|people|history|art|film|music|literature/)) return 'CULTURE';
-  if (text.match(/future|trend|innovation|foresight|next|frontier/)) return 'FUTURE';
-  if (text.match(/nature|climate|environment|green|sustainable|eco|wildlife/)) return 'NATURE';
-  return 'TECHNOLOGY';
-}
-
-// ── Helper: author color ──────────────────────────────────────
-function getAuthorColor(name: string): string {
-  const colors = ['#22d3ee', '#a78bfa', '#f97316', '#34d399', '#fb7185', '#fbbf24', '#60a5fa', '#e879f9'];
-  const index = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length;
-  return colors[index];
-}
-
-// ── Helper: strip HTML tags ───────────────────────────────────
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, '').trim();
-}
+import { hashString, estimateReadTime, getCategory, getAuthorColor, stripHtml } from '@/lib/articleHelpers';
+import { fetchRssFeedArticles } from '@/lib/rssFeed';
 
 // ── The Guardian API ──────────────────────────────────────────
 async function fetchGuardian(): Promise<Article[]> {
@@ -101,7 +59,7 @@ async function fetchGuardian(): Promise<Article[]> {
 async function fetchHackerNews(): Promise<Article[]> {
   try {
     const res = await fetch(
-      'https://hn.algolia.com/api/v1/search?tags=story&hitsPerPage=30&numericFilters=num_comments>5',
+      'https://hn.algolia.com/api/v1/search?tags=story&hitsPerPage=30',
       {
         next: { revalidate: 3600 },
         signal: AbortSignal.timeout(5000),
@@ -111,7 +69,9 @@ async function fetchHackerNews(): Promise<Article[]> {
     if (!data.hits) return [];
 
     return data.hits
-      .filter((item: any) => item.title && item.url)
+      // filtered client-side — Algolia's index no longer accepts num_comments
+      // in numericFilters (this used to be a server-side query param)
+      .filter((item: any) => item.title && item.url && (item.num_comments || 0) > 5)
       .map((item: any) => {
         const storyText = item.story_text
           ? stripHtml(item.story_text)
@@ -197,45 +157,170 @@ async function fetchMedium(): Promise<Article[]> {
   const mediumUser = process.env.MEDIUM_USERNAME;
   if (!mediumUser) return [];
 
-  const rssUrl = `https://medium.com/feed/${mediumUser}`;
-  const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-
   try {
-    const res = await fetch(proxyUrl, {
-      next: { revalidate: 3600 },
-      signal: AbortSignal.timeout(5000),
-    });
-    const data = await res.json();
-    if (data.status !== 'ok') return [];
-
-    return data.items
-      .filter((item: any) => item.title)
-      .map((item: any) => {
-        const author = item.author || 'Medium';
-        const description = stripHtml(item.description || '').slice(0, 200);
-        return {
-          id: `article-${hashString(item.title + (item.link || ''))}`,
-          title: item.title,
-          description,
-          category: getCategory(item.title, description),
-          readTime: estimateReadTime(item.description || item.title),
-          isStaffPick: false,
-          isNewRelease: false,
-          imageType: 'landscape',
-          imageUrl: item.thumbnail || null,
-          author,
-          authorInitial: author[0].toUpperCase(),
-          authorColor: getAuthorColor(author),
-          publishedAt: item.pubDate || new Date().toISOString(),
-          source: 'Medium',
-          url: item.link || '#',
-          content: item.description || '',
-        };
-      });
+    return await fetchRssFeedArticles(`https://medium.com/feed/${mediumUser}`, 'Medium');
   } catch (err) {
     console.error('Medium RSS failed:', err);
     return [];
   }
+}
+
+// ── New York Times (Top Stories API) ──────────────────────────
+const NYT_SECTIONS = ['technology', 'science'];
+
+async function fetchNytSection(section: string, apiKey: string): Promise<Article[]> {
+  const res = await fetch(
+    `https://api.nytimes.com/svc/topstories/v2/${section}.json?api-key=${apiKey}`,
+    { next: { revalidate: 3600 }, signal: AbortSignal.timeout(5000) }
+  );
+  const data = await res.json();
+  if (!Array.isArray(data.results)) return [];
+
+  return data.results
+    .filter((item: any) => item.title && item.url)
+    .map((item: any) => {
+      const byline = (item.byline || 'The New York Times').replace(/^By\s+/i, '');
+      const description = item.abstract || '';
+      const image = item.multimedia?.[0]?.url;
+      return {
+        id: `article-${hashString(item.url)}`,
+        title: item.title,
+        description: description.slice(0, 200),
+        category: getCategory(item.title, description),
+        readTime: estimateReadTime(description),
+        isStaffPick: false,
+        isNewRelease: false,
+        imageType: 'landscape',
+        imageUrl: image || null,
+        author: byline,
+        authorInitial: byline[0]?.toUpperCase() || 'N',
+        authorColor: getAuthorColor(byline),
+        publishedAt: item.published_date || new Date().toISOString(),
+        source: 'The New York Times',
+        url: item.url,
+        content: `<p>${description}</p>`,
+      };
+    });
+}
+
+async function fetchNYT(): Promise<Article[]> {
+  const apiKey = process.env.NYT_API_KEY;
+  if (!apiKey) {
+    console.warn('NYT_API_KEY not set');
+    return [];
+  }
+  const results = await Promise.allSettled(NYT_SECTIONS.map((section) => fetchNytSection(section, apiKey)));
+  let articles: Article[] = [];
+  results.forEach((r, i) => {
+    if (r.status === 'fulfilled') {
+      articles = articles.concat(r.value);
+    } else {
+      console.error(`NYT /${NYT_SECTIONS[i]} failed:`, r.reason);
+    }
+  });
+  return articles;
+}
+
+// ── GNews.io ───────────────────────────────────────────────────
+async function fetchGNews(): Promise<Article[]> {
+  const apiKey = process.env.GNEWS_API_KEY;
+  if (!apiKey) {
+    console.warn('GNEWS_API_KEY not set');
+    return [];
+  }
+  try {
+    const res = await fetch(
+      `https://gnews.io/api/v4/top-headlines?lang=en&max=25&apikey=${apiKey}`,
+      { next: { revalidate: 3600 }, signal: AbortSignal.timeout(5000) }
+    );
+    const data = await res.json();
+    if (!Array.isArray(data.articles)) return [];
+
+    return data.articles
+      .filter((item: any) => item.title && item.url)
+      .map((item: any) => {
+        const author = item.source?.name || 'GNews';
+        const description = item.description || '';
+        return {
+          id: `article-${hashString(item.url)}`,
+          title: item.title,
+          description: description.slice(0, 200),
+          category: getCategory(item.title, description),
+          readTime: estimateReadTime(item.content || description),
+          isStaffPick: false,
+          isNewRelease: false,
+          imageType: 'landscape',
+          imageUrl: item.image || null,
+          author,
+          authorInitial: author[0]?.toUpperCase() || 'G',
+          authorColor: getAuthorColor(author),
+          publishedAt: item.publishedAt || new Date().toISOString(),
+          // Collapsed to a single "GNews" toggle since it aggregates many
+          // outlets — the real outlet name is preserved in `author`.
+          source: 'GNews',
+          url: item.url,
+          content: item.content ? `<p>${item.content}</p>` : `<p>${description}</p>`,
+        };
+      });
+  } catch (err) {
+    console.error('GNews failed:', err);
+    return [];
+  }
+}
+
+// ── Reddit (public JSON, no key) ──────────────────────────────
+const REDDIT_SUBREDDITS = ['technology', 'worldnews'];
+
+async function fetchRedditSubreddit(subreddit: string): Promise<Article[]> {
+  const res = await fetch(`https://www.reddit.com/r/${subreddit}.json?limit=25`, {
+    headers: { 'User-Agent': 'ReadLiteNewsAggregator/1.0' }, // Reddit blocks/throttles default fetch UAs
+    next: { revalidate: 3600 },
+    signal: AbortSignal.timeout(5000),
+  });
+  const data = await res.json();
+  const children = data?.data?.children;
+  if (!Array.isArray(children)) return [];
+
+  return children
+    .map((c: any) => c.data)
+    .filter((item: any) => item && item.title && !item.is_self) // skip text-only posts — keep the "external link" flavor
+    .map((item: any) => {
+      const author = item.author || 'Reddit';
+      const description = `${item.score || 0} points · ${item.num_comments || 0} comments · r/${subreddit}`;
+      const url = item.url_overridden_by_dest || `https://reddit.com${item.permalink}`;
+      const thumbnail = typeof item.thumbnail === 'string' && item.thumbnail.startsWith('http') ? item.thumbnail : null;
+      return {
+        id: `article-${hashString(item.id || item.name || url)}`,
+        title: item.title,
+        description,
+        category: getCategory(item.title, description),
+        readTime: '3 min read',
+        isStaffPick: (item.score || 0) > 1000,
+        isNewRelease: false,
+        imageType: 'abstract3d',
+        imageUrl: thumbnail,
+        author,
+        authorInitial: author[0]?.toUpperCase() || 'R',
+        authorColor: getAuthorColor(author),
+        publishedAt: item.created_utc ? new Date(item.created_utc * 1000).toISOString() : new Date().toISOString(),
+        source: 'Reddit',
+        url,
+        content: `<p>${description}</p>`,
+      };
+    });
+}
+
+async function fetchReddit(): Promise<Article[]> {
+  const results = await Promise.allSettled(REDDIT_SUBREDDITS.map(fetchRedditSubreddit));
+  let articles: Article[] = [];
+  results.forEach((r, i) => {
+    if (r.status === 'fulfilled') {
+      articles = articles.concat(r.value);
+    } else {
+      console.error(`Reddit r/${REDDIT_SUBREDDITS[i]} failed:`, r.reason);
+    }
+  });
+  return articles;
 }
 
 // ── Fallback mock data ────────────────────────────────────────
@@ -290,6 +375,9 @@ export async function GET() {
       fetchDevTo(),
       fetchHackerNews(),
       fetchMedium(),
+      fetchNYT(),
+      fetchGNews(),
+      fetchReddit(),
     ]);
 
     let allArticles: Article[] = [];

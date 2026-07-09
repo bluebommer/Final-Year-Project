@@ -8,6 +8,7 @@ type SignupStep = "form" | "verify";
 
 interface AuthPageProps {
   onAuthComplete: (user: { name: string; gender: string; email: string }) => void;
+  topics: string[];
 }
 
 // ─── Google Icon ──────────────────────────────────────────────────────────────
@@ -250,7 +251,7 @@ function VerifyEmailStep({
 
 // ─── Sign-Up Form ─────────────────────────────────────────────────────────────
 
-function SignUpForm({ onCodeSent }: { onCodeSent: (email: string) => void }) {
+function SignUpForm({ onCodeSent, topics }: { onCodeSent: (email: string) => void; topics: string[] }) {
   const [firstName, setFirstName] = useState("");
   const [lastName,  setLastName]  = useState("");
   const [email,     setEmail]     = useState("");
@@ -268,7 +269,7 @@ function SignUpForm({ onCodeSent }: { onCodeSent: (email: string) => void }) {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, email, password, gender }),
+        body: JSON.stringify({ firstName, lastName, email, password, gender, topics }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Registration failed."); return; }
@@ -423,7 +424,7 @@ function SignInForm({
 
 // ─── Main AuthPage ────────────────────────────────────────────────────────────
 
-export default function AuthPage({ onAuthComplete }: AuthPageProps) {
+export default function AuthPage({ onAuthComplete, topics }: AuthPageProps) {
   const router = useRouter();                                                   // ← NEW
   const [mode,         setMode]         = useState<AuthMode>("signup");
   const [signupStep,   setSignupStep]   = useState<SignupStep>("form");
@@ -440,7 +441,7 @@ export default function AuthPage({ onAuthComplete }: AuthPageProps) {
     const res = await fetch("/api/auth/google", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ credential }),
+      body: JSON.stringify({ credential, topics }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
@@ -570,7 +571,7 @@ export default function AuthPage({ onAuthComplete }: AuthPageProps) {
           )}
 
           {mode === "signup" && signupStep === "form" && (
-            <SignUpForm onCodeSent={handleCodeSent} />
+            <SignUpForm onCodeSent={handleCodeSent} topics={topics} />
           )}
 
           {mode === "signup" && signupStep === "verify" && (

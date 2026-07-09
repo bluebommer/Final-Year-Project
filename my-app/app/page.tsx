@@ -1,7 +1,7 @@
 "use client";
 import dynamic from 'next/dynamic';
 import React, { useState } from "react";
-import { Page, UserProfile } from "./index";
+import { Page } from "./index";
 const AuthPage = dynamic(() => import('./Components/RootComponents/Authpage'));
 const PreferencesPage = dynamic(() => import('./Components/RootComponents/PreferencesPage'));
 const WelcomePage = dynamic(() => import('./Components/RootComponents/WelcomePage'));
@@ -19,17 +19,16 @@ export default function Home() {
     setPage("auth");
   };
 
-  const handleAuthComplete = (authData: { name: string; gender: string; email: string }) => {
-    const profile: UserProfile = { ...authData, topics: selectedTopics };
-    console.log("User profile complete:", profile);
-    alert(`Welcome, ${profile.name || "reader"}! Your feed is being built…`);
-  };
+  // AuthPage handles the actual redirect to /home once sign-in/registration
+  // succeeds — selectedTopics is threaded into AuthPage's own API calls
+  // instead of being handled here.
+  const handleAuthComplete = () => {};
 
   return (
     <>
       {page === "welcome" && <WelcomePage onGetStarted={handleGetStarted} />}
       {page === "preferences" && <PreferencesPage onContinue={handlePreferencesContinue} />}
-      {page === "auth" && <AuthPage onAuthComplete={handleAuthComplete} />}
+      {page === "auth" && <AuthPage onAuthComplete={handleAuthComplete} topics={selectedTopics} />}
     </>
   );
 }

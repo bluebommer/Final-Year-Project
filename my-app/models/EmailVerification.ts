@@ -12,6 +12,7 @@ export interface IEmailVerification extends Document {
     lastName: string;
     passwordHash: string;
     gender: string;
+    preferredTopics: string[];
   };
 }
 
@@ -26,6 +27,7 @@ const EmailVerificationSchema = new Schema<IEmailVerification>({
     lastName:     { type: String, default: "" },
     passwordHash: { type: String, required: true },
     gender:       { type: String, default: "" },
+    preferredTopics: { type: [String], default: [] },
   },
 });
 

@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { firstName, lastName, email, password, gender } = await req.json();
+    const { firstName, lastName, email, password, gender, topics } = await req.json();
 
     if (!firstName?.trim()) return NextResponse.json({ error: "First name is required." }, { status: 400 });
     if (!email?.trim())     return NextResponse.json({ error: "Email is required." }, { status: 400 });
@@ -73,6 +73,7 @@ export async function POST(req: NextRequest) {
           lastName: lastName?.trim() ?? "",
           passwordHash,
           gender: gender ?? "",
+          preferredTopics: Array.isArray(topics) ? topics.filter((t: unknown) => typeof t === "string") : [],
         },
       },
       { upsert: true, new: true }

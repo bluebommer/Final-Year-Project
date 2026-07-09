@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { credential } = await req.json();
+    const { credential, topics } = await req.json();
 
     if (!credential) {
       return NextResponse.json({ error: "Google credential is required." }, { status: 400 });
@@ -81,8 +81,12 @@ export async function POST(req: NextRequest) {
           avatar:       picture,
           authProvider: "google",
         },
-        // Only set gender on first creation
-        $setOnInsert: { gender: "" },
+        // Only set on first creation — re-authenticating an existing Google
+        // user must never overwrite topics they've since changed in Settings.
+        $setOnInsert: {
+          gender: "",
+          preferredTopics: Array.isArray(topics) ? topics.filter((t: unknown) => typeof t === "string") : [],
+        },
       },
       { upsert: true, new: true }
     );

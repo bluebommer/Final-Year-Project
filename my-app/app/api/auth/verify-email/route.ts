@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ✅ Code is correct — create the real user account
-    const { firstName, lastName, passwordHash, gender } = record.pendingUser;
+    const { firstName, lastName, passwordHash, gender, preferredTopics } = record.pendingUser;
 
     // Guard against duplicate (edge case: two simultaneous requests)
     const alreadyExists = await User.findOne({ email: normalizedEmail });
@@ -91,6 +91,7 @@ export async function POST(req: NextRequest) {
       email: normalizedEmail,
       passwordHash,
       gender,
+      preferredTopics: preferredTopics ?? [],
     });
 
     // Clean up verification record

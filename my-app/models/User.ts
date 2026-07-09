@@ -13,6 +13,9 @@ export interface IUser extends Document {
   updatedAt: Date;
   loginAttempts: number;
   lockUntil?: Date;
+  preferredTopics: string[];
+  enabledSources?: string[];   // undefined = user never touched Source Manager = treat as all enabled
+  customFeeds: { id: string; name: string; url: string }[];
   isLocked(): boolean;
   incrementLoginAttempts(): Promise<void>;
   resetLoginAttempts(): Promise<void>;
@@ -48,6 +51,17 @@ const UserSchema = new Schema<IUser>(
     },
     loginAttempts: { type: Number, default: 0 },
     lockUntil:     { type: Date },
+    preferredTopics: { type: [String], default: [] },
+    // default: undefined (not []) — an empty-array default would get written
+    // on the user's very first unrelated save, silently disabling every
+    // source. Stays truly absent until Source Manager is touched.
+    enabledSources: { type: [String], default: undefined },
+    customFeeds: [{
+      _id:  false,
+      id:   { type: String, required: true },
+      name: { type: String, required: true, trim: true, maxlength: 60 },
+      url:  { type: String, required: true, trim: true },
+    }],
   },
   { timestamps: true }
 );

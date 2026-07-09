@@ -1,33 +1,32 @@
 // Components/SettingsComponents/Personalization.tsx
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './styles/Personalization.module.css';
-
-interface Topic {
-  id: string;
-  name: string;
-  active: boolean;
-}
-
-const INITIAL_TOPICS: Topic[] = [
-  { id: 'quantum', name: 'Quantum Physics', active: true },
-  { id: 'minimalist', name: 'Minimalist Design', active: true },
-  { id: 'architecture', name: 'Architectural Theory', active: false },
-  { id: 'neuroscience', name: 'Neuroscience', active: false },
-  { id: 'urbanism', name: 'Urbanism', active: false },
-];
+import { TOPICS } from '@/lib/topics';
 
 export default function Personalization() {
-  const [topics, setTopics] = useState<Topic[]>(INITIAL_TOPICS);
+  const [activeTopics, setActiveTopics] = useState<string[]>([]);
 
-  const toggleTopic = (id: string) => {
-    setTopics(prev =>
-      prev.map(topic =>
-        topic.id === id ? { ...topic, active: !topic.active } : topic
-      )
-    );
-  };
+  useEffect(() => {
+    fetch('/api/user/preferences')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((prefs) => {
+        if (prefs) setActiveTopics(prefs.preferredTopics);
+      });
+  }, []);
+
+  async function toggleTopic(id: string) {
+    const next = activeTopics.includes(id)
+      ? activeTopics.filter((t) => t !== id)
+      : [...activeTopics, id];
+    setActiveTopics(next);
+    await fetch('/api/user/preferences', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ preferredTopics: next }),
+    });
+  }
 
   return (
     <div className={styles.personalization}>
@@ -37,23 +36,22 @@ export default function Personalization() {
       </div>
 
       <div className={styles.topicsList}>
-        {topics.map(topic => (
-          <div key={topic.id} className={styles.topicRow}>
-            <span className={styles.topicName}>{topic.name}</span>
-            <button
-              className={styles.actionBtn}
-              onClick={() => toggleTopic(topic.id)}
-              aria-label={topic.active ? 'Remove' : 'Add'}
-            >
-              {topic.active ? '✖' : '+'}
-            </button>
-          </div>
-        ))}
+        {TOPICS.map((topic) => {
+          const active = activeTopics.includes(topic.id);
+          return (
+            <div key={topic.id} className={styles.topicRow}>
+              <span className={styles.topicName}>{topic.label}</span>
+              <button
+                className={styles.actionBtn}
+                onClick={() => toggleTopic(topic.id)}
+                aria-label={active ? `Remove ${topic.label}` : `Add ${topic.label}`}
+              >
+                {active ? '✖' : '+'}
+              </button>
+            </div>
+          );
+        })}
       </div>
-
-      <button className={styles.advancedBtn}>
-        Advanced Algorithm Adjustments
-      </button>
     </div>
   );
 }

@@ -1,29 +1,12 @@
 
 "use client"
-import { Topic } from '@/app';
 import dynamic from 'next/dynamic';
 import React, { useState } from "react";
+import { TOPICS } from '@/lib/topics';
 const TopicCard = dynamic(() => import('./TopicCard'));
 
 
 const MIN_TOPICS = 5;
-
-const TOPICS: Topic[] = [
-  { id: "quantum-tech", label: "Quantum Tech", icon: "⚛", category: "Primary Domain", size: "large" },
-  { id: "space", label: "Space", icon: "🚀", size: "medium" },
-  { id: "acoustics", label: "Acoustics", icon: "🎚", size: "medium" },
-  { id: "architecture", label: "Architecture", icon: "🏛", category: "Design", size: "wide" },
-  { id: "genetics", label: "Genetics", icon: "🧬", size: "medium" },
-  { id: "ai-ethics", label: "A.I. Ethics", icon: "🤖", size: "medium" },
-  { id: "global-markets", label: "Global Markets", sublabel: "Economics & Future Trends", icon: "🏦", size: "wide" },
-  { id: "philosophy", label: "Philosophy", icon: "📖", size: "medium" },
-  { id: "medicine", label: "Medicine", icon: "🩺", size: "medium" },
-  { id: "climate", label: "Climate", icon: "🌍", size: "medium" },
-  { id: "cybersecurity", label: "Cybersecurity", icon: "🔐", size: "medium" },
-  { id: "neuroscience", label: "Neuroscience", icon: "🧠", size: "medium" },
-  { id: "geopolitics", label: "Geopolitics", icon: "🗺", size: "medium" },
-  { id: "deep-tech", label: "Deep Tech", sublabel: "Frontier Research", icon: "💡", size: "wide" },
-];
 
 interface PreferencesPageProps {
   onContinue: (selected: string[]) => void;
