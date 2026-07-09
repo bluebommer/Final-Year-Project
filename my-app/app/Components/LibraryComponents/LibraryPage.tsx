@@ -1,90 +1,36 @@
 // Components/LibraryComponents/LibraryPage.tsx
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Navbar from '../../Components/HomeComponents/Navbar';
 import Sidebar from '../../Components/HomeComponents/SideBar';
 import styles from './styles/Library.module.css';
-
-// Demo saved articles data
-const DEMO_SAVED_ARTICLES = [
-  {
-    id: '1',
-    title: 'The Silicon Mind: Ethics of Synthetic Cognition',
-    author: 'Dr. Mira Chen',
-    authorInitial: 'M',
-    authorColor: '#22d3ee',
-    category: 'TECHNOLOGY',
-    readTime: '8 min read',
-    savedAt: '2026-06-10',
-    offlineAvailable: true,
-  },
-  {
-    id: '2',
-    title: 'Quantum Entanglement Breaks Distance Record',
-    author: 'Elena Voss',
-    authorInitial: 'E',
-    authorColor: '#a78bfa',
-    category: 'SCIENCE',
-    readTime: '5 min read',
-    savedAt: '2026-06-09',
-    offlineAvailable: true,
-  },
-  {
-    id: '3',
-    title: 'The Language of Invisible Interfaces',
-    author: 'Kai Tanaka',
-    authorInitial: 'K',
-    authorColor: '#f97316',
-    category: 'DESIGN',
-    readTime: '6 min read',
-    savedAt: '2026-06-08',
-    offlineAvailable: false, // not cached offline
-  },
-  {
-    id: '4',
-    title: 'Mars One: The Realities of Interplanetary Colonization',
-    author: 'Omar Al-Rashid',
-    authorInitial: 'O',
-    authorColor: '#fb7185',
-    category: 'FUTURE',
-    readTime: '22 min read',
-    savedAt: '2026-06-07',
-    offlineAvailable: true,
-  },
-  {
-    id: '5',
-    title: 'The Subtle Art of Perceptual Fluidity',
-    author: 'Saoirse Brennan',
-    authorInitial: 'S',
-    authorColor: '#fbbf24',
-    category: 'PSYCHOLOGY',
-    readTime: '15 min read',
-    savedAt: '2026-06-06',
-    offlineAvailable: false,
-  },
-  {
-    id: '6',
-    title: 'Deep Work in the Age of Constant Interruption',
-    author: 'James Okafor',
-    authorInitial: 'J',
-    authorColor: '#34d399',
-    category: 'PRODUCTIVITY',
-    readTime: '5 min read',
-    savedAt: '2026-06-05',
-    offlineAvailable: true,
-  },
-];
+import { listSavedArticles, removeArticle as removeArticleFromDB, clearAllArticles, postToServiceWorker, type SavedArticle } from '@/lib/offlineDB';
 
 export default function LibraryPage() {
-  const [savedArticles, setSavedArticles] = useState(DEMO_SAVED_ARTICLES);
+  const [savedArticles, setSavedArticles] = useState<SavedArticle[]>([]);
 
-  const removeArticle = (id: string) => {
-    setSavedArticles(prev => prev.filter(article => article.id !== id));
+  const reload = useCallback(() => {
+    listSavedArticles().then(setSavedArticles);
+  }, []);
+
+  useEffect(() => {
+    reload();
+    window.addEventListener('readlite:db-changed', reload);
+    return () => window.removeEventListener('readlite:db-changed', reload);
+  }, [reload]);
+
+  const removeArticle = async (id: string) => {
+    await removeArticleFromDB(id);
+    await postToServiceWorker('EVICT_ARTICLE', { id });
+  };
+
+  const clearAll = async () => {
+    await clearAllArticles();
   };
 
   const totalSaved = savedArticles.length;
-  const offlineCount = savedArticles.filter(a => a.offlineAvailable).length;
+  const offlineCount = totalSaved; // every saved record embeds full content — always offline-readable
 
   return (
     <div className={styles.pageRoot}>
@@ -102,7 +48,7 @@ export default function LibraryPage() {
                 {offlineCount} available offline
               </p>
             </div>
-            <button className={styles.clearAllBtn} onClick={() => setSavedArticles([])}>
+            <button className={styles.clearAllBtn} onClick={clearAll}>
               Clear all
             </button>
           </div>
@@ -147,26 +93,15 @@ export default function LibraryPage() {
                   </div>
                   <div className={styles.cardFooter}>
                     <span className={styles.readTime}>{article.readTime}</span>
-                    {article.offlineAvailable ? (
-                      <span className={styles.offlineBadge}>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M18.36 6.64A9 9 0 0 1 20.77 15" />
-                          <path d="M6.16 6.16a9 9 0 1 0 12.68 12.68" />
-                          <path d="M12 2v4" />
-                          <path d="M2 2l20 20" />
-                        </svg>
-                        Offline available
-                      </span>
-                    ) : (
-                      <span className={styles.onlineOnlyBadge}>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <circle cx="12" cy="12" r="10" />
-                          <line x1="12" y1="8" x2="12" y2="12" />
-                          <line x1="12" y1="16" x2="12.01" y2="16" />
-                        </svg>
-                        Online only
-                      </span>
-                    )}
+                    <span className={styles.offlineBadge}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M18.36 6.64A9 9 0 0 1 20.77 15" />
+                        <path d="M6.16 6.16a9 9 0 1 0 12.68 12.68" />
+                        <path d="M12 2v4" />
+                        <path d="M2 2l20 20" />
+                      </svg>
+                      Offline available
+                    </span>
                   </div>
                 </article>
               ))}

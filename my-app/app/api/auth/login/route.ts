@@ -55,6 +55,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Google-only accounts have no password to check against
+    if (!user.passwordHash) {
+      return NextResponse.json({ error: genericError }, { status: 401 });
+    }
+
     // Verify password
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 

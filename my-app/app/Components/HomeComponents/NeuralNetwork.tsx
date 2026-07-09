@@ -29,7 +29,7 @@ export default function NeuralNetwork() {
   ];
 
   // Helper function to round coordinates to 6 decimal places
-  const roundCoord = (num) => Math.round(num * 1e6) / 1e6;
+  const roundCoord = (num: number) => Math.round(num * 1e6) / 1e6;
 
   return (
     <svg viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg" style={{ width:'100%', height:'100%' }} aria-hidden="true">

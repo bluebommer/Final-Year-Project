@@ -3,30 +3,50 @@ import { jwtVerify } from "jose";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET as string);
 
-const PROTECTED_ROUTES = ["/dashboard", "/profile", "/settings"];
+// The real app routes (not "/dashboard"/"/profile"/"/settings" — those don't
+// exist here; the settings page is "/setting", singular).
+const PROTECTED_ROUTES = ["/home", "/discover", "/library", "/history", "/setting", "/article"];
 
-export async function proxy(req: NextRequest) {
-  const { pathname } = req.nextUrl;
-  const isProtected = PROTECTED_ROUTES.some((r) => pathname.startsWith(r));
-
-  if (!isProtected) return NextResponse.next();
-
+async function hasValidSession(req: NextRequest): Promise<boolean> {
   const token = req.cookies.get("auth_token")?.value;
-
-  if (!token) {
-    return NextResponse.redirect(new URL("/auth", req.url));
-  }
-
+  if (!token) return false;
   try {
     await jwtVerify(token, JWT_SECRET);
-    return NextResponse.next();
+    return true;
   } catch {
-    const response = NextResponse.redirect(new URL("/auth", req.url));
-    response.cookies.delete("auth_token");
-    return response;
+    return false;
   }
 }
 
+export async function proxy(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+  const signedIn = await hasValidSession(req);
+
+  // "/" is the onboarding/sign-in flow — skip it for already-authenticated users
+  if (pathname === "/") {
+    return signedIn ? NextResponse.redirect(new URL("/home", req.url)) : NextResponse.next();
+  }
+
+  const isProtected = PROTECTED_ROUTES.some((r) => pathname.startsWith(r));
+  if (!isProtected) return NextResponse.next();
+
+  if (!signedIn) {
+    const response = NextResponse.redirect(new URL("/", req.url));
+    response.cookies.delete("auth_token"); // clears a stale/invalid token, if any
+    return response;
+  }
+
+  return NextResponse.next();
+}
+
 export const config = {
-  matcher: ["/dashboard/:path*", "/profile/:path*", "/settings/:path*"],
+  matcher: [
+    "/",
+    "/home/:path*",
+    "/discover/:path*",
+    "/library/:path*",
+    "/history/:path*",
+    "/setting/:path*",
+    "/article/:path*",
+  ],
 };

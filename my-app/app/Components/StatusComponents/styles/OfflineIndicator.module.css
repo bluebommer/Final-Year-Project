@@ -41,27 +41,6 @@
   color: #f8fafc;
 }
 
-.dismiss {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  border-radius: 20px;
-  width: 22px;
-  height: 22px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  color: #94a3b8;
-  cursor: pointer;
-  transition: all 0.2s;
-  pointer-events: auto;
-}
-
-.dismiss:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: #f8fafc;
-}
-
 /* Status-specific styles */
 .offline {
   background: rgba(220, 38, 38, 0.9);
@@ -114,33 +93,6 @@
   flex-shrink: 0;
 }
 
-/* Demo controls – only for development (remove later) */
-.demoControls {
-  display: flex;
-  gap: 8px;
-  pointer-events: auto;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 8px 12px;
-  border-radius: 30px;
-  backdrop-filter: blur(8px);
-  font-size: 10px;
-}
-
-.demoBtn {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  padding: 4px 10px;
-  border-radius: 20px;
-  color: #f8fafc;
-  font-size: 10px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.demoBtn:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
 /* Responsive */
 @media (max-width: 600px) {
   .container {
@@ -152,9 +104,5 @@
   .banner {
     width: 100%;
     justify-content: space-between;
-  }
-  .demoControls {
-    width: 100%;
-    justify-content: center;
   }
 }

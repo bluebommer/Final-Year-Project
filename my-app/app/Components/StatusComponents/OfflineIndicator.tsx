@@ -1,30 +1,59 @@
 // Components/StatusComponents/OfflineIndicator.tsx
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './styles/OfflineIndicator.module.css';
+import { getPendingSyncCount, replayPendingSyncActions } from '@/lib/offlineDB';
 
 type ConnectionStatus = 'online' | 'offline' | 'syncing';
-type PendingCount = number;
+
+// Background Sync API is Chrome/Edge-only — this periodic retry (plus the
+// `online` event handler below) is the cross-browser substitute for
+// replaying queued service-worker commands.
+const RETRY_INTERVAL_MS = 45000;
 
 export default function OfflineIndicator() {
-  // Simulated state — replace with real network listener later
-const [status, setStatus] = useState<ConnectionStatus>('offline');
-const [pending, setPending] = useState<PendingCount>(3);
-  // Demo toggle (remove in production)
-  const toggleStatus = () => {
-    if (status === 'online') setStatus('offline');
-    else if (status === 'offline') setStatus('syncing');
-    else setStatus('online');
-  };
+  const [status, setStatus] = useState<ConnectionStatus>('online');
+  const [pending, setPending] = useState(0);
+  const pendingRef = useRef(0);
 
-  const simulatePending = () => {
-    if (pending === 0) setPending(3);
-    else setPending(0);
-  };
+  const refreshPending = useCallback(async () => {
+    const count = await getPendingSyncCount();
+    pendingRef.current = count;
+    setPending(count);
+  }, []);
+
+  const sync = useCallback(async () => {
+    setStatus('syncing');
+    await replayPendingSyncActions();
+    await refreshPending();
+    setStatus(navigator.onLine ? 'online' : 'offline');
+  }, [refreshPending]);
+
+  useEffect(() => {
+    setStatus(navigator.onLine ? 'online' : 'offline');
+    refreshPending();
+
+    const handleOnline = () => { sync(); };
+    const handleOffline = () => setStatus('offline');
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    window.addEventListener('readlite:db-changed', refreshPending);
+
+    const interval = setInterval(() => {
+      if (navigator.onLine && pendingRef.current > 0) sync();
+    }, RETRY_INTERVAL_MS);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('readlite:db-changed', refreshPending);
+      clearInterval(interval);
+    };
+  }, [refreshPending, sync]);
 
   if (status === 'online' && pending === 0) {
-    // Optionally show nothing, or a small green dot
     return null;
   }
 
@@ -52,9 +81,6 @@ const [pending, setPending] = useState<PendingCount>(3);
           {status === 'offline' && 'You are offline. Some content may be unavailable.'}
           {status === 'syncing' && 'Syncing your changes...'}
         </span>
-        {status === 'offline' && (
-          <button className={styles.dismiss} aria-label="Dismiss">✕</button>
-        )}
       </div>
 
       {/* Pending items badge (appears when offline and there are pending actions) */}
@@ -67,16 +93,6 @@ const [pending, setPending] = useState<PendingCount>(3);
           <span>{pending} item{pending !== 1 ? 's' : ''} waiting for connection</span>
         </div>
       )}
-
-      {/* DEMO CONTROLS (remove in production) */}
-      <div className={styles.demoControls}>
-        <button onClick={toggleStatus} className={styles.demoBtn}>
-          Toggle status (online/offline/syncing)
-        </button>
-        <button onClick={simulatePending} className={styles.demoBtn}>
-          {pending === 0 ? 'Simulate pending items' : 'Clear pending'}
-        </button>
-      </div>
     </div>
   );
 }

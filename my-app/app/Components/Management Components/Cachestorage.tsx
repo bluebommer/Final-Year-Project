@@ -1,8 +1,21 @@
 // Components/ManagementComponents/Cachestorage.tsx
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import styles from './styles/Cachestorage.module.css';
+import {
+  listSavedArticles,
+  removeArticle as removeArticleFromDB,
+  clearAllArticles,
+  getStorageSummary,
+  getCacheStrategy,
+  setCacheStrategy as persistCacheStrategy,
+  postToServiceWorker,
+  CLEARABLE_CACHE_NAMES,
+  type SavedArticle,
+  type CacheStrategy,
+  type StorageSummary,
+} from '@/lib/offlineDB';
 
 interface ArticleCache {
   id: string;
@@ -12,47 +25,90 @@ interface ArticleCache {
   category: string;
 }
 
-type CacheStrategy = 'cache-first' | 'network-first' | 'stale-while-revalidate';
-
-const MOCK_ARTICLES: ArticleCache[] = [
-  { id: '1', title: 'The Silicon Mind: Ethics of Synthetic Cognition', size: '4.2 MB', savedAt: '2 days ago', category: 'TECHNOLOGY' },
-  { id: '2', title: 'The Quiet Revolution of Bio-Regenerative Design', size: '3.8 MB', savedAt: '4 days ago', category: 'NATURE' },
-  { id: '3', title: 'Mars One: The Realities of Interplanetary Colonization', size: '6.1 MB', savedAt: '1 week ago', category: 'FUTURE' },
-  { id: '4', title: 'The Subtle Art of Perceptual Fluidity', size: '2.9 MB', savedAt: '1 week ago', category: 'PSYCHOLOGY' },
-  { id: '5', title: 'Deep Work in the Age of Constant Interruption', size: '7.0 MB', savedAt: '2 weeks ago', category: 'PRODUCTIVITY' },
-];
-
-const TOTAL_MB = 100;
-const USED_MB = 24;
-
 const STRATEGY_LABELS: Record<CacheStrategy, { label: string; description: string }> = {
   'cache-first': { label: 'Cache First', description: 'Fastest offline, serves cached then updates' },
   'network-first': { label: 'Network First', description: 'Always fresh, falls back to cache' },
   'stale-while-revalidate': { label: 'Stale While Revalidate', description: 'Serves cached, updates in background' },
 };
 
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function formatRelative(iso: string): string {
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const days = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+  if (days <= 0) return 'today';
+  if (days === 1) return '1 day ago';
+  if (days < 7) return `${days} days ago`;
+  const weeks = Math.floor(days / 7);
+  return weeks === 1 ? '1 week ago' : `${weeks} weeks ago`;
+}
+
+function toArticleCache(saved: SavedArticle): ArticleCache {
+  return {
+    id: saved.id,
+    title: saved.title,
+    size: formatBytes(saved.approxBytes),
+    savedAt: formatRelative(saved.savedAt),
+    category: saved.category,
+  };
+}
+
+async function clearBrowserCaches(): Promise<void> {
+  if (typeof caches === 'undefined') return;
+  await Promise.all(CLEARABLE_CACHE_NAMES.map((name) => caches.delete(name)));
+}
+
 export default function CacheStorage() {
-  const [articles, setArticles] = useState<ArticleCache[]>(MOCK_ARTICLES);
+  const [articles, setArticles] = useState<ArticleCache[]>([]);
+  const [summary, setSummary] = useState<StorageSummary | null>(null);
   const [clearing, setClearing] = useState(false);
   const [cleared, setCleared] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [strategy, setStrategy] = useState<CacheStrategy>('stale-while-revalidate');
 
-  function handleClearAll() {
+  const reload = useCallback(() => {
+    listSavedArticles().then((saved) => setArticles(saved.map(toArticleCache)));
+    getStorageSummary().then(setSummary);
+  }, []);
+
+  useEffect(() => {
+    reload();
+    getCacheStrategy().then(setStrategy);
+    window.addEventListener('readlite:db-changed', reload);
+    return () => window.removeEventListener('readlite:db-changed', reload);
+  }, [reload]);
+
+  async function handleClearAll() {
     setClearing(true);
-    setTimeout(() => {
-      setArticles([]);
-      setClearing(false);
+    try {
+      await clearAllArticles();
+      await clearBrowserCaches();
       setCleared(true);
-    }, 1200);
+      setTimeout(() => setCleared(false), 2000);
+    } finally {
+      setClearing(false);
+    }
   }
 
-  function handleRemoveArticle(id: string) {
-    setArticles((prev) => prev.filter((a) => a.id !== id));
+  async function handleRemoveArticle(id: string) {
+    await removeArticleFromDB(id);
+    await postToServiceWorker('EVICT_ARTICLE', { id });
   }
 
-  const usedPercent = cleared ? 0 : (USED_MB / TOTAL_MB) * 100;
-  const displayUsed = cleared ? '0 MB' : `${USED_MB} MB`;
+  async function handleStrategyChange(key: CacheStrategy) {
+    setStrategy(key);
+    await persistCacheStrategy(key);
+  }
+
+  const usedBytes = summary?.usageBytes ?? summary?.approxBytes ?? 0;
+  const totalBytes = summary?.quotaBytes ?? null;
+  const usedPercent = totalBytes ? Math.min(100, (usedBytes / totalBytes) * 100) : 0;
+  const displayUsed = formatBytes(usedBytes);
+  const displayTotal = totalBytes ? formatBytes(totalBytes) : null;
 
   return (
     <div className={styles.card}>
@@ -82,7 +138,7 @@ export default function CacheStorage() {
             <button
               key={key}
               className={`${styles.strategyBtn} ${strategy === key ? styles.strategyBtnActive : ''}`}
-              onClick={() => setStrategy(key)}
+              onClick={() => handleStrategyChange(key)}
               aria-pressed={strategy === key}
             >
               <span className={styles.strategyBtnLabel}>{value.label}</span>
@@ -96,7 +152,7 @@ export default function CacheStorage() {
       <div className={styles.storageBlock}>
         <div className={styles.storageLabels}>
           <span className={styles.storageUsed}>{displayUsed} used</span>
-          <span className={styles.storageTotal}>of {TOTAL_MB} MB</span>
+          <span className={styles.storageTotal}>{displayTotal ? `of ${displayTotal}` : 'quota unavailable'}</span>
         </div>
         <div className={styles.storageBar}>
           <div
@@ -108,7 +164,9 @@ export default function CacheStorage() {
           <span className={styles.storageArticleCount}>
             {articles.length} article{articles.length !== 1 ? 's' : ''} cached offline
           </span>
-          <span className={styles.storageFree}>{TOTAL_MB - (cleared ? 0 : USED_MB)} MB free</span>
+          {displayTotal && (
+            <span className={styles.storageFree}>{formatBytes(Math.max(0, (totalBytes ?? 0) - usedBytes))} free</span>
+          )}
         </div>
       </div>
 
@@ -117,7 +175,7 @@ export default function CacheStorage() {
         <button
           className={`${styles.clearBtn} ${clearing ? styles.clearBtnLoading : ''} ${cleared ? styles.clearBtnDone : ''}`}
           onClick={handleClearAll}
-          disabled={clearing || cleared || articles.length === 0}
+          disabled={clearing || articles.length === 0}
         >
           {clearing ? (
             <><span className={styles.spinner} /> Clearing...</>

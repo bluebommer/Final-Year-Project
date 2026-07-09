@@ -53,11 +53,10 @@ const UserSchema = new Schema<IUser>(
 );
 
 // Only local users should have passwordHash
-UserSchema.pre("save", function (next) {
+UserSchema.pre("save", function () {
   if (this.authProvider === "local" && !this.passwordHash) {
-    return next(new Error("Password is required for local accounts"));
+    throw new Error("Password is required for local accounts");
   }
-  next();
 });
 
 UserSchema.methods.isLocked = function (): boolean {

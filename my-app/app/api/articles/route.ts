@@ -250,7 +250,7 @@ function getMockArticles(): Article[] {
       isStaffPick: true,
       isNewRelease: true,
       imageType: 'abstract3d',
-      imageUrl: null,
+      imageUrl: undefined,
       author: 'Dr. Mira Chen',
       authorInitial: 'M',
       authorColor: '#22d3ee',

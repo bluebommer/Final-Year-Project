@@ -4,6 +4,7 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from './styles/ArticleReader.module.css';
 import type { Article } from '@/app/types/article';
+import { saveArticle, isArticleSaved, postToServiceWorker } from '@/lib/offlineDB';
 
 interface ArticleReaderProps {
   article: Article;
@@ -15,8 +16,14 @@ export default function ArticleReader({ article }: ArticleReaderProps) {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [progress, setProgress] = useState(0);
   const [bookmarked, setBookmarked] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const articleRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    isArticleSaved(article.id).then(setSaved);
+  }, [article.id]);
 
   // Scroll progress
   useEffect(() => {
@@ -31,9 +38,19 @@ export default function ArticleReader({ article }: ArticleReaderProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleSave = () => {
-    // TODO: implement save to library
-    alert('Save article (demo)');
+  const handleSave = async () => {
+    if (saved || saving) return;
+    setSaving(true);
+    try {
+      await saveArticle(article);
+      setSaved(true);
+      if (article.imageUrl) {
+        await postToServiceWorker('CACHE_IMAGE', { url: article.imageUrl });
+      }
+      await postToServiceWorker('CACHE_ARTICLE_RESPONSE', { id: article.id });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleShare = () => {
@@ -98,11 +115,11 @@ export default function ArticleReader({ article }: ArticleReaderProps) {
       {/* Action Bar */}
       <div className={styles.actionBar}>
         <div className={styles.actionButtons}>
-          <button className={styles.actionBtn} onClick={handleSave} aria-label="Save">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <button className={styles.actionBtn} onClick={handleSave} disabled={saving} aria-label="Save for offline reading">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill={saved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
               <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" />
             </svg>
-            <span>Save</span>
+            <span>{saving ? 'Saving…' : saved ? 'Saved offline' : 'Save'}</span>
           </button>
           <button className={styles.actionBtn} onClick={handleBookmark} aria-label="Bookmark">
             <svg width="18" height="18" viewBox="0 0 24 24" fill={bookmarked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
