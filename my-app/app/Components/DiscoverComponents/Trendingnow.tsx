@@ -1,23 +1,32 @@
 'use client';
 import dynamic from 'next/dynamic';
 
-
+import Link from 'next/link';
 import { useRef, useState } from 'react';
 import styles from './styles/Trendingnow.module.css';
+import type { Article } from '@/app/types/article';
 const SectionHeader = dynamic(() => import('./Sectionheader'));
 
-const TRENDING = [
-  { id: 1, rank: 1, category: 'TECHNOLOGY', title: 'The Silicon Mind: Ethics of Synthetic Cognition', readTime: '8 MIN', heat: 98, accent: '#22d3ee' },
-  { id: 2, rank: 2, category: 'SCIENCE',    title: 'Quantum Entanglement Breaks Distance Record', readTime: '5 MIN', heat: 94, accent: '#a78bfa' },
-  { id: 3, rank: 3, category: 'DESIGN',     title: 'The Language of Invisible Interfaces', readTime: '6 MIN', heat: 91, accent: '#f97316' },
-  { id: 4, rank: 4, category: 'FUTURE',     title: 'Mars One: The Realities of Interplanetary Colonization', readTime: '22 MIN', heat: 88, accent: '#fb7185' },
-  { id: 5, rank: 5, category: 'NATURE',     title: 'The Quiet Revolution of Bio-Regenerative Design', readTime: '12 MIN', heat: 85, accent: '#34d399' },
-  { id: 6, rank: 6, category: 'PSYCHOLOGY', title: 'The Subtle Art of Perceptual Fluidity', readTime: '15 MIN', heat: 81, accent: '#fbbf24' },
-];
+interface TrendingNowProps {
+  articles: Article[];
+}
 
-export default function TrendingNow() {
+function formatReadTime(readTime: string): string {
+  const match = readTime.match(/\d+/);
+  return match ? `${match[0]} MIN` : readTime.toUpperCase();
+}
+
+export default function TrendingNow({ articles }: TrendingNowProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [activeId, setActiveId] = useState<number | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  // No real engagement metrics exist yet — rank by staff-pick/recency (already
+  // the API's sort order) and derive a decaying "heat" score from rank.
+  const trending = articles.slice(0, 6).map((article, i) => ({
+    ...article,
+    rank: i + 1,
+    heat: Math.max(60, 98 - i * 4),
+  }));
 
   function scroll(dir: 'left' | 'right') {
     if (!scrollRef.current) return;

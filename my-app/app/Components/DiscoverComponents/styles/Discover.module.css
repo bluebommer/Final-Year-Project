@@ -18,3 +18,44 @@
   flex-direction: column;
   gap: 48px;
 }
+
+.section {
+  width: 100%;
+}
+
+.sectionInner {
+  padding: 0 40px;
+}
+
+.resultsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.resultsTitle {
+  font-size: 20px;
+  font-weight: 800;
+  color: #f8fafc;
+  letter-spacing: -0.02em;
+  text-transform: capitalize;
+}
+
+.clearResultsBtn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.clearResultsBtn:hover {
+  color: #22d3ee;
+  border-color: rgba(0, 222, 236, 0.3);
+}

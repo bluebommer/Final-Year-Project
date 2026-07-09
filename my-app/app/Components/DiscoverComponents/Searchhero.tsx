@@ -17,7 +17,11 @@ const TRENDING_TAGS = [
   'Space Exploration', 'Liquid Design', 'Consciousness',
 ];
 
-export default function SearchHero() {
+interface SearchHeroProps {
+  onSearch: (query: string) => void;
+}
+
+export default function SearchHero({ onSearch }: SearchHeroProps) {
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
@@ -39,12 +43,19 @@ export default function SearchHero() {
 
   function handleTagClick(tag: string) {
     setQuery(tag);
+    onSearch(tag);
     inputRef.current?.focus();
   }
 
   function handleClear() {
     setQuery('');
+    onSearch('');
     inputRef.current?.focus();
+  }
+
+  function handleChange(value: string) {
+    setQuery(value);
+    onSearch(value);
   }
 
   return (
@@ -81,7 +92,7 @@ export default function SearchHero() {
               className={styles.input}
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)}
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
               aria-label="Search articles"
@@ -96,7 +107,7 @@ export default function SearchHero() {
             </button>
           )}
 
-          <button className={styles.searchBtn}>
+          <button className={styles.searchBtn} onClick={() => onSearch(query)}>
             Search
           </button>
         </div>
