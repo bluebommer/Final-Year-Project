@@ -1,0 +1,22 @@
+Recommended Next Step: Service Worker & Offline Caching
+This is a core PWA requirement and will allow users to:
+
+Access previously loaded articles offline.
+
+See “Offline available” badges in the Library.
+
+Use the cache strategies you designed (cache-first, network-first, stale-while-revalidate).
+
+We’ll implement:
+
+Register a service worker (using Next.js’s built‑in next-pwa or a custom setup).
+
+Cache static assets (JS, CSS, fonts) using a cache-first strategy.
+
+Cache article data from the API using the selected cache strategy (you already have the UI for selecting it).
+
+Show real offline availability in the Library – based on whether the article’s data is in the cache.
+
+Update the offline indicator to reflect real network status and pending sync.
+
+Since Next.js 16.2.6 supports the next-pwa plugin, we can integrate it easily.
