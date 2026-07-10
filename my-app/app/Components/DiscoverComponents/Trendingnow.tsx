@@ -5,15 +5,63 @@ import Link from 'next/link';
 import { useRef, useState } from 'react';
 import styles from './styles/Trendingnow.module.css';
 import type { Article } from '@/app/types/article';
+import { useHoverPrefetch } from '@/lib/useHoverPrefetch';
 const SectionHeader = dynamic(() => import('./Sectionheader'));
 
 interface TrendingNowProps {
   articles: Article[];
 }
 
+interface TrendingItem extends Article {
+  rank: number;
+  heat: number;
+}
+
 function formatReadTime(readTime: string): string {
   const match = readTime.match(/\d+/);
   return match ? `${match[0]} MIN` : readTime.toUpperCase();
+}
+
+// Extracted so useHoverPrefetch (a hook) can be called once per card
+// instead of inside the parent's .map() callback.
+function TrendingCard({ item, active, onHover, onUnhover }: {
+  item: TrendingItem;
+  active: boolean;
+  onHover: () => void;
+  onUnhover: () => void;
+}) {
+  const href = `/article/${encodeURIComponent(item.id)}`;
+  const { onMouseEnter, onMouseLeave } = useHoverPrefetch(href);
+
+  return (
+    <Link
+      href={href}
+      className={`${styles.card} ${active ? styles.cardActive : ''}`}
+      onMouseEnter={() => { onHover(); onMouseEnter(); }}
+      onMouseLeave={() => { onUnhover(); onMouseLeave(); }}
+    >
+      {/* Rank number */}
+      <span className={styles.rank}>
+        {String(item.rank).padStart(2, '0')}
+      </span>
+
+      {/* Content */}
+      <div className={styles.cardBody}>
+        <span className={styles.category} style={{ color: item.authorColor }}>{item.category}</span>
+        <h3 className={styles.title}>{item.title}</h3>
+        <div className={styles.meta}>
+          <span className={styles.readTime}>{formatReadTime(item.readTime)} READ</span>
+          <div className={styles.heatBar}>
+            <div className={styles.heatFill} style={{ width: `${item.heat}%`, background: item.authorColor }} />
+          </div>
+          <span className={styles.heatLabel} style={{ color: item.authorColor }}>{item.heat}°</span>
+        </div>
+      </div>
+
+      {/* Hover accent line */}
+      <div className={styles.accentLine} style={{ background: item.authorColor }} />
+    </Link>
+  );
 }
 
 export default function TrendingNow({ articles }: TrendingNowProps) {
@@ -54,34 +102,13 @@ export default function TrendingNow({ articles }: TrendingNowProps) {
 
         <div className={styles.track} ref={scrollRef}>
           {trending.map((item) => (
-            <Link
+            <TrendingCard
               key={item.id}
-              href={`/article/${encodeURIComponent(item.id)}`}
-              className={`${styles.card} ${activeId === item.id ? styles.cardActive : ''}`}
-              onMouseEnter={() => setActiveId(item.id)}
-              onMouseLeave={() => setActiveId(null)}
-            >
-              {/* Rank number */}
-              <span className={styles.rank}>
-                {String(item.rank).padStart(2, '0')}
-              </span>
-
-              {/* Content */}
-              <div className={styles.cardBody}>
-                <span className={styles.category} style={{ color: item.authorColor }}>{item.category}</span>
-                <h3 className={styles.title}>{item.title}</h3>
-                <div className={styles.meta}>
-                  <span className={styles.readTime}>{formatReadTime(item.readTime)} READ</span>
-                  <div className={styles.heatBar}>
-                    <div className={styles.heatFill} style={{ width: `${item.heat}%`, background: item.authorColor }} />
-                  </div>
-                  <span className={styles.heatLabel} style={{ color: item.authorColor }}>{item.heat}°</span>
-                </div>
-              </div>
-
-              {/* Hover accent line */}
-              <div className={styles.accentLine} style={{ background: item.authorColor }} />
-            </Link>
+              item={item}
+              active={activeId === item.id}
+              onHover={() => setActiveId(item.id)}
+              onUnhover={() => setActiveId(null)}
+            />
           ))}
         </div>
       </div>

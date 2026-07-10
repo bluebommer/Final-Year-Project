@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import styles from './styles/Editorspicks.module.css';
 import type { Article } from '@/app/types/article';
 import { saveArticle, removeArticle, isArticleSaved } from '@/lib/offlineDB';
+import { useHoverPrefetch } from '@/lib/useHoverPrefetch';
 const SectionHeader = dynamic(() => import('./Sectionheader'));
 
 interface EditorsPicksProps {
@@ -14,6 +15,45 @@ interface EditorsPicksProps {
 
 function formatReadTime(readTime: string): string {
   return readTime.toUpperCase();
+}
+
+// Extracted so useHoverPrefetch (a hook) can be called once per card
+// instead of inside the parent's .map() callback.
+function SecondaryPickCard({ pick, isSaved, onToggleSave }: {
+  pick: Article;
+  isSaved: boolean;
+  onToggleSave: () => void;
+}) {
+  const href = `/article/${encodeURIComponent(pick.id)}`;
+  const { onMouseEnter, onMouseLeave } = useHoverPrefetch(href);
+
+  return (
+    <article className={styles.secondaryCard} style={{ '--accent': pick.authorColor } as React.CSSProperties}>
+      <div className={styles.secondaryTop}>
+        <span className={styles.category} style={{ color: pick.authorColor }}>{pick.category}</span>
+        <button
+          className={`${styles.saveBtn} ${isSaved ? styles.saveBtnActive : ''}`}
+          onClick={onToggleSave}
+          aria-label="Save article"
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+          </svg>
+        </button>
+      </div>
+      <Link href={href} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+        <h3 className={styles.secondaryTitle}>{pick.title}</h3>
+        <p className={styles.secondaryDesc}>{pick.description}</p>
+      </Link>
+      <div className={styles.cardFooter}>
+        <div className={styles.author}>
+          <span className={styles.authorDot} style={{ background: pick.authorColor }}>{pick.authorInitial}</span>
+          <span className={styles.authorName}>{pick.author}</span>
+        </div>
+        <span className={styles.readTime}>{formatReadTime(pick.readTime)}</span>
+      </div>
+    </article>
+  );
 }
 
 export default function EditorsPicks({ articles }: EditorsPicksProps) {
@@ -41,6 +81,11 @@ export default function EditorsPicks({ articles }: EditorsPicksProps) {
       setSaved((prev) => new Set(prev).add(article.id));
     }
   }
+
+  // Hook must be called unconditionally (before the early return below), so
+  // fall back to an inert href when there are no picks yet.
+  const featuredHref = picks.length > 0 ? `/article/${encodeURIComponent(picks[0].id)}` : '';
+  const { onMouseEnter: onFeaturedEnter, onMouseLeave: onFeaturedLeave } = useHoverPrefetch(featuredHref);
 
   if (picks.length === 0) return null;
 
@@ -72,7 +117,7 @@ export default function EditorsPicks({ articles }: EditorsPicksProps) {
               </button>
             </div>
 
-            <Link href={`/article/${encodeURIComponent(featured.id)}`}>
+            <Link href={featuredHref} onMouseEnter={onFeaturedEnter} onMouseLeave={onFeaturedLeave}>
               <span className={styles.category} style={{ color: featured.authorColor }}>{featured.category}</span>
               <h3 className={styles.featuredTitle}>{featured.title}</h3>
               <p className={styles.featuredDesc}>{featured.description}</p>
@@ -92,31 +137,12 @@ export default function EditorsPicks({ articles }: EditorsPicksProps) {
           {/* Secondary picks */}
           <div className={styles.secondaryCol}>
             {rest.map((pick) => (
-              <article key={pick.id} className={styles.secondaryCard} style={{ '--accent': pick.authorColor } as React.CSSProperties}>
-                <div className={styles.secondaryTop}>
-                  <span className={styles.category} style={{ color: pick.authorColor }}>{pick.category}</span>
-                  <button
-                    className={`${styles.saveBtn} ${saved.has(pick.id) ? styles.saveBtnActive : ''}`}
-                    onClick={() => toggleSave(pick)}
-                    aria-label="Save article"
-                  >
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill={saved.has(pick.id) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
-                    </svg>
-                  </button>
-                </div>
-                <Link href={`/article/${encodeURIComponent(pick.id)}`}>
-                  <h3 className={styles.secondaryTitle}>{pick.title}</h3>
-                  <p className={styles.secondaryDesc}>{pick.description}</p>
-                </Link>
-                <div className={styles.cardFooter}>
-                  <div className={styles.author}>
-                    <span className={styles.authorDot} style={{ background: pick.authorColor }}>{pick.authorInitial}</span>
-                    <span className={styles.authorName}>{pick.author}</span>
-                  </div>
-                  <span className={styles.readTime}>{formatReadTime(pick.readTime)}</span>
-                </div>
-              </article>
+              <SecondaryPickCard
+                key={pick.id}
+                pick={pick}
+                isSaved={saved.has(pick.id)}
+                onToggleSave={() => toggleSave(pick)}
+              />
             ))}
           </div>
         </div>

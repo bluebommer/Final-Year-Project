@@ -4,6 +4,7 @@
 import Link from 'next/link';
 import { Article } from '@/app/types/article';
 import styles from './styles/FeaturedCard.module.css';
+import { useHoverPrefetch } from '@/lib/useHoverPrefetch';
 
 interface Props {
   article: Article;
@@ -12,10 +13,12 @@ interface Props {
 export default function FeaturedCard({ article }: Props) {
   // If imageUrl exists, use it; otherwise fallback to blob visual
   const hasImage = article.imageUrl && article.imageUrl.length > 0;
+  const href = `/article/${encodeURIComponent(article.id)}`;
+  const { onMouseEnter, onMouseLeave } = useHoverPrefetch(href);
 
   return (
    // wherever you render article cards
-<Link href={`/article/${encodeURIComponent(article.id)}`}>
+<Link href={href} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <article className={styles.featuredCard}>
         <div className={styles.cardImage}>
           {hasImage ? (
@@ -24,6 +27,7 @@ export default function FeaturedCard({ article }: Props) {
               alt={article.title}
               className={styles.featuredImage}
               loading="lazy"
+              decoding="async"
             />
           ) : (
             <>

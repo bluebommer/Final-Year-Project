@@ -4,6 +4,7 @@
 import Link from 'next/link';
 import { Article } from '@/app/types/article';
 import styles from './styles/SideCard.module.css';
+import { useHoverPrefetch } from '@/lib/useHoverPrefetch';
 
 interface Props {
   article: Article;
@@ -11,15 +12,17 @@ interface Props {
 
 export default function SideCard({ article }: Props) {
   const hasImage = article.imageUrl && article.imageUrl.length > 0;
+  const href = `/article/${encodeURIComponent(article.id)}`;
+  const { onMouseEnter, onMouseLeave } = useHoverPrefetch(href);
 
   return (
     // wherever you render article cards
-<Link href={`/article/${encodeURIComponent(article.id)}`} className={styles.sideCardLink}>
-    
+<Link href={href} className={styles.sideCardLink} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+
       <article className={styles.sideCard}>
         <div className={styles.cardImage}>
           {hasImage ? (
-            <img src={article.imageUrl} alt={article.title} className={styles.sideImage} loading="lazy" />
+            <img src={article.imageUrl} alt={article.title} className={styles.sideImage} loading="lazy" decoding="async" />
           ) : (
             <div className={styles.landscapeVisual} />
           )}

@@ -3,11 +3,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import styles from './styles/HeroBanner.module.css';
 import NeuralNetwork from './NeuralNetwork';
 import QuantumField from './QuantumField';
 import GeometricGrid from './GeometricGrid';
 import type { Article } from '@/app/types/article';
+import { isDataSaverActive } from '@/lib/prefetch';
 
 interface HeroBannerProps {
   slides: Article[]; // array of articles to cycle through
@@ -18,17 +20,8 @@ const VISUALS = [NeuralNetwork, QuantumField, GeometricGrid];
 export default function HeroBanner({ slides }: HeroBannerProps) {
   const [current, setCurrent] = useState(0);
   const [animating, setAnimating] = useState(false);
-
-  // If no slides, don't render
-  if (!slides || slides.length === 0) return null;
-
-  // Cycle slides
-  useEffect(() => {
-    const timer = setInterval(() => {
-      goTo((current + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [current, slides.length]);
+  const router = useRouter();
+  const hasSlides = slides && slides.length > 0;
 
   function goTo(index: number) {
     if (index === current || animating) return;
@@ -38,6 +31,36 @@ export default function HeroBanner({ slides }: HeroBannerProps) {
       setAnimating(false);
     }, 350);
   }
+
+  // Cycle slides
+  useEffect(() => {
+    if (!hasSlides) return;
+    const timer = setInterval(() => {
+      goTo((current + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [current, hasSlides, slides.length]);
+
+  // Warm the browser's image cache for the next slide before it's shown, so
+  // rotation never reveals a blank/loading image.
+  useEffect(() => {
+    if (!hasSlides || isDataSaverActive()) return;
+    const next = slides[(current + 1) % slides.length];
+    if (next?.imageUrl) {
+      const img = new window.Image();
+      img.src = next.imageUrl;
+    }
+  }, [current, hasSlides, slides]);
+
+  // The currently-highlighted slide is prominent enough to warrant an
+  // unconditional prefetch (unlike card grids, which are hover-gated).
+  useEffect(() => {
+    if (!hasSlides || isDataSaverActive()) return;
+    router.prefetch(`/article/${encodeURIComponent(slides[current].id)}`);
+  }, [current, hasSlides, slides, router]);
+
+  // If no slides, don't render (after all hooks, to keep hook order stable)
+  if (!hasSlides) return null;
 
   const slide = slides[current];
   const Visual = VISUALS[current % VISUALS.length];
@@ -64,7 +87,14 @@ export default function HeroBanner({ slides }: HeroBannerProps) {
     <div className={`${styles.heroBanner} ${styles[bgClass]}`}>
       <div className={styles.visualWrapper}>
         {hasImage ? (
-          <img src={slide.imageUrl} alt={slide.title} className={styles.slideImage} loading="lazy" />
+          <img
+            src={slide.imageUrl}
+            alt={slide.title}
+            className={styles.slideImage}
+            loading={current === 0 ? 'eager' : 'lazy'}
+            decoding="async"
+            fetchPriority={current === 0 ? 'high' : 'auto'}
+          />
         ) : (
           <Visual />
         )}
