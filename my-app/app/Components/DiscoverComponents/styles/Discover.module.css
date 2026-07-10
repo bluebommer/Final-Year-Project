@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #080d18;
+  background-color: var(--bg-primary);
 }
 
 .pageBody {
@@ -37,19 +37,19 @@
 .resultsTitle {
   font-size: 20px;
   font-weight: 800;
-  color: #f8fafc;
+  color: var(--text-primary);
   letter-spacing: -0.02em;
   text-transform: capitalize;
 }
 
 .clearResultsBtn {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(var(--overlay-rgb), 0.04);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
   border-radius: 8px;
   padding: 8px 16px;
   font-size: 12px;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.18s ease;
   font-family: 'DM Sans', system-ui, sans-serif;

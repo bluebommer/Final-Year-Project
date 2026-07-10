@@ -25,9 +25,9 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #64748b;
+  background: var(--surface-card);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.18s ease;
 }
@@ -57,8 +57,8 @@
   position: relative;
   flex-shrink: 0;
   width: 280px;
-  background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--surface-card);
+  border: 1px solid rgba(var(--overlay-rgb), 0.07);
   border-radius: 14px;
   padding: 20px;
   cursor: pointer;
@@ -72,7 +72,7 @@
 .card:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-  border-color: rgba(255, 255, 255, 0.14);
+  border-color: rgba(var(--overlay-rgb), 0.14);
 }
 
 .cardActive {
@@ -103,7 +103,7 @@
 .rank {
   font-size: 28px;
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.06);
+  color: rgba(var(--overlay-rgb), 0.06);
   letter-spacing: -0.04em;
   line-height: 1;
   flex-shrink: 0;
@@ -113,7 +113,7 @@
 }
 
 .card:hover .rank {
-  color: rgba(255, 255, 255, 0.12);
+  color: rgba(var(--overlay-rgb), 0.12);
 }
 
 .cardBody {
@@ -135,7 +135,7 @@
   font-size: 13px;
   font-weight: 700;
   line-height: 1.45;
-  color: #f8fafc;
+  color: var(--text-primary);
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -154,7 +154,7 @@
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.06em;
-  color: #64748b;
+  color: var(--text-muted);
   font-family: 'DM Sans', system-ui, sans-serif;
   white-space: nowrap;
 }
@@ -163,7 +163,7 @@
 .heatBar {
   flex: 1;
   height: 2px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(var(--overlay-rgb), 0.06);
   border-radius: 2px;
   overflow: hidden;
 }

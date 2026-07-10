@@ -6,9 +6,12 @@ import { useRouter } from "next/navigation";
 type AuthMode  = "signup" | "signin";
 type SignupStep = "form" | "verify";
 
+export const HAS_ACCOUNT_FLAG = "readLite_hasAccount";
+
 interface AuthPageProps {
   onAuthComplete: (user: { name: string; gender: string; email: string }) => void;
   topics: string[];
+  initialMode?: AuthMode;
 }
 
 // ─── Google Icon ──────────────────────────────────────────────────────────────
@@ -424,15 +427,18 @@ function SignInForm({
 
 // ─── Main AuthPage ────────────────────────────────────────────────────────────
 
-export default function AuthPage({ onAuthComplete, topics }: AuthPageProps) {
+export default function AuthPage({ onAuthComplete, topics, initialMode }: AuthPageProps) {
   const router = useRouter();                                                   // ← NEW
-  const [mode,         setMode]         = useState<AuthMode>("signup");
+  const [mode,         setMode]         = useState<AuthMode>(initialMode ?? "signup");
   const [signupStep,   setSignupStep]   = useState<SignupStep>("form");
   const [pendingEmail, setPendingEmail] = useState("");
   const [googleError,  setGoogleError]  = useState("");
 
   // Wraps the parent's onAuthComplete and redirects to /home               // ← NEW
   const handleAuthComplete = (user: { name: string; gender: string; email: string }) => {
+    // So a later expired session skips straight to sign-in instead of
+    // restarting welcome/preferences — see app/page.tsx.
+    localStorage.setItem(HAS_ACCOUNT_FLAG, "1");
     onAuthComplete(user);
     router.push("/home");
   };

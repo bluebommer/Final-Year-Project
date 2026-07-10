@@ -36,6 +36,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={manrope.variable} suppressHydrationWarning>
       <body>
+        {/* Sets data-theme before hydration/paint to avoid a dark->light
+            flash for users who've chosen light mode. Keep the storage key
+            ("readLite_theme") in sync with lib/theme.ts — this is a
+            necessary duplication since inline scripts can't import modules. */}
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`(function(){try{var t=localStorage.getItem('readLite_theme');document.documentElement.setAttribute('data-theme', t==='light'?'light':'dark');}catch(e){}})();`}
+        </Script>
         {children}
         <Script src="https://accounts.google.com/gsi/client" strategy="beforeInteractive" />
           <OfflineIndicator />

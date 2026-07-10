@@ -33,18 +33,18 @@
 
 .tab {
   background: transparent;
-  color: #64748b;
-  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  border-color: rgba(var(--overlay-rgb), 0.08);
 }
 
 .tab:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #94a3b8;
-  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(var(--overlay-rgb), 0.05);
+  color: var(--text-secondary);
+  border-color: rgba(var(--overlay-rgb), 0.12);
 }
 
 .tabActive {
-  background: rgba(255, 255, 255, 0.08);
-  color: #f8fafc;
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(var(--overlay-rgb), 0.08);
+  color: var(--text-primary);
+  border-color: rgba(var(--overlay-rgb), 0.15);
 }

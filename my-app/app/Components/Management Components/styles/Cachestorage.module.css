@@ -1,6 +1,6 @@
 .card {
-  background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--surface-card);
+  border: 1px solid rgba(var(--overlay-rgb), 0.07);
   border-radius: 16px;
   padding: 24px;
   display: flex;
@@ -31,7 +31,7 @@
 .cardTitle {
   font-size: 16px;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary);
   margin: 0 0 3px;
   letter-spacing: -0.01em;
 }
@@ -40,7 +40,7 @@
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.1em;
-  color: #64748b;
+  color: var(--text-muted);
   font-family: 'DM Sans', system-ui, sans-serif;
 }
 
@@ -60,19 +60,19 @@
 .storageUsed {
   font-size: 22px;
   font-weight: 800;
-  color: #f8fafc;
+  color: var(--text-primary);
   letter-spacing: -0.02em;
 }
 
 .storageTotal {
   font-size: 13px;
-  color: #64748b;
+  color: var(--text-muted);
   font-family: 'DM Sans', system-ui, sans-serif;
 }
 
 .storageBar {
   height: 6px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(var(--overlay-rgb), 0.06);
   border-radius: 3px;
   overflow: hidden;
 }
@@ -96,7 +96,7 @@
 
 .storageArticleCount {
   font-size: 11px;
-  color: #64748b;
+  color: var(--text-muted);
   font-family: 'DM Sans', system-ui, sans-serif;
 }
 
@@ -142,9 +142,9 @@
 }
 
 .clearBtnLoading {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: #64748b !important;
+  background: rgba(var(--overlay-rgb), 0.05) !important;
+  border-color: rgba(var(--overlay-rgb), 0.1) !important;
+  color: var(--text-muted) !important;
 }
 
 .clearBtnDone {
@@ -156,8 +156,8 @@
 .spinner {
   width: 12px;
   height: 12px;
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  border-top-color: #94a3b8;
+  border: 2px solid rgba(var(--overlay-rgb), 0.15);
+  border-top-color: var(--text-secondary);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   flex-shrink: 0;
@@ -179,15 +179,15 @@
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: 'DM Sans', system-ui, sans-serif;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #94a3b8;
+  background: rgba(var(--overlay-rgb), 0.04);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
+  color: var(--text-secondary);
 }
 
 .manageBtn:hover {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.14);
-  color: #f8fafc;
+  background: rgba(var(--overlay-rgb), 0.07);
+  border-color: rgba(var(--overlay-rgb), 0.14);
+  color: var(--text-primary);
 }
 
 /* Per-article list */
@@ -195,8 +195,8 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(var(--overlay-rgb), 0.02);
+  border: 1px solid rgba(var(--overlay-rgb), 0.06);
   border-radius: 10px;
   overflow: hidden;
   animation: slideDown 0.2s ease;
@@ -212,7 +212,7 @@
   align-items: center;
   gap: 14px;
   padding: 13px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(var(--overlay-rgb), 0.05);
   transition: background 0.15s ease;
 }
 
@@ -221,7 +221,7 @@
 }
 
 .articleRow:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(var(--overlay-rgb), 0.03);
 }
 
 .articleInfo {
@@ -243,7 +243,7 @@
 .articleTitle {
   font-size: 12px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -309,7 +309,7 @@
   flex-direction: column;
   gap: 10px;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(var(--overlay-rgb), 0.06);
 }
 
 .strategyHeader {
@@ -323,14 +323,14 @@
 .strategyLabel {
   font-size: 12px;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary);
   letter-spacing: -0.01em;
 }
 
 .strategyHint {
   font-size: 10px;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-muted);
   font-family: 'DM Sans', system-ui, sans-serif;
 }
 
@@ -346,8 +346,8 @@
   align-items: flex-start;
   gap: 4px;
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(var(--overlay-rgb), 0.03);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -356,8 +356,8 @@
 }
 
 .strategyBtn:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(var(--overlay-rgb), 0.06);
+  border-color: rgba(var(--overlay-rgb), 0.14);
 }
 
 .strategyBtnActive {
@@ -369,14 +369,14 @@
 .strategyBtnLabel {
   font-size: 13px;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary);
   letter-spacing: -0.01em;
 }
 
 .strategyBtnDesc {
   font-size: 11px;
   font-weight: 400;
-  color: #64748b;
+  color: var(--text-muted);
   line-height: 1.4;
 }
 

@@ -7,9 +7,9 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #64748b;
+  background: var(--surface-card);
+  border: 1px solid rgba(var(--overlay-rgb), 0.1);
+  color: var(--text-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -40,8 +40,8 @@
   right: 28px;
   z-index: 499;
   width: 260px;
-  background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--surface-card);
+  border: 1px solid rgba(var(--overlay-rgb), 0.1);
   border-radius: 16px;
   padding: 18px;
   display: flex;
@@ -65,7 +65,7 @@
 .panelTitle {
   font-size: 13px;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary);
   letter-spacing: -0.01em;
 }
 
@@ -85,8 +85,8 @@
 }
 
 .closeBtn:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #94a3b8;
+  background: rgba(var(--overlay-rgb), 0.06);
+  color: var(--text-secondary);
 }
 
 /* Control rows */
@@ -107,7 +107,7 @@
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.1em;
-  color: #64748b;
+  color: var(--text-muted);
   font-family: 'DM Sans', system-ui, sans-serif;
   white-space: nowrap;
 }
@@ -117,8 +117,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(var(--overlay-rgb), 0.04);
+  border: 1px solid rgba(var(--overlay-rgb), 0.07);
   border-radius: 8px;
   padding: 4px;
 }
@@ -129,7 +129,7 @@
   border-radius: 6px;
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -152,7 +152,7 @@
 .stepValue {
   font-size: 12px;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary);
   min-width: 36px;
   text-align: center;
   font-family: 'DM Sans', system-ui, sans-serif;
@@ -161,7 +161,7 @@
 /* Size bar */
 .sizeBar {
   height: 3px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(var(--overlay-rgb), 0.06);
   border-radius: 2px;
   overflow: hidden;
   margin-top: -8px;
@@ -189,15 +189,15 @@
   gap: 4px;
   padding: 10px 6px;
   border-radius: 9px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(var(--overlay-rgb), 0.03);
+  border: 1px solid rgba(var(--overlay-rgb), 0.07);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .fontBtn:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(var(--overlay-rgb), 0.06);
+  border-color: rgba(var(--overlay-rgb), 0.12);
 }
 
 .fontBtnActive {
@@ -208,7 +208,7 @@
 .fontSample {
   font-size: 18px;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary);
   line-height: 1;
 }
 
@@ -220,7 +220,7 @@
   font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.07em;
-  color: #64748b;
+  color: var(--text-muted);
   font-family: 'DM Sans', system-ui, sans-serif;
 }
 
@@ -243,17 +243,17 @@
   cursor: pointer;
   transition: all 0.15s ease;
   font-family: 'DM Sans', system-ui, sans-serif;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(var(--overlay-rgb), 0.07);
 }
 
 .themeBtnLight {
   background: rgba(240, 244, 248, 0.06);
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .themeBtnDark {
   background: rgba(8, 13, 24, 0.6);
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .themeBtnActive {
@@ -264,11 +264,11 @@
 
 /* Live preview */
 .preview {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(var(--overlay-rgb), 0.03);
+  border: 1px solid rgba(var(--overlay-rgb), 0.06);
   border-radius: 8px;
   padding: 12px;
-  color: #94a3b8;
+  color: var(--text-secondary);
   transition: font-size 0.15s ease, line-height 0.15s ease;
 }
 

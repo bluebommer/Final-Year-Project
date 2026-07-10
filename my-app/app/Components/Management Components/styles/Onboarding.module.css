@@ -18,7 +18,7 @@
 
 .modal {
   background: #0d1424;
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(var(--overlay-rgb), 0.09);
   border-radius: 22px;
   width: 520px;
   max-width: calc(100vw - 32px);
@@ -40,7 +40,7 @@
 /* Progress bar */
 .progressBar {
   height: 3px;
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(var(--overlay-rgb), 0.07);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -69,8 +69,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(var(--overlay-rgb), 0.05);
+  border: 1px solid rgba(var(--overlay-rgb), 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -98,7 +98,7 @@
 .stepLine {
   width: 48px;
   height: 1px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(var(--overlay-rgb), 0.08);
   transition: background 0.3s ease;
 }
 
@@ -154,7 +154,7 @@
 .stepTitle {
   font-size: 26px;
   font-weight: 800;
-  color: #f8fafc;
+  color: var(--text-primary);
   letter-spacing: -0.025em;
   margin: 0;
 }
@@ -162,7 +162,7 @@
 .stepDesc {
   font-size: 14px;
   line-height: 1.6;
-  color: #64748b;
+  color: var(--text-muted);
   margin: 0;
 }
 
@@ -178,17 +178,17 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: #64748b;
+  color: var(--text-muted);
   font-family: 'DM Sans', system-ui, sans-serif;
 }
 
 .fieldInput {
   padding: 13px 16px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(var(--overlay-rgb), 0.04);
+  border: 1px solid rgba(var(--overlay-rgb), 0.09);
   border-radius: 10px;
   font-size: 15px;
-  color: #f8fafc;
+  color: var(--text-primary);
   font-family: 'DM Sans', system-ui, sans-serif;
   transition: border-color 0.18s ease, box-shadow 0.18s ease;
   caret-color: #22d3ee;
@@ -222,15 +222,15 @@
   cursor: pointer;
   transition: all 0.18s ease;
   font-family: 'DM Sans', system-ui, sans-serif;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #94a3b8;
+  background: rgba(var(--overlay-rgb), 0.04);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
+  color: var(--text-secondary);
 }
 
 .topicChip:hover {
   background: rgba(0, 222, 236, 0.07);
   border-color: rgba(0, 222, 236, 0.2);
-  color: #f8fafc;
+  color: var(--text-primary);
   transform: translateY(-1px);
 }
 
@@ -243,7 +243,7 @@
 .topicCount {
   font-size: 12px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-muted);
   font-family: 'DM Sans', system-ui, sans-serif;
 }
 
@@ -265,12 +265,12 @@
   border-radius: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(var(--overlay-rgb), 0.03);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
 }
 
 .themeOption:hover {
-  border-color: rgba(255, 255, 255, 0.16);
+  border-color: rgba(var(--overlay-rgb), 0.16);
   transform: translateY(-2px);
 }
 
@@ -306,7 +306,7 @@
 .themeLabel {
   font-size: 12px;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary);
   font-family: 'DM Sans', system-ui, sans-serif;
   letter-spacing: 0.01em;
 }
@@ -334,7 +334,7 @@
   align-items: center;
   justify-content: space-between;
   padding-top: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(var(--overlay-rgb), 0.06);
 }
 
 .backBtn {
@@ -348,12 +348,12 @@
   cursor: pointer;
   font-family: 'DM Sans', system-ui, sans-serif;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #64748b;
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
+  color: var(--text-muted);
   transition: all 0.18s ease;
 }
 
-.backBtn:hover { color: #f8fafc; border-color: rgba(255,255,255,0.15); }
+.backBtn:hover { color: var(--text-primary); border-color: rgba(var(--overlay-rgb),0.15); }
 
 .nextBtn {
   display: inline-flex;

@@ -13,8 +13,8 @@
 /* Featured card */
 .featuredCard {
   position: relative;
-  background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--surface-card);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
   border-radius: 16px;
   padding: 24px;
   display: flex;
@@ -69,7 +69,7 @@
   font-size: 20px;
   font-weight: 800;
   line-height: 1.25;
-  color: #f8fafc;
+  color: var(--text-primary);
   letter-spacing: -0.02em;
   margin: 0;
 }
@@ -77,7 +77,7 @@
 .featuredDesc {
   font-size: 13px;
   line-height: 1.65;
-  color: #94a3b8;
+  color: var(--text-secondary);
   margin: 0;
   flex: 1;
 }
@@ -85,10 +85,10 @@
 .editorNote {
   font-size: 12px;
   font-style: italic;
-  color: #64748b;
+  color: var(--text-muted);
   margin: 0;
   line-height: 1.5;
-  border-left: 2px solid rgba(255,255,255,0.1);
+  border-left: 2px solid rgba(var(--overlay-rgb),0.1);
   padding-left: 10px;
 }
 
@@ -100,8 +100,8 @@
 }
 
 .secondaryCard {
-  background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--surface-card);
+  border: 1px solid rgba(var(--overlay-rgb), 0.07);
   border-radius: 14px;
   padding: 20px;
   display: flex;
@@ -128,7 +128,7 @@
   font-size: 15px;
   font-weight: 700;
   line-height: 1.35;
-  color: #f8fafc;
+  color: var(--text-primary);
   letter-spacing: -0.01em;
   margin: 0;
 }
@@ -136,7 +136,7 @@
 .secondaryDesc {
   font-size: 12px;
   line-height: 1.6;
-  color: #94a3b8;
+  color: var(--text-secondary);
   margin: 0;
   flex: 1;
   display: -webkit-box;
@@ -152,10 +152,10 @@
   justify-content: center;
   width: 30px;
   height: 30px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(var(--overlay-rgb), 0.05);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
   border-radius: 7px;
-  color: #64748b;
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.18s ease;
   flex-shrink: 0;
@@ -198,7 +198,7 @@
   justify-content: center;
   font-size: 10px;
   font-weight: 700;
-  color: #080d18;
+  color: var(--bg-primary);
   font-family: 'DM Sans', system-ui, sans-serif;
   flex-shrink: 0;
 }
@@ -206,14 +206,14 @@
 .authorName {
   font-size: 11px;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-family: 'DM Sans', system-ui, sans-serif;
 }
 
 .readTime {
   font-size: 11px;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-muted);
   font-family: 'DM Sans', system-ui, sans-serif;
   letter-spacing: 0.04em;
 }

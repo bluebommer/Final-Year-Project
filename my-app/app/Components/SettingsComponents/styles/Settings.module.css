@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #080d18;
+  background-color: var(--bg-primary);
 }
 
 .pageBody {
@@ -23,7 +23,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 0;
   padding: 0 48px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(var(--overlay-rgb), 0.05);
 }
 
 /* Cache + Source Manager */
@@ -32,7 +32,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   padding: 40px 48px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(var(--overlay-rgb), 0.05);
 }
 
 .sourceWrapper {
@@ -59,7 +59,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   padding: 40px 48px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(var(--overlay-rgb), 0.05);
 }
 
 @media (max-width: 900px) {

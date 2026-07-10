@@ -18,9 +18,9 @@
   align-items: center;
   gap: 12px;
   padding: 10px 16px;
-  background: #111827;
+  background: var(--surface-card);
   border-radius: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(var(--overlay-rgb), 0.1);
   backdrop-filter: blur(12px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   pointer-events: auto;
@@ -38,7 +38,7 @@
 .message {
   font-size: 13px;
   font-weight: 500;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 /* Status-specific styles */
@@ -56,12 +56,12 @@
 .syncing {
   background: rgba(0, 222, 236, 0.85);
   backdrop-filter: blur(12px);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(var(--overlay-rgb), 0.2);
 }
 
 .syncing .icon,
 .syncing .message {
-  color: #080d18;
+  color: var(--bg-primary);
 }
 
 .syncing .icon svg {
@@ -83,7 +83,7 @@
   border-radius: 40px;
   font-size: 12px;
   font-weight: 600;
-  color: #080d18;
+  color: var(--bg-primary);
   font-family: 'DM Sans', system-ui, sans-serif;
   pointer-events: auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);

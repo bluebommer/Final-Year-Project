@@ -1,7 +1,7 @@
 /* Components/SettingsComponents/styles/Personalization.module.css */
 .personalization {
-  background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--surface-card);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
   border-radius: 20px;
   padding: 24px;
   height: 100%;
@@ -28,7 +28,7 @@
 .title {
   font-size: 20px;
   font-weight: 800;
-  color: #f8fafc;
+  color: var(--text-primary);
   letter-spacing: -0.02em;
   margin: 0;
 }
@@ -47,19 +47,19 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(var(--overlay-rgb), 0.06);
 }
 
 .topicName {
   font-size: 14px;
   font-weight: 500;
-  color: #f8fafc;
+  color: var(--text-primary);
   font-family: 'DM Sans', system-ui, sans-serif;
 }
 
 .actionBtn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(var(--overlay-rgb), 0.05);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
   border-radius: 20px;
   width: 28px;
   height: 28px;
@@ -69,7 +69,7 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-secondary);
   transition: all 0.2s ease;
 }
 
@@ -83,13 +83,13 @@
 .advancedBtn {
   margin-top: 16px;
   padding: 12px 0;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(var(--overlay-rgb), 0.04);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
   border-radius: 12px;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: #94a3b8;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: 'DM Sans', system-ui, sans-serif;

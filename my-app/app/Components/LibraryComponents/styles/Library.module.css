@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #080d18;
+  background-color: var(--bg-primary);
 }
 
 .pageBody {
@@ -47,24 +47,24 @@
   font-size: 36px;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #f8fafc;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .subtitle {
   font-size: 14px;
-  color: #64748b;
+  color: var(--text-muted);
   margin: 0;
 }
 
 .clearAllBtn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(var(--overlay-rgb), 0.05);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
   border-radius: 30px;
   padding: 8px 20px;
   font-size: 12px;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: 'DM Sans', system-ui, sans-serif;
@@ -85,8 +85,8 @@
 
 /* Card */
 .card {
-  background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--surface-card);
+  border: 1px solid rgba(var(--overlay-rgb), 0.07);
   border-radius: 20px;
   padding: 20px;
   transition: transform 0.2s ease, border-color 0.2s ease;
@@ -115,8 +115,8 @@
 }
 
 .removeBtn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(var(--overlay-rgb), 0.05);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
   border-radius: 20px;
   width: 26px;
   height: 26px;
@@ -124,7 +124,7 @@
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -139,7 +139,7 @@
   font-size: 18px;
   font-weight: 700;
   line-height: 1.35;
-  color: #f8fafc;
+  color: var(--text-primary);
   letter-spacing: -0.01em;
   margin: 0;
 }
@@ -159,7 +159,7 @@
   justify-content: center;
   font-size: 14px;
   font-weight: 700;
-  color: #080d18;
+  color: var(--bg-primary);
   flex-shrink: 0;
 }
 
@@ -172,12 +172,12 @@
 .authorName {
   font-size: 13px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .savedDate {
   font-size: 11px;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .cardFooter {
@@ -190,7 +190,7 @@
 .readTime {
   font-size: 11px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-muted);
   letter-spacing: 0.04em;
 }
 
@@ -213,9 +213,9 @@
 }
 
 .onlineOnlyBadge {
-  background: rgba(255, 255, 255, 0.05);
-  color: #64748b;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(var(--overlay-rgb), 0.05);
+  color: var(--text-muted);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
 }
 
 /* Empty state */
@@ -226,9 +226,9 @@
   justify-content: center;
   text-align: center;
   padding: 80px 20px;
-  background: #111827;
+  background: var(--surface-card);
   border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(var(--overlay-rgb), 0.06);
 }
 
 .emptyIcon {
@@ -240,13 +240,13 @@
 .emptyTitle {
   font-size: 20px;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
 .emptyDesc {
   font-size: 14px;
-  color: #64748b;
+  color: var(--text-muted);
   max-width: 300px;
 }
 

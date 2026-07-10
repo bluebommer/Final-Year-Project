@@ -3,7 +3,7 @@
   width: 240px;
   flex-shrink: 0;
   background: #0b0f18;
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: 1px solid rgba(var(--overlay-rgb), 0.06);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -33,7 +33,7 @@
   border-radius: 10px;
   font-size: 13px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: 'DM Sans', system-ui, sans-serif;
@@ -52,8 +52,8 @@
 }
 
 .sideNavItem:hover:not(.sideNavItemActive) {
-  background: rgba(255, 255, 255, 0.04);
-  color: #94a3b8;
+  background: rgba(var(--overlay-rgb), 0.04);
+  color: var(--text-secondary);
 }
 
 .userProfileBottom {
@@ -61,20 +61,20 @@
   align-items: center;
   gap: 12px;
   padding: 16px 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(var(--overlay-rgb), 0.06);
   margin-top: auto;
 }
 
 .userIcon {
   width: 36px;
   height: 36px;
-  background: #111827;
+  background: var(--surface-card);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #64748b;
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
+  color: var(--text-muted);
 }
 
 .userInfo {
@@ -87,7 +87,7 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: #64748b;
+  color: var(--text-muted);
   font-family: 'DM Sans', system-ui, sans-serif;
 }
 

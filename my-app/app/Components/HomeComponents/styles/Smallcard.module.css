@@ -10,8 +10,8 @@
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--surface-card);
+  border: 1px solid rgba(var(--overlay-rgb), 0.07);
   border-radius: 14px;
   overflow: hidden;
   transition: border-color 0.2s ease, transform 0.2s ease;
@@ -45,7 +45,7 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 1.35;
-  color: #f8fafc;
+  color: var(--text-primary);
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -56,7 +56,7 @@
 .description {
   font-size: 12px;
   line-height: 1.5;
-  color: #94a3b8;
+  color: var(--text-secondary);
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -83,7 +83,7 @@
 .authorName {
   font-size: 11px;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -91,7 +91,7 @@
 
 .readTime {
   font-size: 11px;
-  color: #64748b;
+  color: var(--text-muted);
   margin-left: auto;
   white-space: nowrap;
 }
@@ -123,7 +123,7 @@
   justify-content: center;
   font-size: 24px;
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(var(--overlay-rgb), 0.2);
 }
 
 @media (max-width: 600px) {

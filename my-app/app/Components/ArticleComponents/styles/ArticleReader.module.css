@@ -2,12 +2,12 @@
 
 .container {
   min-height: 100vh;
-  background-color: #080d18;
+  background-color: var(--bg-primary);
   transition: background-color 0.2s ease;
 }
 
 .lightTheme {
-  background-color: #f8fafc;
+  background-color: var(--text-primary);
 }
 
 .lightTheme .articleBody,
@@ -24,7 +24,7 @@
 
 .lightTheme .articleBody p,
 .lightTheme .articleBody h2 {
-  color: #1e293b;
+  color: var(--surface-alt);
 }
 
 .lightTheme .actionBar,
@@ -50,7 +50,7 @@
   left: 0;
   width: 100%;
   height: 3px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(var(--overlay-rgb), 0.1);
   z-index: 1000;
 }
 
@@ -105,7 +105,7 @@
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.02em;
-  color: #f8fafc;
+  color: var(--text-primary);
   margin-bottom: 32px;
 }
 
@@ -133,7 +133,7 @@
   justify-content: center;
   font-size: 18px;
   font-weight: 700;
-  color: #080d18;
+  color: var(--bg-primary);
 }
 
 .authorInfo {
@@ -145,12 +145,12 @@
 .authorName {
   font-size: 16px;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .publishDate {
   font-size: 13px;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 /* Sticky Action Bar */
@@ -160,7 +160,7 @@
   z-index: 200;
   background: rgba(8, 13, 24, 0.85);
   backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(var(--overlay-rgb), 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -182,7 +182,7 @@
   border: none;
   font-size: 13px;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 8px 12px;
   border-radius: 30px;
@@ -191,7 +191,7 @@
 }
 
 .actionBtn:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(var(--overlay-rgb), 0.08);
   color: #22d3ee;
 }
 
@@ -207,10 +207,10 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(var(--overlay-rgb), 0.04);
   padding: 4px 16px;
   border-radius: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(var(--overlay-rgb), 0.08);
 }
 
 .controlGroup {
@@ -222,13 +222,13 @@
 .controlLabel {
   font-size: 11px;
   font-weight: 700;
-  color: #64748b;
+  color: var(--text-muted);
   letter-spacing: 0.05em;
 }
 
 .controlBtn {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(var(--overlay-rgb), 0.08);
+  border: 1px solid rgba(var(--overlay-rgb), 0.1);
   border-radius: 16px;
   width: 28px;
   height: 28px;
@@ -237,7 +237,7 @@
   justify-content: center;
   font-size: 14px;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -251,7 +251,7 @@
 .controlValue {
   font-size: 12px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--text-primary);
   min-width: 42px;
   text-align: center;
 }
@@ -259,12 +259,12 @@
 .divider {
   width: 1px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(var(--overlay-rgb), 0.15);
 }
 
 .themeToggle {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(var(--overlay-rgb), 0.08);
+  border: 1px solid rgba(var(--overlay-rgb), 0.1);
   border-radius: 24px;
   width: 36px;
   height: 36px;
@@ -272,7 +272,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #f8fafc;
+  color: var(--text-primary);
   transition: all 0.2s;
 }
 
@@ -303,7 +303,7 @@
   font-weight: 700;
   margin: 2em 0 0.8em;
   letter-spacing: -0.01em;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .articleBody h3 {
@@ -326,7 +326,7 @@
   max-width: 740px;
   margin: 0 auto 64px;
   padding: 32px 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(var(--overlay-rgb), 0.08);
   text-align: center;
 }
 
@@ -336,7 +336,7 @@
   justify-content: center;
   gap: 12px;
   font-size: 12px;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .footerDot {

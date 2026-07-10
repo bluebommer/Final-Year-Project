@@ -37,7 +37,7 @@
   margin-top: 48px; /* more separation from the feed */
   text-align: center;
   padding: 24px 0 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(var(--overlay-rgb), 0.06);
 }
 
 .discoverLink {
@@ -65,5 +65,5 @@
 .empty {
   padding: 40px 0;
   text-align: center;
-  color: #64748b;
+  color: var(--text-muted);
 }
