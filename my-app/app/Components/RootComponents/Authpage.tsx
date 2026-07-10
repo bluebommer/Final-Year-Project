@@ -4,8 +4,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
 
-type AuthMode  = "signup" | "signin";
+type AuthMode  = "signup" | "signin" | "forgot";
 type SignupStep = "form" | "verify";
+type ForgotStep = "request" | "reset";
 
 export const HAS_ACCOUNT_FLAG = "readLite_hasAccount";
 
@@ -253,6 +254,209 @@ function VerifyEmailStep({
   );
 }
 
+// ─── Forgot Password: request step ────────────────────────────────────────────
+
+function ForgotPasswordRequestStep({
+  onCodeSent,
+  onBack,
+}: {
+  onCodeSent: (email: string) => void;
+  onBack: () => void;
+}) {
+  const [email,   setEmail]   = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error,   setError]   = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error ?? "Something went wrong."); return; }
+      onCodeSent(email.toLowerCase().trim());
+    } catch {
+      setError("Network error. Please check your connection.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form className="auth__form auth__form-fields" onSubmit={handleSubmit}>
+      <p className="auth__form-title">Reset your password</p>
+      <p className="auth__form-subtitle">
+        Enter your account email and we&apos;ll send you a reset code, if an account exists.
+      </p>
+
+      {error && <ErrorBanner message={error} />}
+
+      <div className="auth__field">
+        <label className="auth__label" htmlFor="forgot-email">Email address</label>
+        <input id="forgot-email" className="auth__input" type="email" placeholder="ada@readlite.io"
+          value={email} onChange={(e) => setEmail(e.target.value)}
+          required autoComplete="email" />
+      </div>
+
+      <button className="auth__submit" type="submit" disabled={loading}>
+        {loading ? "Sending…" : "Send reset code →"}
+      </button>
+
+      <button type="button" className="auth__verify-back" onClick={onBack}>
+        ← Back to sign in
+      </button>
+    </form>
+  );
+}
+
+// ─── Forgot Password: reset step ──────────────────────────────────────────────
+
+function ResetPasswordStep({
+  email,
+  onReset,
+  onBack,
+}: {
+  email: string;
+  onReset: (user: { name: string; gender: string; email: string }) => void;
+  onBack: () => void;
+}) {
+  const [code,            setCode]            = useState("");
+  const [newPassword,     setNewPassword]     = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPw,          setShowPw]          = useState(false);
+  const [loading,         setLoading]         = useState(false);
+  const [resending,       setResending]       = useState(false);
+  const [error,           setError]           = useState("");
+  const [success,         setSuccess]         = useState("");
+  const [countdown,       setCountdown]       = useState(60);
+
+  useEffect(() => {
+    if (countdown <= 0) return;
+    const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [countdown]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    if (code.replace(/\D/g, "").length < 6) {
+      setError("Please enter the full 6-digit code.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code, newPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error ?? "Reset failed."); return; }
+      onReset({ name: data.user.name, gender: data.user.gender, email: data.user.email });
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    setError("");
+    setSuccess("");
+    setResending(true);
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error ?? "Could not resend code."); return; }
+      setSuccess("New code sent, if an account exists for that email.");
+      setCode("");
+      setCountdown(60);
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setResending(false);
+    }
+  };
+
+  return (
+    <form className="auth__form auth__form-fields" onSubmit={handleSubmit}>
+      <div className="auth__verify-icon">🔒</div>
+      <p className="auth__form-title">Enter your reset code</p>
+      <p className="auth__verify-subtitle">We sent a 6-digit code to</p>
+      <p className="auth__verify-email">{email}</p>
+
+      {error   && <ErrorBanner   message={error}   />}
+      {success && <SuccessBanner message={success} />}
+
+      <CodeInput value={code} onChange={setCode} />
+
+      <div className="auth__field" style={{ marginTop: "0.75rem" }}>
+        <label className="auth__label" htmlFor="new-password">New password</label>
+        <div className="auth__password-wrap">
+          <input id="new-password" className="auth__input" type={showPw ? "text" : "password"}
+            placeholder="Min. 8 characters" value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required minLength={8} autoComplete="new-password" />
+          <button type="button" className="auth__pw-toggle" onClick={() => setShowPw((v) => !v)}
+            aria-label={showPw ? "Hide password" : "Show password"}>
+            {showPw ? "🙈" : "👁"}
+          </button>
+        </div>
+        <PasswordStrengthBar password={newPassword} />
+      </div>
+
+      <div className="auth__field">
+        <label className="auth__label" htmlFor="confirm-password">Confirm new password</label>
+        <input id="confirm-password" className="auth__input" type={showPw ? "text" : "password"}
+          placeholder="Re-enter your new password" value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required autoComplete="new-password" />
+      </div>
+
+      <button
+        className="auth__submit"
+        type="submit"
+        disabled={loading || code.replace(/\D/g, "").length < 6}
+      >
+        {loading ? "Resetting…" : "Reset password →"}
+      </button>
+
+      <p className="auth__verify-resend">
+        Didn&apos;t receive it?{" "}
+        {countdown > 0 ? (
+          <span>Resend in {countdown}s</span>
+        ) : (
+          <button
+            type="button"
+            className="auth__verify-resend-btn"
+            onClick={handleResend}
+            disabled={resending}
+          >
+            {resending ? "Sending…" : "Resend code"}
+          </button>
+        )}
+      </p>
+
+      <button type="button" className="auth__verify-back" onClick={onBack}>
+        ← Back to sign in
+      </button>
+    </form>
+  );
+}
+
 // ─── Sign-Up Form ─────────────────────────────────────────────────────────────
 
 function SignUpForm({ onCodeSent, topics }: { onCodeSent: (email: string) => void; topics: string[] }) {
@@ -356,15 +560,16 @@ function SignUpForm({ onCodeSent, topics }: { onCodeSent: (email: string) => voi
 
 function SignInForm({
   onSubmit,
+  onForgotPassword,
 }: {
   onSubmit: (user: { name: string; gender: string; email: string }) => void;
+  onForgotPassword: () => void;
 }) {
   const [email,    setEmail]    = useState("");
   const [password, setPassword] = useState("");
   const [showPw,   setShowPw]   = useState(false);
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState("");
-  const [resetNotice, setResetNotice] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -412,18 +617,13 @@ function SignInForm({
       </div>
 
       <div style={{ textAlign: "right", marginTop: "-0.25rem" }}>
-        <button type="button" onClick={() => setResetNotice(true)} style={{
+        <button type="button" onClick={onForgotPassword} style={{
           background: "none", border: "none", cursor: "pointer",
           fontFamily: "Manrope, sans-serif", fontSize: "0.75rem",
           fontWeight: 600, color: "var(--text-sub)",
         }}>
           Forgot password?
         </button>
-        {resetNotice && (
-          <p style={{ fontSize: "0.7rem", color: "var(--text-sub)", marginTop: "0.35rem" }}>
-            Self-serve password reset isn&apos;t available yet — contact support to reset your password.
-          </p>
-        )}
       </div>
 
       <button className="auth__submit" type="submit" disabled={loading}>
@@ -440,6 +640,8 @@ export default function AuthPage({ onAuthComplete, topics, initialMode }: AuthPa
   const [mode,         setMode]         = useState<AuthMode>(initialMode ?? "signup");
   const [signupStep,   setSignupStep]   = useState<SignupStep>("form");
   const [pendingEmail, setPendingEmail] = useState("");
+  const [forgotStep,   setForgotStep]   = useState<ForgotStep>("request");
+  const [resetEmail,   setResetEmail]   = useState("");
   const [googleError,  setGoogleError]  = useState("");
   // Loaded only on this page (not the root layout) so every other route
   // skips this script entirely — see the removed <Script> in app/layout.tsx.
@@ -503,10 +705,30 @@ export default function AuthPage({ onAuthComplete, topics, initialMode }: AuthPa
     setMode(next);
     setSignupStep("form");
     setPendingEmail("");
+    setForgotStep("request");
+    setResetEmail("");
     setGoogleError("");
   };
 
+  const handleForgotPassword = () => {
+    setMode("forgot");
+    setForgotStep("request");
+    setResetEmail("");
+  };
+
+  const handleResetCodeSent = (email: string) => {
+    setResetEmail(email);
+    setForgotStep("reset");
+  };
+
+  const handleBackToSignIn = () => {
+    setMode("signin");
+    setForgotStep("request");
+    setResetEmail("");
+  };
+
   const isVerifyStep = mode === "signup" && signupStep === "verify";
+  const hideTopSection = isVerifyStep || mode === "forgot";
 
   return (
     <main className="auth">
@@ -546,7 +768,7 @@ export default function AuthPage({ onAuthComplete, topics, initialMode }: AuthPa
         </aside>
 
         <section className="auth__right">
-          {!isVerifyStep && (
+          {!hideTopSection && (
             <>
               <div className="auth__tabs" role="tablist">
                 <button
@@ -610,10 +832,18 @@ export default function AuthPage({ onAuthComplete, topics, initialMode }: AuthPa
           )}
 
           {mode === "signin" && (
-            <SignInForm onSubmit={handleAuthComplete} />                      
+            <SignInForm onSubmit={handleAuthComplete} onForgotPassword={handleForgotPassword} />
           )}
 
-          {!isVerifyStep && (
+          {mode === "forgot" && forgotStep === "request" && (
+            <ForgotPasswordRequestStep onCodeSent={handleResetCodeSent} onBack={handleBackToSignIn} />
+          )}
+
+          {mode === "forgot" && forgotStep === "reset" && (
+            <ResetPasswordStep email={resetEmail} onReset={handleAuthComplete} onBack={handleBackToSignIn} />
+          )}
+
+          {!hideTopSection && (
             <p className="auth__switch">
               {mode === "signup" ? "Already have an account?" : "New to ReadLite?"}
               <button onClick={() => switchMode(mode === "signup" ? "signin" : "signup")}>

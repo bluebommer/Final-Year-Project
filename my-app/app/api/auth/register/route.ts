@@ -5,19 +5,11 @@ import { User } from "@/models/User";
 import { EmailVerification } from "../../../../models/EmailVerification";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { sendVerificationEmail } from "../../../../lib/mailer";
+import { validatePassword } from "@/lib/validation";
 import crypto from "crypto";
 
 const SALT_ROUNDS = 12;
 const CODE_EXPIRY_MINUTES = 15;
-
-function validatePassword(password: string): string | null {
-  if (password.length < 8)             return "Password must be at least 8 characters.";
-  if (!/[A-Z]/.test(password))         return "Password must contain at least one uppercase letter.";
-  if (!/[a-z]/.test(password))         return "Password must contain at least one lowercase letter.";
-  if (!/[0-9]/.test(password))         return "Password must contain at least one number.";
-  if (!/[^A-Za-z0-9]/.test(password))  return "Password must contain at least one special character.";
-  return null;
-}
 
 function generateCode(): string {
   return String(crypto.randomInt(100000, 999999));
