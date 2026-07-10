@@ -6,12 +6,17 @@ const Navbar = dynamic(() => import('../Components/HomeComponents/Navbar'));
 const DiscoverContent = dynamic(() => import('../Components/DiscoverComponents/DiscoverContent'));
 
 async function getArticles(): Promise<Article[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/articles`, {
-    cache: 'no-store',
-  });
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.articles || [];
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/articles`, {
+      cache: 'no-store',
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.articles || [];
+  } catch (err) {
+    console.error('Failed to fetch articles:', err);
+    return [];
+  }
 }
 
 export default async function DiscoverPage() {

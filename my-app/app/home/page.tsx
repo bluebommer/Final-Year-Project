@@ -20,16 +20,24 @@ interface UserPrefs {
   customFeeds: { id: string; name: string; url: string }[];
 }
 
+// Any failure here (bad NEXT_PUBLIC_BASE_URL, network error, non-OK
+// response) must resolve to [], never throw — matches getUserPrefs()'s rule
+// below: a broken read must never break /home itself.
 async function getArticles(): Promise<Article[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/articles`, {
-    cache: 'no-store',
-  });
-  if (!res.ok) {
-    console.error('Failed to fetch articles');
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/articles`, {
+      cache: 'no-store',
+    });
+    if (!res.ok) {
+      console.error('Failed to fetch articles: non-OK response', res.status);
+      return [];
+    }
+    const data = await res.json();
+    return data.articles || [];
+  } catch (err) {
+    console.error('Failed to fetch articles:', err);
     return [];
   }
-  const data = await res.json();
-  return data.articles || [];
 }
 
 // Any failure here (bad/expired cookie, DB error) must resolve to `null`,
