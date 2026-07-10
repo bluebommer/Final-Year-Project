@@ -77,16 +77,17 @@ export async function GET(
     }
 
     // ── 5. Scrape full content if truncated ───────────────────
-    // Dev.to articles already have full body_html — skip scraping
-    const isDevTo = article.source === 'Dev.to';
-
+    // NOTE: Dev.to's bulk list endpoint (used in /api/articles) never
+    // includes body_html/body_markdown — those only exist on Dev.to's
+    // single-article endpoint, which we don't call. So Dev.to content is
+    // just as truncated as everyone else's and must go through the same
+    // scraping fallback below (previously this was skipped on the false
+    // assumption that Dev.to's list response already had full content).
     const isTruncated =
-      !isDevTo && (
-        !article.content ||
-        article.content.includes('[+') ||
-        isBadDescription(article.content) ||
-        article.content.length < 300
-      );
+      !article.content ||
+      article.content.includes('[+') ||
+      isBadDescription(article.content) ||
+      article.content.length < 300;
 
     let fullContent = article.content ?? '';
 
