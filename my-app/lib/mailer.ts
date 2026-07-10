@@ -1,14 +1,24 @@
-import nodemailer from "nodemailer";
+import sgMail from "@sendgrid/mail";
 
-const transporter = nodemailer.createTransport({
-  host:   process.env.SMTP_HOST,
-  port:   Number(process.env.SMTP_PORT ?? 587),
-  secure: process.env.SMTP_SECURE === "true", // true for port 465
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+sgMail.setApiKey(process.env.SENDGRID_API_KEY ?? "");
+// Must be a Single Sender verified in SendGrid (no custom domain needed —
+// just a confirmation-link click on an email address you own), or an
+// authenticated domain if one's ever added later.
+const FROM = process.env.EMAIL_FROM ?? "";
+
+async function send(opts: { to: string; subject: string; text: string; html: string }): Promise<void> {
+  if (!FROM) throw new Error("EMAIL_FROM is not configured.");
+  try {
+    // @sendgrid/mail rejects its promise on API-level failures (bad key,
+    // unverified sender, etc.), so callers' existing try/catch blocks work
+    // correctly without extra handling.
+    await sgMail.send({ from: FROM, ...opts });
+  } catch (err) {
+    const sgError = err as { response?: { body?: unknown } };
+    console.error("[SENDGRID]", sgError.response?.body ?? err);
+    throw err;
+  }
+}
 
 function codeEmailHtml(opts: { title: string; greeting: string; code: string; footerNote: string }): string {
   return `
@@ -81,8 +91,7 @@ export async function sendVerificationEmail(
   code: string,
   firstName: string
 ): Promise<void> {
-  await transporter.sendMail({
-    from: `"ReadLite" <${process.env.SMTP_FROM ?? process.env.SMTP_USER}>`,
+  await send({
     to: email,
     subject: "Your ReadLite verification code",
     text: `Hi ${firstName},\n\nYour verification code is: ${code}\n\nIt expires in 15 minutes.\n\nIf you didn't request this, you can ignore this email.\n\n— The ReadLite Team`,
@@ -100,8 +109,7 @@ export async function sendPasswordResetEmail(
   code: string,
   firstName: string
 ): Promise<void> {
-  await transporter.sendMail({
-    from: `"ReadLite" <${process.env.SMTP_FROM ?? process.env.SMTP_USER}>`,
+  await send({
     to: email,
     subject: "Reset your ReadLite password",
     text: `Hi ${firstName},\n\nYour password reset code is: ${code}\n\nIt expires in 15 minutes.\n\nIf you didn't request this, you can safely ignore this email — your password won't be changed.\n\n— The ReadLite Team`,
@@ -118,8 +126,7 @@ export async function sendGoogleAccountNotice(
   email: string,
   firstName: string
 ): Promise<void> {
-  await transporter.sendMail({
-    from: `"ReadLite" <${process.env.SMTP_FROM ?? process.env.SMTP_USER}>`,
+  await send({
     to: email,
     subject: "About your ReadLite password reset request",
     text: `Hi ${firstName},\n\nSomeone requested a password reset for this ReadLite account, but it was created with "Sign in with Google" and doesn't have a password. Please use the "Continue with Google" button on the sign-in page instead.\n\nIf this wasn't you, you can safely ignore this email.\n\n— The ReadLite Team`,

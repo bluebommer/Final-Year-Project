@@ -31,7 +31,8 @@ Required in `my-app/.env.local` (gitignored, never commit real values):
 - `GUARDIAN_API_KEY` — The Guardian content API
 - `DEV_TO_API_KEY` — optional, raises Dev.to rate limits
 - `MEDIUM_USERNAME` — Medium RSS handle (fetched via rss2json proxy)
-- `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` — nodemailer, used for email verification codes
+- `SENDGRID_API_KEY` — SendGrid, used for email verification codes and password reset (see `lib/mailer.ts`)
+- `EMAIL_FROM` — required; must be a Single Sender verified in SendGrid (an email address you own, verified via confirmation link — no custom domain needed) or an authenticated domain if one's added later
 - `NEXT_PUBLIC_BASE_URL` — base URL used by server components/route handlers to call this app's own API routes (defaults to `http://localhost:3000`)
 
 ## Architecture
