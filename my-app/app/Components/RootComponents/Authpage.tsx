@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Script from "next/script";
 
 type AuthMode  = "signup" | "signin";
 type SignupStep = "form" | "verify";
@@ -344,7 +345,8 @@ function SignUpForm({ onCodeSent, topics }: { onCodeSent: (email: string) => voi
 
       <p className="auth__terms">
         By creating an account you agree to our{" "}
-        <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        <a href="/legal/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a> and{" "}
+        <a href="/legal/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
       </p>
     </form>
   );
@@ -362,6 +364,7 @@ function SignInForm({
   const [showPw,   setShowPw]   = useState(false);
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState("");
+  const [resetNotice, setResetNotice] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -409,13 +412,18 @@ function SignInForm({
       </div>
 
       <div style={{ textAlign: "right", marginTop: "-0.25rem" }}>
-        <button type="button" style={{
+        <button type="button" onClick={() => setResetNotice(true)} style={{
           background: "none", border: "none", cursor: "pointer",
           fontFamily: "Manrope, sans-serif", fontSize: "0.75rem",
           fontWeight: 600, color: "var(--text-sub)",
         }}>
           Forgot password?
         </button>
+        {resetNotice && (
+          <p style={{ fontSize: "0.7rem", color: "var(--text-sub)", marginTop: "0.35rem" }}>
+            Self-serve password reset isn&apos;t available yet — contact support to reset your password.
+          </p>
+        )}
       </div>
 
       <button className="auth__submit" type="submit" disabled={loading}>
@@ -433,6 +441,9 @@ export default function AuthPage({ onAuthComplete, topics, initialMode }: AuthPa
   const [signupStep,   setSignupStep]   = useState<SignupStep>("form");
   const [pendingEmail, setPendingEmail] = useState("");
   const [googleError,  setGoogleError]  = useState("");
+  // Loaded only on this page (not the root layout) so every other route
+  // skips this script entirely — see the removed <Script> in app/layout.tsx.
+  const [googleReady,  setGoogleReady]  = useState(false);
 
   // Wraps the parent's onAuthComplete and redirects to /home               // ← NEW
   const handleAuthComplete = (user: { name: string; gender: string; email: string }) => {
@@ -460,6 +471,10 @@ export default function AuthPage({ onAuthComplete, topics, initialMode }: AuthPa
 
   const triggerGooglePopup = () => {
     setGoogleError("");
+    if (!googleReady || !window.google) {
+      setGoogleError("Still loading Google sign-in — try again in a moment.");
+      return;
+    }
     window.google.accounts.id.initialize({
       client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
       callback: async ({ credential }: { credential: string }) => {
@@ -560,6 +575,12 @@ export default function AuthPage({ onAuthComplete, topics, initialMode }: AuthPa
                   ? "Create your account to save your curiosity profile."
                   : "Sign in to pick up exactly where you left off."}
               </p>
+
+              <Script
+                src="https://accounts.google.com/gsi/client"
+                strategy="afterInteractive"
+                onLoad={() => setGoogleReady(true)}
+              />
 
               {googleError && <ErrorBanner message={googleError} />}
 

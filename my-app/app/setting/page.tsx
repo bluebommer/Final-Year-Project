@@ -11,7 +11,6 @@ import PerformanceEngine from '../Components/SettingsComponents/Performanceengin
 import Navbar from '../Components/HomeComponents/Navbar';
 
 // New / modified components
-import SettingsSidebar from '../Components/SettingsComponents/SettingsSidebar';
 import Personalization from '../Components/SettingsComponents/Personalization';
 import SettingsFooter from '../Components/SettingsComponents/SettingsFooter';
 const Sidebar = dynamic(() => import('../Components/HomeComponents/SideBar'));

@@ -35,6 +35,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={manrope.variable} suppressHydrationWarning>
+      <head>
+        {/* Warms the connection to the fixed, known-in-advance image CDNs
+            behind our aggregated sources, so whichever article ends up as
+            the Hero banner's LCP image loads faster. GNews/custom RSS feeds
+            proxy arbitrary publisher domains and can't be preconnected. */}
+        <link rel="preconnect" href="https://media.guim.co.uk" />
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+        <link rel="preconnect" href="https://static01.nyt.com" />
+        <link rel="preconnect" href="https://miro.medium.com" />
+      </head>
       <body>
         {/* Sets data-theme before hydration/paint to avoid a dark->light
             flash for users who've chosen light mode. Keep the storage key
@@ -44,7 +54,6 @@ export default function RootLayout({
           {`(function(){try{var t=localStorage.getItem('readLite_theme');document.documentElement.setAttribute('data-theme', t==='light'?'light':'dark');}catch(e){}})();`}
         </Script>
         {children}
-        <Script src="https://accounts.google.com/gsi/client" strategy="beforeInteractive" />
           <OfflineIndicator />
           <ServiceWorkerRegistrar />
       </body>

@@ -18,6 +18,7 @@ interface DiscoverContentProps {
 export default function DiscoverContent({ articles }: DiscoverContentProps) {
   const [query, setQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [resultsOverride, setResultsOverride] = useState<{ label: string; items: Article[] } | null>(null);
 
   const searchResults = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -33,10 +34,32 @@ export default function DiscoverContent({ articles }: DiscoverContentProps) {
   }, [articles, activeCategory]);
 
   function selectCategory(category: string) {
+    setResultsOverride(null);
     setActiveCategory((prev) => (prev === category ? null : category));
   }
 
-  const showingResults = query.trim().length > 0 || activeCategory !== null;
+  function clearResults() {
+    setQuery('');
+    setActiveCategory(null);
+    setResultsOverride(null);
+  }
+
+  function showAllArticles() {
+    setQuery('');
+    setActiveCategory(null);
+    setResultsOverride({ label: 'All Articles', items: articles });
+  }
+
+  function showEditorsPicks() {
+    const staffPicks = articles.filter((a) => a.isStaffPick);
+    setQuery('');
+    setActiveCategory(null);
+    setResultsOverride({ label: "Editors' Picks", items: staffPicks.length > 0 ? staffPicks : articles });
+  }
+
+  const showingResults = query.trim().length > 0 || activeCategory !== null || resultsOverride !== null;
+  const resultsItems = query.trim() ? searchResults : resultsOverride ? resultsOverride.items : categoryResults;
+  const resultsTitle = query.trim() ? `Results for "${query.trim()}"` : resultsOverride ? resultsOverride.label : activeCategory;
 
   return (
     <>
@@ -46,28 +69,20 @@ export default function DiscoverContent({ articles }: DiscoverContentProps) {
         <section className={styles.section}>
           <div className={styles.sectionInner}>
             <div className={styles.resultsHeader}>
-              <h2 className={styles.resultsTitle}>
-                {query.trim() ? `Results for "${query.trim()}"` : activeCategory}
-              </h2>
-              <button
-                className={styles.clearResultsBtn}
-                onClick={() => {
-                  setQuery('');
-                  setActiveCategory(null);
-                }}
-              >
+              <h2 className={styles.resultsTitle}>{resultsTitle}</h2>
+              <button className={styles.clearResultsBtn} onClick={clearResults}>
                 ← Back to Discover
               </button>
             </div>
-            <ArticleGrid articles={query.trim() ? searchResults : categoryResults} />
+            <ArticleGrid articles={resultsItems} />
           </div>
         </section>
       ) : (
         <>
           <TrendingNow articles={articles} />
-          <Collections articles={articles} onSelectCategory={selectCategory} />
+          <Collections articles={articles} onSelectCategory={selectCategory} onBrowseAll={showAllArticles} />
           <CategoryGrid articles={articles} onSelectCategory={selectCategory} />
-          <EditorsPicks articles={articles} />
+          <EditorsPicks articles={articles} onSeeAll={showEditorsPicks} />
           <RisingWriters articles={articles} />
         </>
       )}

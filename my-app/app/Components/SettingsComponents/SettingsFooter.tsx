@@ -13,10 +13,10 @@ export default function SettingsFooter() {
         </span>
       </div>
       <div className={styles.links}>
-        <a href="#" className={styles.link}>
+        <a href="/legal/privacy" target="_blank" rel="noopener noreferrer" className={styles.link}>
           PRIVACY PROTOCOL
         </a>
-        <a href="#" className={styles.link}>
+        <a href="/legal/terms" target="_blank" rel="noopener noreferrer" className={styles.link}>
           LEGAL FRAMEWORK
         </a>
       </div>

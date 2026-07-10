@@ -18,9 +18,10 @@ const PRESETS = [
 interface CollectionsProps {
   articles: Article[];
   onSelectCategory: (category: string) => void;
+  onBrowseAll: () => void;
 }
 
-export default function Collections({ articles, onSelectCategory }: CollectionsProps) {
+export default function Collections({ articles, onSelectCategory, onBrowseAll }: CollectionsProps) {
   const [hovered, setHovered] = useState<string | null>(null);
 
   const collections = useMemo(() => {
@@ -47,7 +48,7 @@ export default function Collections({ articles, onSelectCategory }: CollectionsP
   return (
     <section className={styles.section}>
       <div className={styles.sectionInner}>
-        <SectionHeader label="CURATED" title="Collections" action="Browse all" />
+        <SectionHeader label="CURATED" title="Collections" action="Browse all" onAction={onBrowseAll} />
         <div className={styles.grid}>
           {collections.map((col) => (
             <article

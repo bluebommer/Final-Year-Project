@@ -3,11 +3,27 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import styles from './styles/Sidebar.module.css';
 import PWAInstall from '../Management Components/Pwainstall';
+import { useSyncStatus } from '@/lib/useSyncStatus';
+import { getReadingStreakDays } from '@/lib/offlineDB';
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { online, pending, syncing } = useSyncStatus();
+  const [streak, setStreak] = useState(0);
+
+  useEffect(() => {
+    function load() {
+      getReadingStreakDays().then(setStreak);
+    }
+    load();
+    window.addEventListener('readlite:db-changed', load);
+    return () => window.removeEventListener('readlite:db-changed', load);
+  }, []);
+
+  const statusLabel = syncing ? 'Syncing…' : !online ? 'Offline' : pending > 0 ? `${pending} pending` : 'Synced';
 
   const navItems = [
     { name: 'HOME', href: '/home', icon: (
@@ -28,6 +44,12 @@ export default function Sidebar() {
         <path d="m21 21-4.35-4.35"/>
       </svg>
     )},
+    { name: 'HISTORY', href: '/history', icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="12" cy="12" r="9"/>
+        <polyline points="12 7 12 12 15.5 14"/>
+      </svg>
+    )},
     { name: 'SETTINGS', href: '/setting', icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="12" r="3"/>
@@ -46,8 +68,8 @@ export default function Sidebar() {
           </svg>
         </div>
         <div className={styles.profileInfo}>
-          <span className={styles.profileName}>PREMIUM READER</span>
-          <span className={styles.profileStatus}>SYNC ACTIVE</span>
+          <span className={styles.profileName}>READER</span>
+          <span className={styles.profileStatus}>{statusLabel}</span>
         </div>
       </div>
       <nav className={styles.sideNav}>
@@ -68,9 +90,9 @@ export default function Sidebar() {
       <PWAInstall />
       <div className={styles.streakCard}>
         <span className={styles.streakLabel}>READING STREAK</span>
-        <span className={styles.streakValue}>12 Days</span>
+        <span className={styles.streakValue}>{streak === 0 ? 'Start today' : `${streak} Day${streak === 1 ? '' : 's'}`}</span>
         <div className={styles.streakBar}>
-          <div className={styles.streakFill} />
+          <div className={styles.streakFill} style={{ width: `${Math.min(100, (streak / 7) * 100)}%` }} />
         </div>
       </div>
     </aside>

@@ -11,6 +11,7 @@ const SectionHeader = dynamic(() => import('./Sectionheader'));
 
 interface EditorsPicksProps {
   articles: Article[];
+  onSeeAll: () => void;
 }
 
 function formatReadTime(readTime: string): string {
@@ -56,7 +57,7 @@ function SecondaryPickCard({ pick, isSaved, onToggleSave }: {
   );
 }
 
-export default function EditorsPicks({ articles }: EditorsPicksProps) {
+export default function EditorsPicks({ articles, onSeeAll }: EditorsPicksProps) {
   const [saved, setSaved] = useState<Set<string>>(new Set());
 
   // Real staff picks when available; pad with the most recent articles otherwise.
@@ -94,7 +95,7 @@ export default function EditorsPicks({ articles }: EditorsPicksProps) {
   return (
     <section className={styles.section}>
       <div className={styles.sectionInner}>
-        <SectionHeader label="HANDPICKED" title="Editors' Picks" action="See all picks" />
+        <SectionHeader label="HANDPICKED" title="Editors' Picks" action="See all picks" onAction={onSeeAll} />
         <div className={styles.layout}>
 
           {/* Featured pick */}

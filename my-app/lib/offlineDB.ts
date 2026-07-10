@@ -15,11 +15,12 @@
 import type { Article } from "@/app/types/article";
 
 export const DB_NAME = "readlite-db";
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 
 const STORE_SAVED = "savedArticles";
 const STORE_SETTINGS = "settings";
 const STORE_SYNC_QUEUE = "syncQueue";
+const STORE_HISTORY = "readHistory";
 
 // Cache Storage bucket names used by public/sw.js — kept in sync manually
 // (the SW is an unbundled classic script and can't import this constant).
@@ -69,6 +70,9 @@ function openDB(): Promise<IDBDatabase> {
       }
       if (!db.objectStoreNames.contains(STORE_SYNC_QUEUE)) {
         db.createObjectStore(STORE_SYNC_QUEUE, { keyPath: "id", autoIncrement: true });
+      }
+      if (!db.objectStoreNames.contains(STORE_HISTORY)) {
+        db.createObjectStore(STORE_HISTORY, { keyPath: "id" });
       }
     };
     req.onsuccess = () => resolve(req.result);
@@ -154,6 +158,73 @@ export async function getStorageSummary(): Promise<StorageSummary> {
   }
 
   return { articleCount: articles.length, approxBytes, quotaBytes, usageBytes };
+}
+
+// ---- Reading history ----
+
+export interface HistoryEntry extends Article {
+  readAt: string;
+}
+
+const MAX_HISTORY_ENTRIES = 200;
+
+export async function markArticleRead(article: Article): Promise<void> {
+  const entry: HistoryEntry = { ...article, readAt: new Date().toISOString() };
+  await runTx<IDBValidKey>(STORE_HISTORY, "readwrite", (store) => store.put(entry));
+
+  // Cap history size — trim oldest entries beyond the limit.
+  const all = await runTx<HistoryEntry[]>(STORE_HISTORY, "readonly", (store) => store.getAll());
+  if (all.length > MAX_HISTORY_ENTRIES) {
+    const toRemove = all
+      .sort((a, b) => new Date(a.readAt).getTime() - new Date(b.readAt).getTime())
+      .slice(0, all.length - MAX_HISTORY_ENTRIES);
+    for (const stale of toRemove) {
+      await runTx<undefined>(STORE_HISTORY, "readwrite", (store) => store.delete(stale.id));
+    }
+  }
+  notifyChanged();
+}
+
+export async function getReadHistory(): Promise<HistoryEntry[]> {
+  const all = await runTx<HistoryEntry[]>(STORE_HISTORY, "readonly", (store) => store.getAll());
+  return all.sort((a, b) => new Date(b.readAt).getTime() - new Date(a.readAt).getTime());
+}
+
+export async function getRecentReads(limit = 5): Promise<HistoryEntry[]> {
+  const all = await getReadHistory();
+  return all.slice(0, limit);
+}
+
+export async function isArticleRead(id: string): Promise<boolean> {
+  const record = await runTx<HistoryEntry | undefined>(STORE_HISTORY, "readonly", (store) => store.get(id));
+  return !!record;
+}
+
+export async function clearReadHistory(): Promise<void> {
+  await runTx<undefined>(STORE_HISTORY, "readwrite", (store) => store.clear());
+  notifyChanged();
+}
+
+// Consecutive calendar days (local time) with at least one read, counting
+// backward from today. If nothing's been read yet today, still counts from
+// yesterday — a still-current streak shouldn't read as broken until the day
+// actually lapses.
+export async function getReadingStreakDays(): Promise<number> {
+  const history = await getReadHistory();
+  if (history.length === 0) return 0;
+
+  const readDates = new Set(history.map((h) => new Date(h.readAt).toDateString()));
+  const cursor = new Date();
+  if (!readDates.has(cursor.toDateString())) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  let streak = 0;
+  while (readDates.has(cursor.toDateString())) {
+    streak++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
 }
 
 // ---- Settings (cache strategy) ----

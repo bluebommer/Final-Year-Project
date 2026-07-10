@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
 import styles from './styles/Risingwriters.module.css';
 import type { Article } from '@/app/types/article';
+import { getFollowedWriters, setFollowedWriters } from '@/lib/followedWriters';
 const SectionHeader = dynamic(() => import('./Sectionheader'));
 
 interface RisingWritersProps {
@@ -12,12 +13,13 @@ interface RisingWritersProps {
 }
 
 export default function RisingWriters({ articles }: RisingWritersProps) {
-  const [followed, setFollowed] = useState<Set<string>>(new Set());
+  const [followed, setFollowed] = useState<Set<string>>(() => getFollowedWriters());
+  const [showAll, setShowAll] = useState(false);
 
   // No real profile/follower system exists yet — derive real per-author
   // article counts and source from the current fetched pool instead of a
   // separate authors collection.
-  const writers = useMemo(() => {
+  const allWriters = useMemo(() => {
     const byAuthor = new Map<string, { count: number; sample: Article }>();
     for (const a of articles) {
       const entry = byAuthor.get(a.author) ?? { count: 0, sample: a };
@@ -26,7 +28,6 @@ export default function RisingWriters({ articles }: RisingWritersProps) {
     }
     return [...byAuthor.entries()]
       .sort((a, b) => b[1].count - a[1].count)
-      .slice(0, 6)
       .map(([name, { count, sample }]) => ({
         id: name,
         name,
@@ -38,10 +39,13 @@ export default function RisingWriters({ articles }: RisingWritersProps) {
       }));
   }, [articles]);
 
+  const writers = showAll ? allWriters : allWriters.slice(0, 6);
+
   function toggleFollow(id: string) {
     setFollowed((prev) => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
+      setFollowedWriters(next);
       return next;
     });
   }
@@ -49,7 +53,12 @@ export default function RisingWriters({ articles }: RisingWritersProps) {
   return (
     <section className={styles.section}>
       <div className={styles.sectionInner}>
-        <SectionHeader label="VOICES" title="Rising Writers" action="View all writers" />
+        <SectionHeader
+          label="VOICES"
+          title="Rising Writers"
+          action={showAll ? 'Show fewer' : 'View all writers'}
+          onAction={() => setShowAll((v) => !v)}
+        />
         <div className={styles.grid}>
           {writers.map((writer) => (
             <div key={writer.id} className={styles.card}>

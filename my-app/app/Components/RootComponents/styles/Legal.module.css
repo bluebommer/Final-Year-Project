@@ -1,0 +1,57 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 48px 24px 96px;
+}
+
+.inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.back {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.back:hover {
+  color: var(--text-primary);
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.updated {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 32px;
+}
+
+.body h2 {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 28px 0 10px;
+}
+
+.body p,
+.body li {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.body ul {
+  padding-left: 20px;
+}
+
+.body a {
+  color: #22d3ee;
+  text-decoration: underline;
+}

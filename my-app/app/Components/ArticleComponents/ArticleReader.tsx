@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from './styles/ArticleReader.module.css';
 import type { Article } from '@/app/types/article';
-import { saveArticle, isArticleSaved, postToServiceWorker } from '@/lib/offlineDB';
+import { saveArticle, isArticleSaved, postToServiceWorker, markArticleRead } from '@/lib/offlineDB';
 
 interface ArticleReaderProps {
   article: Article;
@@ -14,7 +14,6 @@ export default function ArticleReader({ article }: ArticleReaderProps) {
   const [fontSize, setFontSize] = useState(100);
   const [lineHeight, setLineHeight] = useState(160);
   const [progress, setProgress] = useState(0);
-  const [bookmarked, setBookmarked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -23,6 +22,12 @@ export default function ArticleReader({ article }: ArticleReaderProps) {
   useEffect(() => {
     isArticleSaved(article.id).then(setSaved);
   }, [article.id]);
+
+  // Opening the article is what "reading history" tracks — matches how
+  // browser/Pocket-style history works, no scroll-depth threshold needed.
+  useEffect(() => {
+    markArticleRead(article);
+  }, [article]);
 
   // Scroll progress
   useEffect(() => {
@@ -52,13 +57,25 @@ export default function ArticleReader({ article }: ArticleReaderProps) {
     }
   };
 
-  const handleShare = () => {
-    // TODO: implement share
-    alert('Share article (demo)');
-  };
+  const [shareFeedback, setShareFeedback] = useState('');
 
-  const handleBookmark = () => {
-    setBookmarked(!bookmarked);
+  const handleShare = async () => {
+    const shareUrl = typeof window !== 'undefined' ? window.location.href : article.url;
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({ title: article.title, text: article.description, url: shareUrl });
+      } catch {
+        // User cancelled the share sheet — not an error, do nothing.
+      }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setShareFeedback('Link copied!');
+    } catch {
+      setShareFeedback('Could not copy link');
+    }
+    setTimeout(() => setShareFeedback(''), 2000);
   };
 
   const handleFontDecrease = () => {
@@ -120,12 +137,6 @@ export default function ArticleReader({ article }: ArticleReaderProps) {
             </svg>
             <span>{saving ? 'Saving…' : saved ? 'Saved offline' : 'Save'}</span>
           </button>
-          <button className={styles.actionBtn} onClick={handleBookmark} aria-label="Bookmark">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill={bookmarked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
-              <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" />
-            </svg>
-            <span>{bookmarked ? 'Saved' : 'Bookmark'}</span>
-          </button>
           <button className={styles.actionBtn} onClick={handleShare} aria-label="Share">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="18" cy="5" r="3" />
@@ -134,7 +145,7 @@ export default function ArticleReader({ article }: ArticleReaderProps) {
               <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
               <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
             </svg>
-            <span>Share</span>
+            <span>{shareFeedback || 'Share'}</span>
           </button>
         </div>
 

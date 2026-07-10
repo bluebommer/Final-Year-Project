@@ -1,6 +1,7 @@
 // Components/HistoryComponents/ReadArticleCard.tsx
 'use client';
 
+import Link from 'next/link';
 import styles from './styles/ReadArticleCard.module.css';
 
 interface ReadArticleCardProps {
@@ -11,8 +12,7 @@ interface ReadArticleCardProps {
   author: string;
   authorInitial: string;
   authorColor: string;
-  isRead: boolean;
-  onRead: (id: string) => void;
+  readAgo: string;
 }
 
 export default function ReadArticleCard({
@@ -23,11 +23,10 @@ export default function ReadArticleCard({
   author,
   authorInitial,
   authorColor,
-  isRead,
-  onRead,
+  readAgo,
 }: ReadArticleCardProps) {
   return (
-    <div className={`${styles.card} ${isRead ? styles.cardRead : ''}`} onClick={() => onRead(id)}>
+    <Link href={`/article/${encodeURIComponent(id)}`} className={`${styles.card} ${styles.cardRead}`}>
       <span className={styles.category}>{category}</span>
       <h3 className={styles.title}>{title}</h3>
       <div className={styles.meta}>
@@ -37,14 +36,12 @@ export default function ReadArticleCard({
         <span className={styles.authorName}>{author}</span>
         <span className={styles.readTime}>{readTime}</span>
       </div>
-      {isRead && (
-        <div className={styles.readBadge}>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-          Read
-        </div>
-      )}
-    </div>
+      <div className={styles.readBadge}>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        Read {readAgo}
+      </div>
+    </Link>
   );
 }

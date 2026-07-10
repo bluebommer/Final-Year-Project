@@ -3,51 +3,20 @@
 
 import { useState } from 'react';
 import styles from './styles/PerformanceEngine.module.css';
-
-interface Toggle {
-  id: string;
-  label: string;
-  description: string;
-  defaultOn: boolean;
-}
-
-type PrefetchBehavior = 'wifi-only' | 'always' | 'never';
-
-const TOGGLES: Toggle[] = [
-  {
-    id: 'hifi',
-    label: 'Ultra High Fidelity Images',
-    description: 'Download RAW formats for crystal-clear visuals.',
-    defaultOn: true,
-  },
-  {
-    id: 'gpu',
-    label: 'Hardware Acceleration',
-    description: 'Utilize GPU for fluid page transitions.',
-    defaultOn: false,
-  },
-  {
-    id: 'prefetch',
-    label: 'Adaptive Content Prefetch',
-    description: 'Anticipate your next read for zero latency.',
-    defaultOn: true,
-  },
-];
+import { getPrefetchBehavior, setPrefetchBehavior, type PrefetchBehavior } from '@/lib/prefetch';
 
 const PREFETCH_OPTIONS: { value: PrefetchBehavior; label: string; description: string }[] = [
-  { value: 'wifi-only', label: 'WiFi only', description: 'Prefetch only when on unmetered connections' },
+  { value: 'wifi-only', label: 'WiFi only', description: 'Prefetch only when the browser reports a fast, unmetered connection' },
   { value: 'always', label: 'Always', description: 'Prefetch on any network (may use mobile data)' },
   { value: 'never', label: 'Never', description: 'Disable all prefetching' },
 ];
 
 export default function PerformanceEngine() {
-  const [states, setStates] = useState<Record<string, boolean>>(
-    Object.fromEntries(TOGGLES.map((t) => [t.id, t.defaultOn]))
-  );
-  const [prefetchBehavior, setPrefetchBehavior] = useState<PrefetchBehavior>('wifi-only');
+  const [behavior, setBehavior] = useState<PrefetchBehavior>(() => getPrefetchBehavior());
 
-  function toggle(id: string) {
-    setStates((prev) => ({ ...prev, [id]: !prev[id] }));
+  function selectBehavior(value: PrefetchBehavior) {
+    setBehavior(value);
+    setPrefetchBehavior(value);
   }
 
   return (
@@ -63,46 +32,23 @@ export default function PerformanceEngine() {
         </div>
         <div>
           <h3 className={styles.panelTitle}>Performance Engine</h3>
-          <span className={styles.panelSub}>RENDER PIPELINE & ASSET QUALITY</span>
+          <span className={styles.panelSub}>PREFETCH & DATA USAGE</span>
         </div>
-      </div>
-
-      {/* Toggle rows */}
-      <div className={styles.toggleList}>
-        {TOGGLES.map((t) => (
-          <div key={t.id} className={styles.toggleRow}>
-            <div className={styles.toggleInfo}>
-              <span className={`${styles.toggleLabel} ${!states[t.id] ? styles.toggleLabelOff : ''}`}>
-                {t.label}
-              </span>
-              <span className={styles.toggleDesc}>{t.description}</span>
-            </div>
-            <button
-              className={`${styles.switch} ${states[t.id] ? styles.switchOn : styles.switchOff}`}
-              onClick={() => toggle(t.id)}
-              role="switch"
-              aria-checked={states[t.id]}
-              aria-label={t.label}
-            >
-              <span className={`${styles.thumb} ${states[t.id] ? styles.thumbOn : styles.thumbOff}`} />
-            </button>
-          </div>
-        ))}
       </div>
 
       {/* Prefetch Behaviour Section */}
       <div className={styles.prefetchSection}>
         <div className={styles.prefetchHeader}>
           <span className={styles.prefetchLabel}>Prefetch Behaviour</span>
-          <span className={styles.prefetchHint}>Data saving & performance</span>
+          <span className={styles.prefetchHint}>Controls hover-prefetch on article cards and the Hero banner</span>
         </div>
         <div className={styles.prefetchOptions}>
           {PREFETCH_OPTIONS.map((option) => (
             <button
               key={option.value}
-              className={`${styles.prefetchBtn} ${prefetchBehavior === option.value ? styles.prefetchBtnActive : ''}`}
-              onClick={() => setPrefetchBehavior(option.value)}
-              aria-pressed={prefetchBehavior === option.value}
+              className={`${styles.prefetchBtn} ${behavior === option.value ? styles.prefetchBtnActive : ''}`}
+              onClick={() => selectBehavior(option.value)}
+              aria-pressed={behavior === option.value}
             >
               <span className={styles.prefetchBtnLabel}>{option.label}</span>
               <span className={styles.prefetchBtnDesc}>{option.description}</span>
