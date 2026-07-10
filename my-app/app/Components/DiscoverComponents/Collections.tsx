@@ -2,68 +2,62 @@
 import dynamic from 'next/dynamic';
 
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import styles from './styles/Collections.module.css';
+import type { Article } from '@/app/types/article';
 const SectionHeader = dynamic(() => import('./Sectionheader'));
 
-
-const COLLECTIONS = [
-  {
-    id: 1,
-    title: 'The Future of Mind',
-    description: 'Consciousness, AI, and the nature of intelligence.',
-    count: 24,
-    gradient: 'linear-gradient(135deg, #0a1628 0%, #0d2240 40%, #001a4d 70%, #00112e 100%)',
-    glow: 'rgba(0, 222, 236, 0.25)',
-    tags: ['AI', 'Neuroscience', 'Philosophy'],
-    icon: '🧠',
-  },
-  {
-    id: 2,
-    title: 'Designed Worlds',
-    description: 'How aesthetics shape the systems we inhabit.',
-    count: 18,
-    gradient: 'linear-gradient(135deg, #1a0a28 0%, #2d1040 40%, #3d0050 70%, #1a0028 100%)',
-    glow: 'rgba(160, 80, 255, 0.25)',
-    tags: ['Design', 'Architecture', 'Culture'],
-    icon: '✦',
-  },
-  {
-    id: 3,
-    title: 'Climate Futures',
-    description: 'The science and solutions behind a changing planet.',
-    count: 31,
-    gradient: 'linear-gradient(135deg, #081a10 0%, #0d2e18 40%, #083a1a 70%, #041208 100%)',
-    glow: 'rgba(52, 211, 153, 0.25)',
-    tags: ['Science', 'Nature', 'Tech'],
-    icon: '◈',
-  },
-  {
-    id: 4,
-    title: 'Beyond Earth',
-    description: 'Humanity\'s ambition to reach the stars.',
-    count: 15,
-    gradient: 'linear-gradient(135deg, #14080a 0%, #280d14 40%, #3d0020 70%, #1a0010 100%)',
-    glow: 'rgba(251, 113, 133, 0.25)',
-    tags: ['Space', 'Future', 'Science'],
-    icon: '⬡',
-  },
+// Decorative presets cycled per real category — not fabricated content, just styling.
+const PRESETS = [
+  { gradient: 'linear-gradient(135deg, #0a1628 0%, #0d2240 40%, #001a4d 70%, #00112e 100%)', glow: 'rgba(0, 222, 236, 0.25)', icon: '🧠' },
+  { gradient: 'linear-gradient(135deg, #1a0a28 0%, #2d1040 40%, #3d0050 70%, #1a0028 100%)', glow: 'rgba(160, 80, 255, 0.25)', icon: '✦' },
+  { gradient: 'linear-gradient(135deg, #081a10 0%, #0d2e18 40%, #083a1a 70%, #041208 100%)', glow: 'rgba(52, 211, 153, 0.25)', icon: '◈' },
+  { gradient: 'linear-gradient(135deg, #14080a 0%, #280d14 40%, #3d0020 70%, #1a0010 100%)', glow: 'rgba(251, 113, 133, 0.25)', icon: '⬡' },
 ];
 
-export default function Collections() {
-  const [hovered, setHovered] = useState<number | null>(null);
+interface CollectionsProps {
+  articles: Article[];
+  onSelectCategory: (category: string) => void;
+}
+
+export default function Collections({ articles, onSelectCategory }: CollectionsProps) {
+  const [hovered, setHovered] = useState<string | null>(null);
+
+  const collections = useMemo(() => {
+    const counts = new Map<string, { count: number; sources: Set<string> }>();
+    for (const a of articles) {
+      const entry = counts.get(a.category) ?? { count: 0, sources: new Set<string>() };
+      entry.count += 1;
+      entry.sources.add(a.source);
+      counts.set(a.category, entry);
+    }
+    return [...counts.entries()]
+      .sort((a, b) => b[1].count - a[1].count)
+      .slice(0, 4)
+      .map(([category, data], i) => ({
+        id: category,
+        title: category.charAt(0) + category.slice(1).toLowerCase(),
+        description: `The latest in ${category.toLowerCase()}, from ${[...data.sources].slice(0, 2).join(' & ')}.`,
+        count: data.count,
+        tags: [...data.sources].slice(0, 3),
+        ...PRESETS[i % PRESETS.length],
+      }));
+  }, [articles]);
 
   return (
     <section className={styles.section}>
       <div className={styles.sectionInner}>
         <SectionHeader label="CURATED" title="Collections" action="Browse all" />
         <div className={styles.grid}>
-          {COLLECTIONS.map((col) => (
+          {collections.map((col) => (
             <article
               key={col.id}
               className={`${styles.card} ${hovered === col.id ? styles.cardHovered : ''}`}
               onMouseEnter={() => setHovered(col.id)}
               onMouseLeave={() => setHovered(null)}
+              onClick={() => onSelectCategory(col.id)}
+              role="button"
+              tabIndex={0}
             >
               {/* Gradient background */}
               <div className={styles.cardBg} style={{ background: col.gradient }} />

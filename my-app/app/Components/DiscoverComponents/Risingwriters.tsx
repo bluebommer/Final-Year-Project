@@ -2,23 +2,43 @@
 import dynamic from 'next/dynamic';
 
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import styles from './styles/Risingwriters.module.css';
+import type { Article } from '@/app/types/article';
 const SectionHeader = dynamic(() => import('./Sectionheader'));
 
-const WRITERS = [
-  { id: 1, name: 'Dr. Mira Chen',    role: 'AI & Consciousness',  initial: 'M', color: '#22d3ee', articles: 42, followers: '12.4k', trending: true  },
-  { id: 2, name: 'Kai Tanaka',       role: 'Design & Systems',    initial: 'K', color: '#f97316', articles: 28, followers: '8.1k',  trending: true  },
-  { id: 3, name: 'Elena Voss',       role: 'Physics & Cosmology', initial: 'E', color: '#a78bfa', articles: 35, followers: '9.7k',  trending: false },
-  { id: 4, name: 'James Okafor',     role: 'Climate & Futures',   initial: 'J', color: '#34d399', articles: 19, followers: '5.3k',  trending: true  },
-  { id: 5, name: 'Saoirse Brennan', role: 'Psychology & Mind',   initial: 'S', color: '#fbbf24', articles: 31, followers: '7.8k',  trending: false },
-  { id: 6, name: 'Omar Al-Rashid',  role: 'Architecture & Space',initial: 'O', color: '#fb7185', articles: 24, followers: '6.2k',  trending: false },
-];
+interface RisingWritersProps {
+  articles: Article[];
+}
 
-export default function RisingWriters() {
-  const [followed, setFollowed] = useState<Set<number>>(new Set());
+export default function RisingWriters({ articles }: RisingWritersProps) {
+  const [followed, setFollowed] = useState<Set<string>>(new Set());
 
-  function toggleFollow(id: number) {
+  // No real profile/follower system exists yet — derive real per-author
+  // article counts and source from the current fetched pool instead of a
+  // separate authors collection.
+  const writers = useMemo(() => {
+    const byAuthor = new Map<string, { count: number; sample: Article }>();
+    for (const a of articles) {
+      const entry = byAuthor.get(a.author) ?? { count: 0, sample: a };
+      entry.count += 1;
+      byAuthor.set(a.author, entry);
+    }
+    return [...byAuthor.entries()]
+      .sort((a, b) => b[1].count - a[1].count)
+      .slice(0, 6)
+      .map(([name, { count, sample }]) => ({
+        id: name,
+        name,
+        role: `Writes for ${sample.source}`,
+        initial: sample.authorInitial,
+        color: sample.authorColor,
+        articles: count,
+        trending: count >= 2,
+      }));
+  }, [articles]);
+
+  function toggleFollow(id: string) {
     setFollowed((prev) => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
@@ -31,7 +51,7 @@ export default function RisingWriters() {
       <div className={styles.sectionInner}>
         <SectionHeader label="VOICES" title="Rising Writers" action="View all writers" />
         <div className={styles.grid}>
-          {WRITERS.map((writer) => (
+          {writers.map((writer) => (
             <div key={writer.id} className={styles.card}>
               {writer.trending && (
                 <span className={styles.trendingBadge}>
@@ -56,12 +76,7 @@ export default function RisingWriters() {
               <div className={styles.stats}>
                 <div className={styles.stat}>
                   <span className={styles.statValue}>{writer.articles}</span>
-                  <span className={styles.statLabel}>Articles</span>
-                </div>
-                <div className={styles.statDivider} />
-                <div className={styles.stat}>
-                  <span className={styles.statValue}>{writer.followers}</span>
-                  <span className={styles.statLabel}>Followers</span>
+                  <span className={styles.statLabel}>{writer.articles === 1 ? 'Article' : 'Articles'} in feed</span>
                 </div>
               </div>
 

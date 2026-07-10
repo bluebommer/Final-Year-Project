@@ -53,11 +53,13 @@ export default function TrendingNow({ articles }: TrendingNowProps) {
         </div>
 
         <div className={styles.track} ref={scrollRef}>
-          {TRENDING.map((item) => (
-            <article
+          {trending.map((item) => (
+            <Link
               key={item.id}
+              href={`/article/${encodeURIComponent(item.id)}`}
               className={`${styles.card} ${activeId === item.id ? styles.cardActive : ''}`}
-              onClick={() => setActiveId(item.id === activeId ? null : item.id)}
+              onMouseEnter={() => setActiveId(item.id)}
+              onMouseLeave={() => setActiveId(null)}
             >
               {/* Rank number */}
               <span className={styles.rank}>
@@ -66,20 +68,20 @@ export default function TrendingNow({ articles }: TrendingNowProps) {
 
               {/* Content */}
               <div className={styles.cardBody}>
-                <span className={styles.category} style={{ color: item.accent }}>{item.category}</span>
+                <span className={styles.category} style={{ color: item.authorColor }}>{item.category}</span>
                 <h3 className={styles.title}>{item.title}</h3>
                 <div className={styles.meta}>
-                  <span className={styles.readTime}>{item.readTime} READ</span>
+                  <span className={styles.readTime}>{formatReadTime(item.readTime)} READ</span>
                   <div className={styles.heatBar}>
-                    <div className={styles.heatFill} style={{ width: `${item.heat}%`, background: item.accent }} />
+                    <div className={styles.heatFill} style={{ width: `${item.heat}%`, background: item.authorColor }} />
                   </div>
-                  <span className={styles.heatLabel} style={{ color: item.accent }}>{item.heat}°</span>
+                  <span className={styles.heatLabel} style={{ color: item.authorColor }}>{item.heat}°</span>
                 </div>
               </div>
 
               {/* Hover accent line */}
-              <div className={styles.accentLine} style={{ background: item.accent }} />
-            </article>
+              <div className={styles.accentLine} style={{ background: item.authorColor }} />
+            </Link>
           ))}
         </div>
       </div>
