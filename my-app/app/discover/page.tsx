@@ -1,8 +1,7 @@
 import dynamic from 'next/dynamic';
 import type { Article } from '../types/article';
 import styles from '../Components/DiscoverComponents/styles/Discover.module.css';
-const Sidebar = dynamic(() => import('../Components/HomeComponents/SideBar'));
-const Navbar = dynamic(() => import('../Components/HomeComponents/Navbar'));
+import AppShell from '../Components/HomeComponents/AppShell';
 const DiscoverContent = dynamic(() => import('../Components/DiscoverComponents/DiscoverContent'));
 
 async function getArticles(): Promise<Article[]> {
@@ -23,14 +22,10 @@ export default async function DiscoverPage() {
   const articles = await getArticles();
 
   return (
-    <div className={styles.pageRoot}>
-      <Navbar />
-      <div className={styles.pageBody}>
-        <Sidebar />
-        <main className={styles.mainContent}>
-          <DiscoverContent articles={articles} />
-        </main>
-      </div>
-    </div>
+    <AppShell>
+      <main className={styles.mainContent}>
+        <DiscoverContent articles={articles} />
+      </main>
+    </AppShell>
   );
 }

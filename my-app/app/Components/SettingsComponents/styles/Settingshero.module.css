@@ -47,3 +47,24 @@
   margin: 0;
   max-width: 540px;
 }
+
+@media (max-width: 900px) {
+  .hero {
+    padding: 40px 24px 36px;
+  }
+  .title {
+    font-size: 38px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 28px 16px 24px;
+  }
+  .title {
+    font-size: 28px;
+  }
+  .subtitle {
+    font-size: 13px;
+  }
+}

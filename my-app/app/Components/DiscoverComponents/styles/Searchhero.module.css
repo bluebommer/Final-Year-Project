@@ -227,3 +227,35 @@
   border-color: rgba(0, 222, 236, 0.4);
   color: #22d3ee;
 }
+
+@media (max-width: 768px) {
+  .searchHero {
+    padding: 32px 20px 32px;
+  }
+  .searchHero::after {
+    left: 20px;
+    right: 20px;
+  }
+  .heroTitle {
+    font-size: 26px;
+  }
+  .heroSubtitle {
+    margin-bottom: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .searchHero {
+    padding: 24px 16px 28px;
+  }
+  .searchHero::after {
+    left: 16px;
+    right: 16px;
+  }
+  .heroTitle {
+    font-size: 21px;
+  }
+  .searchBtn {
+    padding: 0 14px;
+  }
+}

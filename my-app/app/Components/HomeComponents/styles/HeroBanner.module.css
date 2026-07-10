@@ -210,3 +210,94 @@
   background: #00deec;
   box-shadow: 0 0 8px rgba(0,222,236,0.6);
 }
+
+/* ── Tablet ── */
+@media (max-width: 1023px) {
+  .heroBanner {
+    height: 300px;
+  }
+
+  .heroContent {
+    padding: 32px;
+    max-width: 65%;
+  }
+
+  .heroTitle {
+    font-size: 26px;
+  }
+}
+
+/* ── Phone: the left-text/right-image split doesn't survive a narrow
+   viewport — switch to a full-bleed background image with a bottom-heavy
+   overlay and text anchored to the bottom, a standard compact mobile-card
+   pattern. ── */
+@media (max-width: 640px) {
+  .heroBanner {
+    height: 260px;
+    border-radius: 12px;
+  }
+
+  .visualWrapper {
+    width: 100%;
+  }
+
+  .heroOverlay {
+    background: linear-gradient(
+      180deg,
+      rgba(7,13,27,0.25) 0%,
+      rgba(7,13,27,0.55) 45%,
+      rgba(7,13,27,0.92) 100%
+    );
+  }
+  .bgPurple .heroOverlay {
+    background: linear-gradient(
+      180deg,
+      rgba(10,6,20,0.25) 0%,
+      rgba(10,6,20,0.55) 45%,
+      rgba(10,6,20,0.92) 100%
+    );
+  }
+  .bgEmerald .heroOverlay {
+    background: linear-gradient(
+      180deg,
+      rgba(4,14,10,0.25) 0%,
+      rgba(4,14,10,0.55) 45%,
+      rgba(4,14,10,0.92) 100%
+    );
+  }
+
+  .heroContent {
+    max-width: 100%;
+    padding: 18px 20px;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .heroBadge {
+    font-size: 9px;
+    padding: 4px 10px;
+  }
+
+  .heroTitle {
+    font-size: 19px;
+    line-height: 1.2;
+  }
+
+  .heroDescription {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  .readNowBtn {
+    padding: 9px 18px;
+    font-size: 10px;
+  }
+
+  .dots {
+    left: 20px;
+    bottom: 10px;
+  }
+}

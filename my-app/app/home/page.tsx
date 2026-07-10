@@ -2,8 +2,7 @@
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 import { Article } from '../types/article';
-import Navbar from '../Components/HomeComponents/Navbar';
-import Sidebar from '../Components/HomeComponents/SideBar';
+import AppShell from '../Components/HomeComponents/AppShell';
 import HomeContent from '../Components/HomeComponents/HomeContent';
 import styles from '../Components/HomeComponents/styles/Home.module.css';
 import { connectToDatabase } from '@/lib/mongodb';
@@ -118,14 +117,10 @@ export default async function HomePage() {
   const personalized = personalizeArticles(articles, prefs, customFeedArticles);
 
   return (
-    <div className={styles.pageRoot}>
-      <Navbar />
-      <div className={styles.pageBody}>
-        <Sidebar />
-        <main className={styles.mainContent}>
-          <HomeContent articles={personalized} />
-        </main>
-      </div>
-    </div>
+    <AppShell>
+      <main className={styles.mainContent}>
+        <HomeContent articles={personalized} />
+      </main>
+    </AppShell>
   );
 }

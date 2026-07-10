@@ -507,6 +507,13 @@
   .auth__row { grid-template-columns: 1fr; }
 }
 
+@media (max-width: 360px) {
+  .auth__right { padding: 1.5rem 1rem; }
+  /* 6 boxes at the default 48px+10px gap overflow a 320-360px viewport */
+  .auth__code-wrap { gap: 6px; }
+  .auth__code-input { width: 38px; height: 46px; font-size: 1.2rem; }
+}
+
 /* ── Email Verification ──────────────────────────────────── */
 .auth__verify {
   display: flex;

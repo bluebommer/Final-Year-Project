@@ -71,21 +71,27 @@ export default function PWAInstall() {
 
   return (
     <div className={styles.banner}>
-      {/* Icon */}
-      <div className={styles.iconWrap}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
-          <line x1="12" y1="18" x2="12.01" y2="18"/>
-        </svg>
+      <div className={styles.header}>
+        <div className={styles.iconWrap}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+            <line x1="12" y1="18" x2="12.01" y2="18"/>
+          </svg>
+        </div>
+        <span className={styles.title}>Install ReadLite</span>
+        <button
+          className={styles.dismissBtn}
+          onClick={() => setDismissed(true)}
+          aria-label="Dismiss install prompt"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
       </div>
 
-      {/* Text */}
-      <div className={styles.text}>
-        <span className={styles.title}>Install ReadLite on your device</span>
-        <span className={styles.subtitle}>Read offline, get faster loads, and a native app experience.</span>
-      </div>
+      <p className={styles.subtitle}>Read offline, get faster loads, and a native app experience.</p>
 
-      {/* Actions */}
       <button
         className={styles.installBtn}
         onClick={handleInstall}
@@ -103,17 +109,6 @@ export default function PWAInstall() {
             Install
           </>
         )}
-      </button>
-
-      {/* Dismiss */}
-      <button
-        className={styles.dismissBtn}
-        onClick={() => setDismissed(true)}
-        aria-label="Dismiss install prompt"
-      >
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M18 6 6 18M6 6l12 12"/>
-        </svg>
       </button>
     </div>
   );

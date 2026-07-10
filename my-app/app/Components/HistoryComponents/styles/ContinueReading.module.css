@@ -126,3 +126,12 @@
     font-size: 20px;
   }
 }
+
+@media (max-width: 480px) {
+  .container {
+    padding: 20px 16px 0;
+  }
+  .card {
+    width: 240px;
+  }
+}

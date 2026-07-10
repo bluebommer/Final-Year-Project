@@ -6,6 +6,9 @@
   padding: 0 40px;
 }
 
+@media (max-width: 768px) { .sectionInner { padding: 0 20px; } }
+@media (max-width: 480px) { .sectionInner { padding: 0 16px; } }
+
 .headerRow {
   display: flex;
   align-items: flex-start;

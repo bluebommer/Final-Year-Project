@@ -9,7 +9,11 @@ import { useSyncStatus } from '@/lib/useSyncStatus';
 import { getLastSeenTime, markAllSeen } from '@/lib/notifications';
 import type { Article } from '@/app/types/article';
 
-export default function Navbar() {
+interface NavbarProps {
+  onMenuClick?: () => void;
+}
+
+export default function Navbar({ onMenuClick }: NavbarProps) {
   const router = useRouter();
   const { online, pending, syncing, sync } = useSyncStatus();
   const [newArticles, setNewArticles] = useState<Article[]>([]);
@@ -58,6 +62,13 @@ export default function Navbar() {
   return (
     <nav className={styles.navbar}>
       <div className={styles.navLeft}>
+        <button className={styles.menuBtn} onClick={onMenuClick} aria-label="Open menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
         <Link href="/home" className={styles.logo}>
           READLITE
         </Link>
@@ -65,7 +76,7 @@ export default function Navbar() {
       <div className={styles.navRight}>
         <span className={styles.syncStatus}>
           <span className={styles.syncDot} style={!online ? { background: '#f87171', boxShadow: '0 0 6px #f87171' } : undefined} />
-          {statusLabel}
+          <span className={styles.syncLabel}>{statusLabel}</span>
         </span>
         <button className={styles.iconBtn} onClick={sync} disabled={syncing} aria-label="Sync now">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

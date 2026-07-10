@@ -2,8 +2,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import Navbar from '../../Components/HomeComponents/Navbar';
-import Sidebar from '../../Components/HomeComponents/SideBar';
+import AppShell from '../../Components/HomeComponents/AppShell';
 import styles from './styles/Library.module.css';
 import { listSavedArticles, removeArticle as removeArticleFromDB, clearAllArticles, postToServiceWorker, type SavedArticle } from '@/lib/offlineDB';
 
@@ -33,11 +32,8 @@ export default function LibraryPage() {
   const offlineCount = totalSaved; // every saved record embeds full content — always offline-readable
 
   return (
-    <div className={styles.pageRoot}>
-      <Navbar />
-      <div className={styles.pageBody}>
-        <Sidebar />
-        <main className={styles.mainContent}>
+    <AppShell>
+      <main className={styles.mainContent}>
           {/* Header */}
           <div className={styles.header}>
             <div className={styles.headerLeft}>
@@ -108,7 +104,6 @@ export default function LibraryPage() {
             </div>
           )}
         </main>
-      </div>
-    </div>
+    </AppShell>
   );
 }
