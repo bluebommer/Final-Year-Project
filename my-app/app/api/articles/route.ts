@@ -5,6 +5,22 @@ import { getCachedArticles, setCachedArticles } from '@/lib/articleCache';
 import { hashString, estimateReadTime, getCategory, getAuthorColor, stripHtml } from '@/lib/articleHelpers';
 import { fetchRssFeedArticles } from '@/lib/rssFeed';
 
+// The Guardian tags every article with a real editorial sectionId — use that
+// directly instead of guessing from title/description keywords. Any section
+// not listed here falls back to the keyword guess.
+const GUARDIAN_SECTION_MAP: Record<string, string> = {
+  politics: 'POLITICS',
+  world: 'WORLD', 'us-news': 'WORLD', 'uk-news': 'WORLD', 'australia-news': 'WORLD', 'global-development': 'WORLD',
+  technology: 'TECHNOLOGY',
+  science: 'SCIENCE',
+  business: 'BUSINESS', money: 'BUSINESS',
+  film: 'ENTERTAINMENT', music: 'ENTERTAINMENT', stage: 'ENTERTAINMENT', games: 'ENTERTAINMENT', 'tv-and-radio': 'ENTERTAINMENT',
+  culture: 'CULTURE', books: 'CULTURE', artanddesign: 'CULTURE', media: 'CULTURE', fashion: 'CULTURE', food: 'CULTURE', travel: 'CULTURE',
+  environment: 'NATURE',
+  society: 'WORLD', lifeandstyle: 'WORLD', education: 'WORLD', law: 'WORLD',
+  sport: 'SPORTS', football: 'SPORTS',
+};
+
 // ── The Guardian API ──────────────────────────────────────────
 async function fetchGuardian(): Promise<Article[]> {
   const apiKey = process.env.GUARDIAN_API_KEY;
@@ -31,7 +47,7 @@ async function fetchGuardian(): Promise<Article[]> {
           id: `article-${hashString(item.id)}`,
           title: item.webTitle,
           description: trailText.slice(0, 200) || '',
-          category: getCategory(item.webTitle, trailText),
+          category: GUARDIAN_SECTION_MAP[item.sectionId] || getCategory(item.webTitle, trailText),
           readTime: bodyText ? estimateReadTime(bodyText) : '5 min read',
           isStaffPick: false,
           isNewRelease: false,
@@ -51,57 +67,6 @@ async function fetchGuardian(): Promise<Article[]> {
       });
   } catch (err) {
     console.error('Guardian failed:', err);
-    return [];
-  }
-}
-
-// ── Hacker News (Algolia API) ─────────────────────────────────
-async function fetchHackerNews(): Promise<Article[]> {
-  try {
-    const res = await fetch(
-      'https://hn.algolia.com/api/v1/search?tags=story&hitsPerPage=30',
-      {
-        next: { revalidate: 3600 },
-        signal: AbortSignal.timeout(5000),
-      }
-    );
-    const data = await res.json();
-    if (!data.hits) return [];
-
-    return data.hits
-      // filtered client-side — Algolia's index no longer accepts num_comments
-      // in numericFilters (this used to be a server-side query param)
-      .filter((item: any) => item.title && item.url && (item.num_comments || 0) > 5)
-      .map((item: any) => {
-        const storyText = item.story_text
-          ? stripHtml(item.story_text)
-          : '';
-        const author = item.author || 'Hacker News';
-        return {
-          id: `article-${hashString(item.objectID)}`,
-          title: item.title,
-          description: storyText.slice(0, 200) || `${item.points || 0} points · ${item.num_comments || 0} comments`,
-          category: getCategory(item.title, storyText),
-          readTime: storyText ? estimateReadTime(storyText) : '5 min read',
-          isStaffPick: (item.points || 0) > 200,
-          isNewRelease: false,
-          imageType: 'abstract3d',
-          imageUrl: null,
-          author,
-          authorInitial: author[0].toUpperCase(),
-          authorColor: getAuthorColor(author),
-          publishedAt: item.created_at || new Date().toISOString(),
-          source: 'Hacker News',
-          url: item.url,
-          // HN story_text is the discussion, not the linked article
-          // so we provide description + link and let scraper handle the rest
-          content: storyText
-            ? `<p>${storyText}</p>`
-            : '',
-        };
-      });
-  } catch (err) {
-    console.error('Hacker News failed:', err);
     return [];
   }
 }
@@ -130,7 +95,9 @@ async function fetchDevTo(): Promise<Article[]> {
           id: `article-${hashString(item.title + (item.url || ''))}`,
           title: item.title,
           description: item.description || '',
-          category: getCategory(item.title, item.description || ''),
+          // Dev.to is an almost entirely developer/tech-focused platform —
+          // more reliable than guessing from title keywords.
+          category: 'TECHNOLOGY',
           readTime: `${item.reading_time_minutes || 5} min read`,
           isStaffPick: (item.positive_reactions_count || 0) > 50,
           isNewRelease: false,
@@ -142,7 +109,6 @@ async function fetchDevTo(): Promise<Article[]> {
           publishedAt: item.published_at || new Date().toISOString(),
           source: 'Dev.to',
           url: item.url || '#',
-          // ✅ Full article body — no scraping needed
           content: item.body_html || item.body_markdown || item.description || '',
         };
       });
@@ -166,7 +132,17 @@ async function fetchMedium(): Promise<Article[]> {
 }
 
 // ── New York Times (Top Stories API) ──────────────────────────
-const NYT_SECTIONS = ['technology', 'science'];
+// The section we query IS the article's real category — no guessing needed.
+const NYT_SECTION_CATEGORY: Record<string, string> = {
+  technology: 'TECHNOLOGY',
+  science: 'SCIENCE',
+  politics: 'POLITICS',
+  business: 'BUSINESS',
+  arts: 'ENTERTAINMENT',
+  health: 'HEALTH',
+  world: 'WORLD',
+};
+const NYT_SECTIONS = Object.keys(NYT_SECTION_CATEGORY);
 
 async function fetchNytSection(section: string, apiKey: string): Promise<Article[]> {
   const res = await fetch(
@@ -186,7 +162,7 @@ async function fetchNytSection(section: string, apiKey: string): Promise<Article
         id: `article-${hashString(item.url)}`,
         title: item.title,
         description: description.slice(0, 200),
-        category: getCategory(item.title, description),
+        category: NYT_SECTION_CATEGORY[section],
         readTime: estimateReadTime(description),
         isStaffPick: false,
         isNewRelease: false,
@@ -222,102 +198,68 @@ async function fetchNYT(): Promise<Article[]> {
 }
 
 // ── GNews.io ───────────────────────────────────────────────────
+// Query per-topic (GNews's own classification) instead of one generic
+// top-headlines call — the topic queried becomes the real category.
+const GNEWS_TOPIC_CATEGORY: Record<string, string> = {
+  technology: 'TECHNOLOGY',
+  science: 'SCIENCE',
+  business: 'BUSINESS',
+  entertainment: 'ENTERTAINMENT',
+  health: 'HEALTH',
+  nation: 'POLITICS',
+  world: 'WORLD',
+};
+const GNEWS_TOPICS = Object.keys(GNEWS_TOPIC_CATEGORY);
+
+async function fetchGNewsTopic(topic: string, apiKey: string): Promise<Article[]> {
+  const res = await fetch(
+    `https://gnews.io/api/v4/top-headlines?lang=en&topic=${topic}&max=10&apikey=${apiKey}`,
+    { next: { revalidate: 3600 }, signal: AbortSignal.timeout(5000) }
+  );
+  const data = await res.json();
+  if (!Array.isArray(data.articles)) return [];
+
+  return data.articles
+    .filter((item: any) => item.title && item.url)
+    .map((item: any) => {
+      const author = item.source?.name || 'GNews';
+      const description = item.description || '';
+      return {
+        id: `article-${hashString(item.url)}`,
+        title: item.title,
+        description: description.slice(0, 200),
+        category: GNEWS_TOPIC_CATEGORY[topic],
+        readTime: estimateReadTime(item.content || description),
+        isStaffPick: false,
+        isNewRelease: false,
+        imageType: 'landscape',
+        imageUrl: item.image || null,
+        author,
+        authorInitial: author[0]?.toUpperCase() || 'G',
+        authorColor: getAuthorColor(author),
+        publishedAt: item.publishedAt || new Date().toISOString(),
+        // Collapsed to a single "GNews" toggle since it aggregates many
+        // outlets — the real outlet name is preserved in `author`.
+        source: 'GNews',
+        url: item.url,
+        content: item.content ? `<p>${item.content}</p>` : `<p>${description}</p>`,
+      };
+    });
+}
+
 async function fetchGNews(): Promise<Article[]> {
   const apiKey = process.env.GNEWS_API_KEY;
   if (!apiKey) {
     console.warn('GNEWS_API_KEY not set');
     return [];
   }
-  try {
-    const res = await fetch(
-      `https://gnews.io/api/v4/top-headlines?lang=en&max=25&apikey=${apiKey}`,
-      { next: { revalidate: 3600 }, signal: AbortSignal.timeout(5000) }
-    );
-    const data = await res.json();
-    if (!Array.isArray(data.articles)) return [];
-
-    return data.articles
-      .filter((item: any) => item.title && item.url)
-      .map((item: any) => {
-        const author = item.source?.name || 'GNews';
-        const description = item.description || '';
-        return {
-          id: `article-${hashString(item.url)}`,
-          title: item.title,
-          description: description.slice(0, 200),
-          category: getCategory(item.title, description),
-          readTime: estimateReadTime(item.content || description),
-          isStaffPick: false,
-          isNewRelease: false,
-          imageType: 'landscape',
-          imageUrl: item.image || null,
-          author,
-          authorInitial: author[0]?.toUpperCase() || 'G',
-          authorColor: getAuthorColor(author),
-          publishedAt: item.publishedAt || new Date().toISOString(),
-          // Collapsed to a single "GNews" toggle since it aggregates many
-          // outlets — the real outlet name is preserved in `author`.
-          source: 'GNews',
-          url: item.url,
-          content: item.content ? `<p>${item.content}</p>` : `<p>${description}</p>`,
-        };
-      });
-  } catch (err) {
-    console.error('GNews failed:', err);
-    return [];
-  }
-}
-
-// ── Reddit (public JSON, no key) ──────────────────────────────
-const REDDIT_SUBREDDITS = ['technology', 'worldnews'];
-
-async function fetchRedditSubreddit(subreddit: string): Promise<Article[]> {
-  const res = await fetch(`https://www.reddit.com/r/${subreddit}.json?limit=25`, {
-    headers: { 'User-Agent': 'ReadLiteNewsAggregator/1.0' }, // Reddit blocks/throttles default fetch UAs
-    next: { revalidate: 3600 },
-    signal: AbortSignal.timeout(5000),
-  });
-  const data = await res.json();
-  const children = data?.data?.children;
-  if (!Array.isArray(children)) return [];
-
-  return children
-    .map((c: any) => c.data)
-    .filter((item: any) => item && item.title && !item.is_self) // skip text-only posts — keep the "external link" flavor
-    .map((item: any) => {
-      const author = item.author || 'Reddit';
-      const description = `${item.score || 0} points · ${item.num_comments || 0} comments · r/${subreddit}`;
-      const url = item.url_overridden_by_dest || `https://reddit.com${item.permalink}`;
-      const thumbnail = typeof item.thumbnail === 'string' && item.thumbnail.startsWith('http') ? item.thumbnail : null;
-      return {
-        id: `article-${hashString(item.id || item.name || url)}`,
-        title: item.title,
-        description,
-        category: getCategory(item.title, description),
-        readTime: '3 min read',
-        isStaffPick: (item.score || 0) > 1000,
-        isNewRelease: false,
-        imageType: 'abstract3d',
-        imageUrl: thumbnail,
-        author,
-        authorInitial: author[0]?.toUpperCase() || 'R',
-        authorColor: getAuthorColor(author),
-        publishedAt: item.created_utc ? new Date(item.created_utc * 1000).toISOString() : new Date().toISOString(),
-        source: 'Reddit',
-        url,
-        content: `<p>${description}</p>`,
-      };
-    });
-}
-
-async function fetchReddit(): Promise<Article[]> {
-  const results = await Promise.allSettled(REDDIT_SUBREDDITS.map(fetchRedditSubreddit));
+  const results = await Promise.allSettled(GNEWS_TOPICS.map((topic) => fetchGNewsTopic(topic, apiKey)));
   let articles: Article[] = [];
   results.forEach((r, i) => {
     if (r.status === 'fulfilled') {
       articles = articles.concat(r.value);
     } else {
-      console.error(`Reddit r/${REDDIT_SUBREDDITS[i]} failed:`, r.reason);
+      console.error(`GNews /${GNEWS_TOPICS[i]} failed:`, r.reason);
     }
   });
   return articles;
@@ -373,11 +315,9 @@ export async function GET() {
     const results = await Promise.allSettled([
       fetchGuardian(),
       fetchDevTo(),
-      fetchHackerNews(),
       fetchMedium(),
       fetchNYT(),
       fetchGNews(),
-      fetchReddit(),
     ]);
 
     let allArticles: Article[] = [];

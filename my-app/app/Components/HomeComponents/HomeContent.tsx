@@ -1,9 +1,10 @@
 // Components/HomeComponents/HomeContent.tsx
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import styles from './styles/Home.module.css';
 import type { Article } from '@/app/types/article';
+import { CATEGORY_KEYS } from '@/lib/categories';
 import HeroBanner from './Herobanner';
 import CategoryTabs from './Categorytabs';
 import ArticleGrid from './ArticleGrid';
@@ -14,6 +15,12 @@ interface HomeContentProps {
 
 export default function HomeContent({ articles }: HomeContentProps) {
   const [activeTab, setActiveTab] = useState('FOR YOU');
+
+  // Only show tabs for categories that actually have articles right now.
+  const presentCategories = useMemo(() => {
+    const present = new Set(articles.map((a) => a.category));
+    return CATEGORY_KEYS.filter((c) => present.has(c));
+  }, [articles]);
 
   // Filter articles by category
   const filteredArticles = activeTab === 'FOR YOU'
@@ -29,7 +36,7 @@ export default function HomeContent({ articles }: HomeContentProps) {
   return (
     <>
       <HeroBanner slides={slides} />
-      <CategoryTabs activeTab={activeTab} onTabChange={setActiveTab} />
+      <CategoryTabs categories={presentCategories} activeTab={activeTab} onTabChange={setActiveTab} />
       <ArticleGrid articles={filteredArticles} />
     </>
   );

@@ -3,8 +3,8 @@
 // Canonical topic list, shared by onboarding (PreferencesPage.tsx) and
 // Settings (Personalization.tsx) — previously each had its own divergent
 // mock list. TOPIC_CATEGORY_MAP bridges this richer topic vocabulary to the
-// 8 broad Article categories used by getCategory() in app/api/articles/route.ts,
-// since article personalization only has the broad categories to filter on.
+// broad Article categories in lib/categories.ts, since article
+// personalization only has the broad categories to filter on.
 import type { Topic } from '@/app';
 
 export const TOPICS: Topic[] = [
@@ -33,12 +33,12 @@ export const TOPIC_CATEGORY_MAP: Record<string, string> = {
   'ai-ethics': 'TECHNOLOGY',
   'global-markets': 'BUSINESS',
   'philosophy': 'CULTURE',
-  'medicine': 'SCIENCE',
+  'medicine': 'HEALTH',
   'climate': 'NATURE',
   'cybersecurity': 'TECHNOLOGY',
   'neuroscience': 'PSYCHOLOGY',
-  'geopolitics': 'CULTURE',
-  'deep-tech': 'FUTURE',
+  'geopolitics': 'POLITICS',
+  'deep-tech': 'TECHNOLOGY',
 };
 
 export function topicsToCategories(topicIds: string[]): Set<string> {

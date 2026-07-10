@@ -3,18 +3,18 @@
 
 import styles from './styles/CategoryTabs.module.css';
 
-const TABS = ['FOR YOU', 'DESIGN', 'ARCHITECTURE', 'SCIENCE', 'BUSINESS', 'CULTURE'];
-
 interface CategoryTabsProps {
+  categories: string[];
   activeTab: string;
   onTabChange: (tab: string) => void;
 }
 
-export default function CategoryTabs({ activeTab, onTabChange }: CategoryTabsProps) {
+export default function CategoryTabs({ categories, activeTab, onTabChange }: CategoryTabsProps) {
+  const tabs = ['FOR YOU', ...categories];
   return (
     <div className={styles.tabsWrapper}>
       <div className={styles.tabs}>
-        {TABS.map((tab) => (
+        {tabs.map((tab) => (
           <button
             key={tab}
             className={activeTab === tab ? styles.tabActive : styles.tab}

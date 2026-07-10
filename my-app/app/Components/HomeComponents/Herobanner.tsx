@@ -48,11 +48,15 @@ export default function HeroBanner({ slides }: HeroBannerProps) {
     'TECHNOLOGY': 'bgTeal',
     'SCIENCE': 'bgPurple',
     'DESIGN': 'bgEmerald',
-    'FUTURE': 'bgPurple',
+    'POLITICS': 'bgPurple',
     'PSYCHOLOGY': 'bgTeal',
     'NATURE': 'bgEmerald',
     'BUSINESS': 'bgTeal',
     'CULTURE': 'bgPurple',
+    'ENTERTAINMENT': 'bgPurple',
+    'HEALTH': 'bgEmerald',
+    'WORLD': 'bgTeal',
+    'SPORTS': 'bgEmerald',
   };
   const bgClass = bgMap[slide.category] || 'bgTeal';
 
