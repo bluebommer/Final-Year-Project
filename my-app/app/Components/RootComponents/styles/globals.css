@@ -8,6 +8,7 @@
    see lib/theme.ts) overrides it below. */
 :root {
   --bg-primary:        #080d18;
+  --bg-primary-rgb:    8, 13, 24;
   --bg-secondary:      #0d1220;
 
   --surface-card:      #111827;
@@ -49,6 +50,7 @@
 
 :root[data-theme="light"] {
   --bg-primary:        #f8fafc;
+  --bg-primary-rgb:    248, 250, 252;
   --bg-secondary:      #eef2f7;
 
   --surface-card:      #ffffff;
