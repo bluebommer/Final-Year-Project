@@ -71,6 +71,11 @@
   gap: 20px;
 }
 
+.cardLink {
+  text-decoration: none;
+  display: block;
+}
+
 /* Card */
 .card {
   background: var(--surface-card);

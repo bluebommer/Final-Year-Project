@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import Link from 'next/link';
 import AppShell from '../../Components/HomeComponents/AppShell';
 import styles from './styles/Library.module.css';
 import { listSavedArticles, removeArticle as removeArticleFromDB, clearAllArticles, postToServiceWorker, type SavedArticle } from '@/lib/offlineDB';
@@ -61,45 +62,55 @@ export default function LibraryPage() {
           ) : (
             <div className={styles.grid}>
               {savedArticles.map(article => (
-                <article key={article.id} className={styles.card}>
-                  <div className={styles.cardHeader}>
-                    <span className={styles.category}>{article.category}</span>
-                    <button
-                      className={styles.removeBtn}
-                      onClick={() => removeArticle(article.id)}
-                      aria-label="Remove from library"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  <h3 className={styles.cardTitle}>{article.title}</h3>
-                  <div className={styles.cardMeta}>
-                    <div
-                      className={styles.authorAvatar}
-                      style={{ background: article.authorColor }}
-                    >
-                      {article.authorInitial}
+                <Link
+                  key={article.id}
+                  href={`/article/${encodeURIComponent(article.id)}`}
+                  className={styles.cardLink}
+                >
+                  <article className={styles.card}>
+                    <div className={styles.cardHeader}>
+                      <span className={styles.category}>{article.category}</span>
+                      <button
+                        className={styles.removeBtn}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          removeArticle(article.id);
+                        }}
+                        aria-label="Remove from library"
+                      >
+                        ✕
+                      </button>
                     </div>
-                    <div className={styles.authorInfo}>
-                      <span className={styles.authorName}>{article.author}</span>
-                      <span className={styles.savedDate}>
-                        Saved on {new Date(article.savedAt).toLocaleDateString()}
+                    <h3 className={styles.cardTitle}>{article.title}</h3>
+                    <div className={styles.cardMeta}>
+                      <div
+                        className={styles.authorAvatar}
+                        style={{ background: article.authorColor }}
+                      >
+                        {article.authorInitial}
+                      </div>
+                      <div className={styles.authorInfo}>
+                        <span className={styles.authorName}>{article.author}</span>
+                        <span className={styles.savedDate}>
+                          Saved on {new Date(article.savedAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <div className={styles.cardFooter}>
+                      <span className={styles.readTime}>{article.readTime}</span>
+                      <span className={styles.offlineBadge}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M18.36 6.64A9 9 0 0 1 20.77 15" />
+                          <path d="M6.16 6.16a9 9 0 1 0 12.68 12.68" />
+                          <path d="M12 2v4" />
+                          <path d="M2 2l20 20" />
+                        </svg>
+                        Offline available
                       </span>
                     </div>
-                  </div>
-                  <div className={styles.cardFooter}>
-                    <span className={styles.readTime}>{article.readTime}</span>
-                    <span className={styles.offlineBadge}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M18.36 6.64A9 9 0 0 1 20.77 15" />
-                        <path d="M6.16 6.16a9 9 0 1 0 12.68 12.68" />
-                        <path d="M12 2v4" />
-                        <path d="M2 2l20 20" />
-                      </svg>
-                      Offline available
-                    </span>
-                  </div>
-                </article>
+                  </article>
+                </Link>
               ))}
             </div>
           )}
