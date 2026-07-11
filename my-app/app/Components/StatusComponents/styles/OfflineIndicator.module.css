@@ -53,6 +53,24 @@
   color: #ffffff;
 }
 
+.reconnectBtn {
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.reconnectBtn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
 .syncing {
   background: rgba(0, 222, 236, 0.85);
   backdrop-filter: blur(12px);

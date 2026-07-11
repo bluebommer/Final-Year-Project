@@ -23,7 +23,7 @@ export default async function DiscoverPage() {
 
   return (
     <AppShell>
-      <main className={styles.mainContent}>
+      <main id="main-content" className={styles.mainContent}>
         <DiscoverContent articles={articles} />
       </main>
     </AppShell>

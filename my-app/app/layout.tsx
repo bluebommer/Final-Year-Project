@@ -5,6 +5,7 @@ import "./Components/RootComponents/styles/globals.css";
 import "./Components/RootComponents/styles/welcome.css";
 import "./Components/RootComponents/styles/preferences.css";
 import "./Components/RootComponents/styles/auth.css";
+import "./Components/Management Components/styles/Accessibility.css";
 import OfflineIndicator from "./Components/StatusComponents/OfflineIndicator";
 import ServiceWorkerRegistrar from "./Components/StatusComponents/ServiceWorkerRegistrar";
 
@@ -46,6 +47,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://miro.medium.com" />
       </head>
       <body>
+        <a href="#main-content" className="skip-to-content">Skip to content</a>
         {/* Sets data-theme before hydration/paint to avoid a dark->light
             flash for users who've chosen light mode. Keep the storage key
             ("readLite_theme") in sync with lib/theme.ts — this is a

@@ -19,7 +19,7 @@ const SourceManager = dynamic(() => import('../Components/Management Components/
 export default function SettingsPage() {
   return (
     <AppShell>
-      <main className={styles.mainContent}>
+      <main id="main-content" className={styles.mainContent}>
         <SettingsHero />
         <AestheticMode />
 

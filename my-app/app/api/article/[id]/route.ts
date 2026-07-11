@@ -2,7 +2,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { Article } from '@/app/types/article';
 import { getCachedArticles, setCachedArticles } from '@/lib/articleCache';
-import { scrapeFullContent } from '@/lib/scrapeArticle';
+import { scrapeFullContent, normalizeParagraphs } from '@/lib/scrapeArticle';
+
+// Without this, Next.js's Route Handler cache (and its on-disk fetch cache)
+// can freeze a scraped article's content the first time it's fetched —
+// surviving even a redeploy — since this handler otherwise looks "static"
+// to Next (no cookies()/headers() use). Matches /api/articles' same opt-out.
+export const dynamic = 'force-dynamic';
 
 function isBadDescription(desc: string | undefined): boolean {
   if (!desc) return true;
@@ -105,6 +111,12 @@ export async function GET(
     if (isBadDescription(fullContent)) {
       fullContent = buildFallbackContent(article);
     }
+
+    // Some source APIs (e.g. Guardian's `bodyText` for live blogs) hand back
+    // "full" content that's already long enough to skip scraping above, but
+    // still collapsed into one giant paragraph — normalize regardless of
+    // where the content came from, not just the scraped path.
+    fullContent = normalizeParagraphs(fullContent);
 
     return NextResponse.json({ article: { ...article, content: fullContent } });
 

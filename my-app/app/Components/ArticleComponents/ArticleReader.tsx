@@ -171,7 +171,7 @@ export default function ArticleReader({ article }: ArticleReaderProps) {
     <article
         ref={articleRef}
         className={styles.articleBody}
-        style={{ fontSize: `${fontSize}%`, lineHeight: `${lineHeight}%` }}
+        style={{ '--font-scale': fontSize / 100, '--line-scale': lineHeight / 100 } as React.CSSProperties}
         dangerouslySetInnerHTML={{
   __html: article.content || `<p>${article.description}</p>`,
 }}

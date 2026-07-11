@@ -67,7 +67,7 @@ function HistoryContent() {
 export default function HistoryPage() {
   return (
     <AppShell>
-      <main className={styles.mainContent}>
+      <main id="main-content" className={styles.mainContent}>
         <HistoryContent />
       </main>
     </AppShell>

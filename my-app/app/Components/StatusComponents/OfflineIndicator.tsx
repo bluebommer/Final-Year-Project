@@ -81,6 +81,11 @@ export default function OfflineIndicator() {
           {status === 'offline' && 'You are offline. Some content may be unavailable.'}
           {status === 'syncing' && 'Syncing your changes...'}
         </span>
+        {status === 'offline' && (
+          <button className={styles.reconnectBtn} onClick={sync} aria-label="Retry connection">
+            Retry
+          </button>
+        )}
       </div>
 
       {/* Pending items badge (appears when offline and there are pending actions) */}

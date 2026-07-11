@@ -263,17 +263,25 @@
   padding: 0 24px;
   font-family: 'DM Sans', system-ui, sans-serif;
   color: var(--text-secondary);
+  /* Base size/line-height that the reader's Aa/Line Ht. controls scale via
+     the --font-scale/--line-scale custom properties (set inline in
+     ArticleReader.tsx). Headings and paragraphs below use em/unitless units
+     so they inherit and scale with it — a plain inline `font-size: 100%`
+     would instead resolve against this element's *parent*, not this base,
+     silently decoupling the controls from the visible text. */
+  --font-scale: 1;
+  --line-scale: 1;
+  font-size: calc(18px * var(--font-scale));
+  line-height: calc(1.6 * var(--line-scale));
   transition: font-size 0.1s, line-height 0.1s;
 }
 
 .articleBody p {
   margin-bottom: 1.6em;
-  font-size: 1.1rem;
-  line-height: 1.6;
 }
 
 .articleBody h2 {
-  font-size: 1.8rem;
+  font-size: 1.7em;
   font-weight: 700;
   margin: 2em 0 0.8em;
   letter-spacing: -0.01em;
@@ -281,17 +289,46 @@
 }
 
 .articleBody h3 {
-  font-size: 1.4rem;
+  font-size: 1.3em;
   font-weight: 600;
   margin: 1.5em 0 0.5em;
 }
 
+.articleBody blockquote {
+  margin: 1.6em 0;
+  padding: 4px 0 4px 20px;
+  border-left: 3px solid #22d3ee;
+  font-size: 1.1em;
+  font-style: italic;
+  color: var(--text-primary);
+}
+
+.articleBody ul,
+.articleBody ol {
+  margin: 0 0 1.6em;
+  padding-left: 1.4em;
+}
+
+.articleBody li {
+  margin-bottom: 0.6em;
+}
+
+.articleBody img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 1.6em 0;
+}
+
+.articleBody a {
+  color: #22d3ee;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 @media (max-width: 700px) {
-  .articleBody p {
-    font-size: 1rem;
-  }
-  .articleBody h2 {
-    font-size: 1.5rem;
+  .articleBody {
+    font-size: calc(16px * var(--font-scale));
   }
 }
 

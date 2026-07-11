@@ -34,7 +34,7 @@ export default function LibraryPage() {
 
   return (
     <AppShell>
-      <main className={styles.mainContent}>
+      <main id="main-content" className={styles.mainContent}>
           {/* Header */}
           <div className={styles.header}>
             <div className={styles.headerLeft}>

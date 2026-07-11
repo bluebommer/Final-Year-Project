@@ -118,7 +118,7 @@ export default async function HomePage() {
 
   return (
     <AppShell>
-      <main className={styles.mainContent}>
+      <main id="main-content" className={styles.mainContent}>
         <HomeContent articles={personalized} />
       </main>
     </AppShell>
