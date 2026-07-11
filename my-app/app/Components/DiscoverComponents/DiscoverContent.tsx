@@ -15,6 +15,10 @@ interface DiscoverContentProps {
   articles: Article[];
 }
 
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export default function DiscoverContent({ articles }: DiscoverContentProps) {
   const [query, setQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -23,12 +27,14 @@ export default function DiscoverContent({ articles }: DiscoverContentProps) {
   const searchResults = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return [];
-    return articles.filter(
-      (a) =>
-        a.title.toLowerCase().includes(q) ||
-        a.description.toLowerCase().includes(q) ||
-        a.category.toLowerCase().includes(q)
-    );
+    // Match on word starts (\b), not raw substrings — a plain `.includes('ai')`
+    // also matches inside unrelated words like "certain", "explain", "said",
+    // which flooded results for short/acronym queries.
+    const words = q.split(/\s+/).filter(Boolean).map((w) => new RegExp(`\\b${escapeRegExp(w)}`, 'i'));
+    return articles.filter((a) => {
+      const haystack = `${a.title} ${a.description} ${a.category}`;
+      return words.every((re) => re.test(haystack));
+    });
   }, [articles, query]);
 
   const categoryResults = useMemo(() => {
