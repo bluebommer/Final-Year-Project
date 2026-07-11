@@ -2,6 +2,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { Article } from '@/app/types/article';
 import styles from './styles/Smallcard.module.css';
@@ -59,12 +60,12 @@ export default function SmallCard({ article }: Props) {
         </div>
         <div className={styles.imageWrapper}>
           {hasImage ? (
-            <img
-              src={article.imageUrl}
+            <Image
+              src={article.imageUrl as string}
               alt={article.title}
+              fill
+              sizes="(max-width: 600px) 100vw, 140px"
               className={styles.thumbnail}
-              loading="lazy"
-              decoding="async"
             />
           ) : (
             <div

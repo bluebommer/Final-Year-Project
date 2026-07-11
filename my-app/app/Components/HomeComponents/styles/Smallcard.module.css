@@ -118,6 +118,7 @@
 }
 
 .imageWrapper {
+  position: relative;
   flex-shrink: 0;
   width: 140px;
   height: auto;

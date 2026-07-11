@@ -2,6 +2,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { Article } from '@/app/types/article';
 import styles from './styles/FeaturedCard.module.css';
@@ -41,12 +42,12 @@ export default function FeaturedCard({ article }: Props) {
       <article className={styles.featuredCard}>
         <div className={styles.cardImage}>
           {hasImage ? (
-            <img
-              src={article.imageUrl}
+            <Image
+              src={article.imageUrl as string}
               alt={article.title}
+              fill
+              sizes="(max-width: 960px) 100vw, 50vw"
               className={styles.featuredImage}
-              loading="lazy"
-              decoding="async"
             />
           ) : (
             <>

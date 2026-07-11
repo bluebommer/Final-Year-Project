@@ -2,6 +2,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { Article } from '@/app/types/article';
 import styles from './styles/SideCard.module.css';
@@ -41,7 +42,13 @@ export default function SideCard({ article }: Props) {
       <article className={styles.sideCard}>
         <div className={styles.cardImage}>
           {hasImage ? (
-            <img src={article.imageUrl} alt={article.title} className={styles.sideImage} loading="lazy" decoding="async" />
+            <Image
+              src={article.imageUrl as string}
+              alt={article.title}
+              fill
+              sizes="(max-width: 960px) 100vw, 50vw"
+              className={styles.sideImage}
+            />
           ) : (
             <div className={styles.landscapeVisual} />
           )}

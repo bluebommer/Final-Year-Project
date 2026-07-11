@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './styles/HeroBanner.module.css';
@@ -87,12 +88,13 @@ export default function HeroBanner({ slides }: HeroBannerProps) {
     <div className={`${styles.heroBanner} ${styles[bgClass]}`}>
       <div className={styles.visualWrapper}>
         {hasImage ? (
-          <img
-            src={slide.imageUrl}
+          <Image
+            src={slide.imageUrl as string}
             alt={slide.title}
+            fill
+            sizes="(max-width: 640px) 100vw, 62vw"
             className={styles.slideImage}
-            loading={current === 0 ? 'eager' : 'lazy'}
-            decoding="async"
+            priority={current === 0}
             fetchPriority={current === 0 ? 'high' : 'auto'}
           />
         ) : (
