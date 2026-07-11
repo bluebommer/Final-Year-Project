@@ -24,7 +24,10 @@ export default function DiscoverContent({ articles }: DiscoverContentProps) {
     const q = query.trim().toLowerCase();
     if (!q) return [];
     return articles.filter(
-      (a) => a.title.toLowerCase().includes(q) || a.description.toLowerCase().includes(q)
+      (a) =>
+        a.title.toLowerCase().includes(q) ||
+        a.description.toLowerCase().includes(q) ||
+        a.category.toLowerCase().includes(q)
     );
   }, [articles, query]);
 
@@ -33,7 +36,16 @@ export default function DiscoverContent({ articles }: DiscoverContentProps) {
     return articles.filter((a) => a.category === activeCategory);
   }, [articles, activeCategory]);
 
+  function search(q: string) {
+    setQuery(q);
+    if (q.trim()) {
+      setActiveCategory(null);
+      setResultsOverride(null);
+    }
+  }
+
   function selectCategory(category: string) {
+    setQuery('');
     setResultsOverride(null);
     setActiveCategory((prev) => (prev === category ? null : category));
   }
@@ -63,7 +75,7 @@ export default function DiscoverContent({ articles }: DiscoverContentProps) {
 
   return (
     <>
-      <SearchHero onSearch={setQuery} />
+      <SearchHero query={query} onSearch={search} />
 
       {showingResults ? (
         <section className={styles.section}>
@@ -74,7 +86,7 @@ export default function DiscoverContent({ articles }: DiscoverContentProps) {
                 ← Back to Discover
               </button>
             </div>
-            <ArticleGrid articles={resultsItems} />
+            <ArticleGrid articles={resultsItems} showDiscoverMore={false} />
           </div>
         </section>
       ) : (

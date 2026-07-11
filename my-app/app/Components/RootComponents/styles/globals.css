@@ -94,6 +94,12 @@
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
+  /* Guards against incidental horizontal overflow (e.g. fixed-width cards in
+     horizontal-scroll rails) on narrow viewports. Applied on html/body —
+     the root scroller — rather than a mid-tree wrapper, since overflow set
+     on an intermediate ancestor creates its own scroll container and breaks
+     `position: sticky` on the navbar/sidebar nested inside it. */
+  overflow-x: hidden;
 }
 
 body {
@@ -104,6 +110,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.2s ease, color 0.2s ease;
+  overflow-x: hidden;
 }
 
 a    { color: inherit; text-decoration: none; }

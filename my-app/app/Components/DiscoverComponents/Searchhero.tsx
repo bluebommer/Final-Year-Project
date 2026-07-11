@@ -11,18 +11,20 @@ const PLACEHOLDERS = [
   'Read about space colonization…',
 ];
 
+// Mirrors the real category taxonomy from lib/articleHelpers.ts (getCategory)
+// so a tag click always matches actual articles instead of a decorative
+// phrase that happens not to appear in any title/description.
 const TRENDING_TAGS = [
-  'Artificial Intelligence', 'Neuroscience', 'Climate Tech',
-  'Biomimicry', 'Quantum Physics', 'Digital Philosophy',
-  'Space Exploration', 'Liquid Design', 'Consciousness',
+  'Technology', 'Science', 'Business', 'Politics',
+  'Health', 'Culture', 'Sports', 'World',
 ];
 
 interface SearchHeroProps {
+  query: string;
   onSearch: (query: string) => void;
 }
 
-export default function SearchHero({ onSearch }: SearchHeroProps) {
-  const [query, setQuery] = useState('');
+export default function SearchHero({ query, onSearch }: SearchHeroProps) {
   const [focused, setFocused] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [placeholderVisible, setPlaceholderVisible] = useState(true);
@@ -42,19 +44,16 @@ export default function SearchHero({ onSearch }: SearchHeroProps) {
   }, [focused, query]);
 
   function handleTagClick(tag: string) {
-    setQuery(tag);
     onSearch(tag);
     inputRef.current?.focus();
   }
 
   function handleClear() {
-    setQuery('');
     onSearch('');
     inputRef.current?.focus();
   }
 
   function handleChange(value: string) {
-    setQuery(value);
     onSearch(value);
   }
 

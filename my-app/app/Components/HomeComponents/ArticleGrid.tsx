@@ -10,9 +10,10 @@ import type { Article } from '@/app/types/article';
 
 interface ArticleGridProps {
   articles: Article[];
+  showDiscoverMore?: boolean;
 }
 
-export default function ArticleGrid({ articles }: ArticleGridProps) {
+export default function ArticleGrid({ articles, showDiscoverMore = true }: ArticleGridProps) {
   if (!articles || articles.length === 0) {
     return (
       <div className={styles.empty}>
@@ -36,11 +37,13 @@ export default function ArticleGrid({ articles }: ArticleGridProps) {
           <SmallCard key={article.id} article={article} />
         ))}
       </div>
-      <div className={styles.discoverMore}>
-        <Link href="/discover" className={styles.discoverLink}>
-          Discover more articles →
-        </Link>
-      </div>
+      {showDiscoverMore && (
+        <div className={styles.discoverMore}>
+          <Link href="/discover" className={styles.discoverLink}>
+            Discover more articles →
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

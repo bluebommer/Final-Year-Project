@@ -12,7 +12,18 @@
 }
 
 @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 640px)  { .grid { grid-template-columns: 1fr; } }
+@media (max-width: 640px)  { .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; } }
+
+@media (max-width: 480px) {
+  .card { aspect-ratio: 1 / 1.15; border-radius: 12px; }
+  .cardContent { padding: 12px; }
+  .cardIcon { font-size: 16px; }
+  .cardCount { font-size: 8px; padding: 2px 7px; }
+  .cardTitle { font-size: 14px; }
+  .cardDesc { display: none; }
+  .cardTags { display: none; }
+  .cardCta { display: none; }
+}
 
 /* No hover on touch devices — keep the "Explore collection" CTA visible
    permanently instead of it never appearing. */
