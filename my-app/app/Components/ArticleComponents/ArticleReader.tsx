@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from './styles/ArticleReader.module.css';
 import type { Article } from '@/app/types/article';
-import { saveArticle, isArticleSaved, postToServiceWorker, markArticleRead } from '@/lib/offlineDB';
+import { saveArticleForOffline, isArticleSaved, markArticleRead } from '@/lib/offlineDB';
 
 interface ArticleReaderProps {
   article: Article;
@@ -46,12 +46,8 @@ export default function ArticleReader({ article }: ArticleReaderProps) {
     if (saved || saving) return;
     setSaving(true);
     try {
-      await saveArticle(article);
+      await saveArticleForOffline(article);
       setSaved(true);
-      if (article.imageUrl) {
-        await postToServiceWorker('CACHE_IMAGE', { url: article.imageUrl });
-      }
-      await postToServiceWorker('CACHE_ARTICLE_RESPONSE', { id: article.id });
     } finally {
       setSaving(false);
     }

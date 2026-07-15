@@ -10,7 +10,7 @@
 // HMR interaction with service workers is unreliable, so `next build && next
 // start` is the only environment this should be tested against.
 
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 const STATIC_CACHE = `readlite-static-${CACHE_VERSION}`;
 const API_LIST_CACHE = `readlite-api-list-${CACHE_VERSION}`;
 const API_ARTICLE_CACHE = `readlite-api-article-${CACHE_VERSION}`;
@@ -21,10 +21,11 @@ const CURRENT_CACHES = [STATIC_CACHE, API_LIST_CACHE, API_ARTICLE_CACHE, IMAGE_C
 // ---- IndexedDB (duplicated read-only subset of lib/offlineDB.ts) ----
 
 const DB_NAME = "readlite-db";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_SAVED = "savedArticles";
 const STORE_SETTINGS = "settings";
 const STORE_SYNC_QUEUE = "syncQueue";
+const STORE_HISTORY = "readHistory";
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -39,6 +40,9 @@ function openDB() {
       }
       if (!db.objectStoreNames.contains(STORE_SYNC_QUEUE)) {
         db.createObjectStore(STORE_SYNC_QUEUE, { keyPath: "id", autoIncrement: true });
+      }
+      if (!db.objectStoreNames.contains(STORE_HISTORY)) {
+        db.createObjectStore(STORE_HISTORY, { keyPath: "id" });
       }
     };
     req.onsuccess = () => resolve(req.result);
@@ -57,20 +61,6 @@ async function getCacheStrategyFromDB() {
     });
   } catch {
     return "stale-while-revalidate";
-  }
-}
-
-async function isArticleSavedInDB(id) {
-  try {
-    const db = await openDB();
-    return await new Promise((resolve) => {
-      const tx = db.transaction(STORE_SAVED, "readonly");
-      const req = tx.objectStore(STORE_SAVED).get(id);
-      req.onsuccess = () => resolve(!!req.result);
-      req.onerror = () => resolve(false);
-    });
-  } catch {
-    return false;
   }
 }
 
@@ -185,23 +175,18 @@ async function handleArticlesList(request) {
 }
 
 async function handleNavigate(request) {
-  const url = new URL(request.url);
+  const navCache = await caches.open(NAV_CACHE);
   try {
     const response = await fetch(request);
+    // Cache every successful navigation document (not just article pages) so
+    // any page the user has actually visited — /home included — has a
+    // last-known-good version to fall back to when offline, instead of
+    // dropping straight to the generic offline.html shell.
     if (response && response.ok) {
-      const articleMatch = url.pathname.match(/^\/article\/([^/]+)/);
-      if (articleMatch) {
-        const id = decodeURIComponent(articleMatch[1]);
-        const saved = await isArticleSavedInDB(id);
-        if (saved) {
-          const navCache = await caches.open(NAV_CACHE);
-          navCache.put(request, response.clone());
-        }
-      }
+      navCache.put(request, response.clone());
     }
     return response;
   } catch {
-    const navCache = await caches.open(NAV_CACHE);
     const cached = await navCache.match(request);
     if (cached) return cached;
     const staticCache = await caches.open(STATIC_CACHE);

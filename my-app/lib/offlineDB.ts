@@ -26,7 +26,7 @@ const STORE_HISTORY = "readHistory";
 // (the SW is an unbundled classic script and can't import this constant).
 // "Clear All Cache" deletes only the article-scoped buckets, leaving the
 // static/app-shell cache (and the articles-list cache) untouched.
-const SW_CACHE_VERSION = "v1";
+const SW_CACHE_VERSION = "v2";
 export const CLEARABLE_CACHE_NAMES = [
   `readlite-api-article-${SW_CACHE_VERSION}`,
   `readlite-images-${SW_CACHE_VERSION}`,
@@ -115,6 +115,19 @@ export async function saveArticle(article: Article): Promise<void> {
   };
   await runTx<IDBValidKey>(STORE_SAVED, "readwrite", (store) => store.put(record));
   notifyChanged();
+}
+
+// Saves the article AND primes the service worker to cache its page/API
+// response for offline reading. Every "bookmark" entry point (card grids,
+// the open article view) must go through this — saving to IndexedDB alone
+// leaves the article's own page uncached, so it 404s once offline unless the
+// user separately opened it while online.
+export async function saveArticleForOffline(article: Article): Promise<void> {
+  await saveArticle(article);
+  if (article.imageUrl) {
+    await postToServiceWorker("CACHE_IMAGE", { url: article.imageUrl });
+  }
+  await postToServiceWorker("CACHE_ARTICLE_RESPONSE", { id: article.id });
 }
 
 export async function removeArticle(id: string): Promise<void> {

@@ -1,12 +1,7 @@
 // app/article/[id]/page.tsx
-import dynamic from 'next/dynamic';
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import type { Article } from '@/app/types/article';
-
-const ArticleReader = dynamic(
-  () => import('@/app/Components/ArticleComponents/ArticleReader')
-);
+import ArticleGate from '@/app/Components/ArticleComponents/ArticleGate';
 
 async function getArticle(id: string): Promise<Article | null> {
   if (!id) return null;
@@ -15,7 +10,7 @@ async function getArticle(id: string): Promise<Article | null> {
     // ✅ Use /api/article/[id] — this is where scraping happens
     const res = await fetch(
       `${baseUrl}/api/article/${encodeURIComponent(id)}`,
-      { cache: 'no-store' }
+      { cache: 'no-store', signal: AbortSignal.timeout(10000) }
     );
     if (!res.ok) {
       if (res.status === 404) return null;
@@ -27,7 +22,7 @@ async function getArticle(id: string): Promise<Article | null> {
     // ✅ Fallback — fetch all articles and find locally if /api/article/[id] fails
     console.error('Article route failed, falling back:', error);
     try {
-      const res = await fetch(`${baseUrl}/api/articles`, { cache: 'no-store' });
+      const res = await fetch(`${baseUrl}/api/articles`, { cache: 'no-store', signal: AbortSignal.timeout(8000) });
       if (!res.ok) return null;
       const data = await res.json();
       const articles = (data.articles as Article[]) ?? [];
@@ -73,7 +68,5 @@ export default async function ArticlePage({
   const { id } = await params;
   const article = await getArticle(id);
 
-  if (!article) notFound();
-
-  return <ArticleReader article={article} />;
+  return <ArticleGate id={decodeURIComponent(id)} article={article} />;
 }

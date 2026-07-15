@@ -250,36 +250,15 @@
   line-height: 1.5;
 }
 
-/* Google button */
-.auth__google-btn {
+/* Google button — Google's own rendered button lives inside this wrapper
+   (see Authpage.tsx); the fixed height keeps the layout stable while the
+   GSI script is still loading and the button hasn't rendered yet. */
+.auth__google-btn-wrap {
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 0.8rem 1.25rem;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: var(--text-primary);
-  font-family: 'Manrope', sans-serif;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  min-height: 44px;
   margin-bottom: 1.25rem;
-}
-
-.auth__google-btn:hover {
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.18);
-  transform: translateY(-1px);
-}
-
-.auth__google-icon {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
 }
 
 /* Divider */

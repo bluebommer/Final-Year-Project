@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { Article } from '@/app/types/article';
 import styles from './styles/FeaturedCard.module.css';
 import { useHoverPrefetch } from '@/lib/useHoverPrefetch';
-import { saveArticle, removeArticle, isArticleSaved } from '@/lib/offlineDB';
+import { saveArticleForOffline, removeArticle, isArticleSaved } from '@/lib/offlineDB';
 
 interface Props {
   article: Article;
@@ -31,7 +31,7 @@ export default function FeaturedCard({ article }: Props) {
       await removeArticle(article.id);
       setSaved(false);
     } else {
-      await saveArticle(article);
+      await saveArticleForOffline(article);
       setSaved(true);
     }
   }

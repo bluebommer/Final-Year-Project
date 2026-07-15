@@ -26,6 +26,7 @@ async function getArticles(): Promise<Article[]> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/articles`, {
       cache: 'no-store',
+      signal: AbortSignal.timeout(8000),
     });
     if (!res.ok) {
       console.error('Failed to fetch articles: non-OK response', res.status);

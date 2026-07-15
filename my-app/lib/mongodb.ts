@@ -23,11 +23,24 @@ export async function connectToDatabase() {
   if (cached.conn) return cached.conn;
 
   if (!cached.promise) {
+    // Without an explicit bound, the driver's default serverSelectionTimeoutMS
+    // (30s) means an unreachable cluster (e.g. no internet) blocks whatever
+    // server render triggered this for half a minute instead of failing fast
+    // into the "signed out" fallback path callers already handle.
     cached.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
     });
   }
 
-  cached.conn = await cached.promise;
+  try {
+    cached.conn = await cached.promise;
+  } catch (err) {
+    // Let the next call retry instead of replaying this same rejection for
+    // the rest of the process lifetime (e.g. once connectivity returns).
+    cached.promise = null;
+    throw err;
+  }
   return cached.conn;
 }

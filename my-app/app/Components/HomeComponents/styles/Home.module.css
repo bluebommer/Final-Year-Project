@@ -10,3 +10,22 @@
     padding: 16px 14px 40px;
   }
 }
+
+.offlineNotice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(34, 211, 238, 0.08);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  color: var(--text-secondary, #94a3b8);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.offlineNotice strong {
+  color: #22d3ee;
+  font-weight: 700;
+}

@@ -16,19 +16,6 @@ interface AuthPageProps {
   initialMode?: AuthMode;
 }
 
-// ─── Google Icon ──────────────────────────────────────────────────────────────
-
-function GoogleIcon() {
-  return (
-    <svg className="auth__google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-    </svg>
-  );
-}
-
 // ─── Password strength ────────────────────────────────────────────────────────
 
 function getPasswordStrength(pw: string) {
@@ -646,6 +633,8 @@ export default function AuthPage({ onAuthComplete, topics, initialMode }: AuthPa
   // Loaded only on this page (not the root layout) so every other route
   // skips this script entirely — see the removed <Script> in app/layout.tsx.
   const [googleReady,  setGoogleReady]  = useState(false);
+  const googleBtnRef = useRef<HTMLDivElement>(null);
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
   // Wraps the parent's onAuthComplete and redirects to /home               // ← NEW
   const handleAuthComplete = (user: { name: string; gender: string; email: string }) => {
@@ -671,15 +660,20 @@ export default function AuthPage({ onAuthComplete, topics, initialMode }: AuthPa
     });
   };
 
-  const triggerGooglePopup = () => {
-    setGoogleError("");
-    if (!googleReady || !window.google) {
-      setGoogleError("Still loading Google sign-in — try again in a moment.");
-      return;
-    }
+  // Renders Google's own button rather than relying on the One Tap prompt()
+  // flow — prompt() silently no-ops in a lot of real-world conditions (FedCM
+  // opt-out browsers, prior dismissal, and especially installed PWA/mobile
+  // contexts where the overlay it depends on often can't display at all).
+  // A rendered button is a plain clickable element that works the same way
+  // everywhere, so it's the only path that satisfies "web and PWA/mobile."
+  useEffect(() => {
+    if (!googleReady || !window.google || !googleClientId || !googleBtnRef.current) return;
+
     window.google.accounts.id.initialize({
-      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+      client_id: googleClientId,
+      use_fedcm_for_prompt: true,
       callback: async ({ credential }: { credential: string }) => {
+        setGoogleError("");
         try {
           await handleGoogleAuth(credential);
         } catch (err) {
@@ -688,8 +682,32 @@ export default function AuthPage({ onAuthComplete, topics, initialMode }: AuthPa
         }
       },
     });
-    window.google.accounts.id.prompt();
-  };
+
+    const container = googleBtnRef.current;
+    const render = () => {
+      if (!container) return;
+      const width = Math.round(container.getBoundingClientRect().width);
+      if (width < 1) return; // container not laid out yet (e.g. hidden tab)
+      container.innerHTML = "";
+      window.google.accounts.id.renderButton(container, {
+        type: "standard",
+        theme: "filled_black",
+        size: "large",
+        shape: "pill",
+        text: "continue_with",
+        width: Math.min(400, width),
+      });
+    };
+
+    render();
+    // Google's button has a fixed pixel width, so re-render on layout
+    // changes (e.g. rotating a phone, resizing a desktop window) to keep it
+    // filling its container instead of drifting out of alignment.
+    const resizeObserver = new ResizeObserver(render);
+    resizeObserver.observe(container);
+    return () => resizeObserver.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [googleReady, googleClientId]);
 
   const handleCodeSent = (email: string) => {
     setPendingEmail(email);
@@ -806,10 +824,11 @@ export default function AuthPage({ onAuthComplete, topics, initialMode }: AuthPa
 
               {googleError && <ErrorBanner message={googleError} />}
 
-              <button className="auth__google-btn" type="button" onClick={triggerGooglePopup}>
-                <GoogleIcon />
-                Continue with Google
-              </button>
+              {googleClientId ? (
+                <div className="auth__google-btn-wrap" ref={googleBtnRef} />
+              ) : (
+                <ErrorBanner message="Google sign-in is not configured." />
+              )}
 
               <div className="auth__divider">
                 <div className="auth__divider-line" />
