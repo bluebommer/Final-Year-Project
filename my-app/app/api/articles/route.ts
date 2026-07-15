@@ -123,8 +123,13 @@ async function fetchMedium(): Promise<Article[]> {
   const mediumUser = process.env.MEDIUM_USERNAME;
   if (!mediumUser) return [];
 
+  // Medium's per-user feed always lives at /feed/@handle — without the "@"
+  // the URL 404s and rss2json rejects it outright, silently zeroing out
+  // this entire source regardless of whether MEDIUM_USERNAME was set.
+  const handle = mediumUser.trim().startsWith('@') ? mediumUser.trim() : `@${mediumUser.trim()}`;
+
   try {
-    return await fetchRssFeedArticles(`https://medium.com/feed/${mediumUser}`, 'Medium');
+    return await fetchRssFeedArticles(`https://medium.com/feed/${handle}`, 'Medium');
   } catch (err) {
     console.error('Medium RSS failed:', err);
     return [];
