@@ -10,7 +10,7 @@
 // HMR interaction with service workers is unreliable, so `next build && next
 // start` is the only environment this should be tested against.
 
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const STATIC_CACHE = `readlite-static-${CACHE_VERSION}`;
 const API_LIST_CACHE = `readlite-api-list-${CACHE_VERSION}`;
 const API_ARTICLE_CACHE = `readlite-api-article-${CACHE_VERSION}`;

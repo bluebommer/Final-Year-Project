@@ -10,6 +10,11 @@ import { scrapeFullContent, normalizeParagraphs } from '@/lib/scrapeArticle';
 // to Next (no cookies()/headers() use). Matches /api/articles' same opt-out.
 export const dynamic = 'force-dynamic';
 
+// Guardian marks truncation as "...[+1234 chars]"; GNews's free tier marks
+// it as "...[1234 chars]" (no "+") — both must be treated as unusable, or
+// the raw counter suffix renders straight to the reader as body text.
+const TRUNCATION_MARKER_RE = /\[\+?\d+\s*chars?\]/i;
+
 function isBadDescription(desc: string | undefined): boolean {
   if (!desc) return true;
   const lower = desc.toLowerCase().trim();
@@ -18,7 +23,8 @@ function isBadDescription(desc: string | undefined): boolean {
     lower === 'null' ||
     lower === 'undefined' ||
     lower === 'n/a' ||
-    desc.length < 10
+    desc.length < 10 ||
+    TRUNCATION_MARKER_RE.test(desc)
   );
 }
 
@@ -89,14 +95,8 @@ export async function GET(
     // just as truncated as everyone else's and must go through the same
     // scraping fallback below (previously this was skipped on the false
     // assumption that Dev.to's list response already had full content).
-    // Guardian marks truncation as "...[+1234 chars]"; GNews's free tier
-    // marks it as "...[1234 chars]" (no "+") — both must trigger scraping,
-    // or the raw counter suffix renders straight to the reader as body text.
-    const hasTruncationMarker = /\[\+?\d+\s*chars?\]/i.test(article.content ?? '');
-
     const isTruncated =
       !article.content ||
-      hasTruncationMarker ||
       isBadDescription(article.content) ||
       article.content.length < 300;
 
@@ -105,14 +105,16 @@ export async function GET(
     if (isTruncated && article.url && article.url !== '#') {
       try {
         const scraped = await scrapeFullContent(article.url);
-        fullContent = scraped || buildFallbackContent(article);
+        fullContent = scraped && !TRUNCATION_MARKER_RE.test(scraped) ? scraped : buildFallbackContent(article);
       } catch (scrapeErr) {
         console.error('Scrape failed:', scrapeErr);
         fullContent = buildFallbackContent(article);
       }
     }
 
-    // ── 6. Final safety check — never render garbage ─────────
+    // ── 6. Final safety check — never render a truncation marker or other
+    // garbage, regardless of which path above produced fullContent
+    // (isBadDescription checks for TRUNCATION_MARKER_RE too) ─────────────
     if (isBadDescription(fullContent)) {
       fullContent = buildFallbackContent(article);
     }

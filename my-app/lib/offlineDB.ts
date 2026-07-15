@@ -26,7 +26,7 @@ const STORE_HISTORY = "readHistory";
 // (the SW is an unbundled classic script and can't import this constant).
 // "Clear All Cache" deletes only the article-scoped buckets, leaving the
 // static/app-shell cache (and the articles-list cache) untouched.
-const SW_CACHE_VERSION = "v2";
+const SW_CACHE_VERSION = "v3";
 export const CLEARABLE_CACHE_NAMES = [
   `readlite-api-article-${SW_CACHE_VERSION}`,
   `readlite-images-${SW_CACHE_VERSION}`,
