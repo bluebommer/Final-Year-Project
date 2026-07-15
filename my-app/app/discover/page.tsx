@@ -1,7 +1,9 @@
 import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
 import type { Article } from '../types/article';
 import styles from '../Components/DiscoverComponents/styles/Discover.module.css';
 import AppShell from '../Components/HomeComponents/AppShell';
+import SkeletonArticleGrid from '../Components/SkeletonComponents/SkeletonArticleGrid';
 const DiscoverContent = dynamic(() => import('../Components/DiscoverComponents/DiscoverContent'));
 
 async function getArticles(): Promise<Article[]> {
@@ -24,7 +26,9 @@ export default async function DiscoverPage() {
   return (
     <AppShell>
       <main id="main-content" className={styles.mainContent}>
-        <DiscoverContent articles={articles} />
+        <Suspense fallback={<SkeletonArticleGrid />}>
+          <DiscoverContent articles={articles} />
+        </Suspense>
       </main>
     </AppShell>
   );

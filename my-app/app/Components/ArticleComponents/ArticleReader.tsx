@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './styles/ArticleReader.module.css';
 import type { Article } from '@/app/types/article';
 import { saveArticleForOffline, isArticleSaved, markArticleRead } from '@/lib/offlineDB';
@@ -11,6 +12,7 @@ interface ArticleReaderProps {
 }
 
 export default function ArticleReader({ article }: ArticleReaderProps) {
+  const router = useRouter();
   const [fontSize, setFontSize] = useState(100);
   const [lineHeight, setLineHeight] = useState(160);
   const [progress, setProgress] = useState(0);
@@ -41,6 +43,17 @@ export default function ArticleReader({ article }: ArticleReaderProps) {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleBack = () => {
+    // A direct/shared link into an article has no in-app history to return
+    // to — router.back() would leave the app entirely (or no-op) in that
+    // case, so fall back to a known-good destination instead.
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push('/home');
+    }
+  };
 
   const handleSave = async () => {
     if (saved || saving) return;
@@ -127,6 +140,14 @@ export default function ArticleReader({ article }: ArticleReaderProps) {
       {/* Action Bar */}
       <div className={styles.actionBar}>
         <div className={styles.actionButtons}>
+          <button className={styles.actionBtn} onClick={handleBack} aria-label="Go back">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 12H5" />
+              <path d="M12 19l-7-7 7-7" />
+            </svg>
+            <span>Back</span>
+          </button>
+          <div className={styles.divider} />
           <button className={styles.actionBtn} onClick={handleSave} disabled={saving} aria-label="Save for offline reading">
             <svg width="18" height="18" viewBox="0 0 24 24" fill={saved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
               <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" />

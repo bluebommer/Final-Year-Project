@@ -89,9 +89,14 @@ export async function GET(
     // just as truncated as everyone else's and must go through the same
     // scraping fallback below (previously this was skipped on the false
     // assumption that Dev.to's list response already had full content).
+    // Guardian marks truncation as "...[+1234 chars]"; GNews's free tier
+    // marks it as "...[1234 chars]" (no "+") — both must trigger scraping,
+    // or the raw counter suffix renders straight to the reader as body text.
+    const hasTruncationMarker = /\[\+?\d+\s*chars?\]/i.test(article.content ?? '');
+
     const isTruncated =
       !article.content ||
-      article.content.includes('[+') ||
+      hasTruncationMarker ||
       isBadDescription(article.content) ||
       article.content.length < 300;
 

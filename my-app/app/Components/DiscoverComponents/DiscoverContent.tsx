@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import type { Article } from '@/app/types/article';
 import ArticleGrid from '../HomeComponents/ArticleGrid';
 import SearchHero from './Searchhero';
@@ -20,9 +21,24 @@ function escapeRegExp(s: string): string {
 }
 
 export default function DiscoverContent({ articles }: DiscoverContentProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [query, setQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  // Seeded from the URL so a category selection survives navigating to an
+  // article and back — plain useState alone resets to null on remount,
+  // since the browser's back button re-mounts this page from scratch.
+  const [activeCategory, setActiveCategoryState] = useState<string | null>(() => searchParams.get('category'));
   const [resultsOverride, setResultsOverride] = useState<{ label: string; items: Article[] } | null>(null);
+
+  function setActiveCategory(category: string | null) {
+    setActiveCategoryState(category);
+    const params = new URLSearchParams(searchParams.toString());
+    if (category) params.set('category', category);
+    else params.delete('category');
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }
 
   const searchResults = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -53,7 +69,7 @@ export default function DiscoverContent({ articles }: DiscoverContentProps) {
   function selectCategory(category: string) {
     setQuery('');
     setResultsOverride(null);
-    setActiveCategory((prev) => (prev === category ? null : category));
+    setActiveCategory(activeCategory === category ? null : category);
   }
 
   function clearResults() {
@@ -99,7 +115,7 @@ export default function DiscoverContent({ articles }: DiscoverContentProps) {
         <>
           <TrendingNow articles={articles} />
           <Collections articles={articles} onSelectCategory={selectCategory} onBrowseAll={showAllArticles} />
-          <CategoryGrid articles={articles} onSelectCategory={selectCategory} />
+          <CategoryGrid articles={articles} activeCategory={activeCategory} onSelectCategory={selectCategory} />
           <EditorsPicks articles={articles} onSeeAll={showEditorsPicks} />
           <RisingWriters articles={articles} />
         </>
