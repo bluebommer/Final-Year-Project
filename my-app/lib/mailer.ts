@@ -1,21 +1,26 @@
-import sgMail from "@sendgrid/mail";
+import nodemailer from "nodemailer";
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY ?? "");
-// Must be a Single Sender verified in SendGrid (no custom domain needed —
-// just a confirmation-link click on an email address you own), or an
-// authenticated domain if one's ever added later.
-const FROM = process.env.EMAIL_FROM ?? "";
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
+
+// Gmail always sends from the authenticated account, so build FROM from it.
+const FROM = process.env.GMAIL_USER ? `ReadLite <${process.env.GMAIL_USER}>` : "";
+
+
 
 async function send(opts: { to: string; subject: string; text: string; html: string }): Promise<void> {
-  if (!FROM) throw new Error("EMAIL_FROM is not configured.");
+  if (!FROM) throw new Error("GMAIL_USER is not configured.");
   try {
-    // @sendgrid/mail rejects its promise on API-level failures (bad key,
-    // unverified sender, etc.), so callers' existing try/catch blocks work
-    // correctly without extra handling.
-    await sgMail.send({ from: FROM, ...opts });
+    await transporter.sendMail({ from: FROM, ...opts });
   } catch (err) {
-    const sgError = err as { response?: { body?: unknown } };
-    console.error("[SENDGRID]", sgError.response?.body ?? err);
+    console.error("[MAILER]", err);
     throw err;
   }
 }
